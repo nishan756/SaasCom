@@ -21,13 +21,25 @@ class Category(models.Model):
         if Category.objects.filter(name__iexact = self.name).exists():
             raise ValidationError("Category with this name is already exists")
 
+class Tag(models.Model):
+    title = models.CharField(max_length = 15 , unique = True)
+    def __str__(self):
+        return self.title
+    
+    def clean(self):
+        if Tag.objects.filter(title__iexact = self.title).exists():
+            raise ValidationError("Tag with this name is already exists")
+    
+
 class App(models.Model):
     id = models.UUIDField(primary_key = True , default = uuid.uuid4 , editable = False)
     founder = models.ForeignKey(User , on_delete = models.SET_NULL , null = True , related_name = "apps")
     name = models.CharField(max_length = 70)
     category = models.ManyToManyField(Category , related_name = "apps" , blank = True)
+    tags = models.ManyToManyField(Tag , blank = True , related_name = "apps")
     logo = CloudinaryField("Logo" , folder = "saas_com/assets/images/app_logos")
     developed_at = models.DateField(blank = True , null = True)
+    short_description = models.CharField(max_length = 200 , blank = True)
     detail = SummernoteTextField()
 
     class StatusChoice(models.TextChoices):
@@ -37,6 +49,10 @@ class App(models.Model):
     
     status = models.CharField(choices = StatusChoice.choices , max_length = 10 , default = StatusChoice.PENDING)
     added_at = models.DateTimeField(auto_now_add = True)
+
+    def __str__(self):
+        return self.name
+    
     class Meta:
         ordering = ["-added_at"]
         indexes = [
@@ -55,7 +71,7 @@ class AppImages(models.Model):
         return f"{self.app.name} image"
     
     def clean(self):
-        if AppImages.objects.filter(app = self.app) > 5:
+        if AppImages.objects.filter(app = self.app).count() > 5:
             raise ValidationError("Maximum 5 images allowed per app ")
 
     class Meta:
@@ -79,4 +95,22 @@ class AppVote(models.Model):
             models.Index(fields = ["app"]),
             models.Index(fields = ["user"]),
             models.Index(fields = ["app" , "vote_type"]),
+        ]
+
+
+class Review(models.Model):
+    id = models.UUIDField(primary_key = True , default = uuid.uuid4 , editable = False)
+    app = models.ForeignKey(App , on_delete = models.CASCADE , related_name = "reviews")
+    user = models.ForeignKey(User , on_delete = models.CASCADE , related_name = "reviews")
+    review = models.TextField()
+    added_at = models.DateTimeField(auto_now_add = True)
+
+    def __str__(self):
+        return f"{self.user.username} reviewed to {self.app.name}"
+    
+    class Meta:
+        ordering = ["-added_at"]
+        unique_together = ["user" , "app"]
+        indexes = [
+            models.Index(fields = ["app" , "user"])
         ]
