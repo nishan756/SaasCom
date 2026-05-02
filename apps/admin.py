@@ -34,7 +34,7 @@ class AppVoteAdmin(admin.ModelAdmin):
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ["app" , "user" , "created_at"]
+    list_display = ["app" , "user" , "added_at"]
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
