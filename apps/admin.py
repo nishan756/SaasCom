@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category , App , AppImages
+from .models import Category , App , AppImages , AppVote , Review , Tag
 from django.utils.safestring import mark_safe
 
 @admin.register(Category)
@@ -24,3 +24,19 @@ class AppAdmin(admin.ModelAdmin):
 
     def view_logo(self , obj):
         return mark_safe(f"<img src={obj.logo.url} width = '50px' height = '40px'>")
+
+@admin.register(AppVote)
+class AppVoteAdmin(admin.ModelAdmin):
+    list_display = ["user" , "app" , "vote_type" , "added_at"]
+    list_filter = ["vote_type"]
+    list_per_page = 100
+
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ["app" , "user" , "created_at"]
+
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ["title"]
+
