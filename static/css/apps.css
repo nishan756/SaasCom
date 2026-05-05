@@ -1,0 +1,51 @@
+body {
+  background: #f6f7fb;
+}
+
+.app-card {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #eee;
+  transition: 0.2s ease;
+  height: 100%;
+}
+
+.app-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.chip-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.chip-scroll::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 10px;
+}
+
+.chip {
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: #eee;
+  color: #333;
+  font-size: 12px;
+  text-decoration: none;
+  transition: 0.25s;
+  position: relative;
+  white-space: nowrap;
+}
+
+.chip:hover {
+  background: #ddd;
+}
+
+.chip.active {
+  background: #111;
+  color: #fff;
+}
+
+.icon{
+  height: 15px;
+  width: 15px;
+}

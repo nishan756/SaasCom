@@ -1,0 +1,8 @@
+.d-flex::-webkit-scrollbar {
+    height: 6px;
+}
+
+.d-flex::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}
