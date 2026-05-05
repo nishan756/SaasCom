@@ -23,7 +23,7 @@ class UserAdmin(admin.ModelAdmin):
         (
             "Basic Info",
             {
-                "fields":["first_name" , "last_name" , "username" , "email"  , "image" , "date_of_birth"],
+                "fields":["first_name" , "last_name" , "username" , "email"  , "image" ,"gender" , "date_of_birth"],
             },
             
         ),
@@ -50,7 +50,5 @@ class UserAdmin(admin.ModelAdmin):
         )
     ]
 
-    def full_name(self , obj):
-        return f"{obj.first_name} {obj.last_name}"
 
     
