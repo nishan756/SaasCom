@@ -62,6 +62,12 @@ class CustomUser(AbstractBaseUser , PermissionsMixin):
     username = models.CharField(max_length = 30 , unique = True)
     email = models.EmailField(unique = True)
 
+    class GenderChoices(models.TextChoices):
+        MALE = "male" , "Male"
+        FEMALE = "female" , "Female"
+        THIRD = "Third" , "third"
+        TRANSGENDER = "transgender" , "Transgender"
+    gender = models.CharField(max_length = 12 , default = GenderChoices.MALE , choices = GenderChoices.choices)
     date_of_birth = models.DateField(blank = True , null = True)
 
     is_staff = models.BooleanField(default = False)
@@ -81,4 +87,31 @@ class CustomUser(AbstractBaseUser , PermissionsMixin):
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"
+    
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
+
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
+class Follow(models.Model):
+    follower = models.ForeignKey(
+        User , 
+        on_delete = models.CASCADE , 
+        related_name = "following",
+    )
+    following = models.ForeignKey(
+        User , 
+        on_delete = models.CASCADE , 
+        related_name = "followers",
+    )
+
+    class Meta:
+        unique_together = ["follower" , "following"]
+        indexes = [
+            models.Index(fields = ["following"]),
+            models.Index(fields = ["follower"]),
+        ]
+
 
