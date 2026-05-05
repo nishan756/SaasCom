@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+    Welcome to SaaS Community
+{% endblock title %}
+
+{% block css %}
+    <link rel="stylehseet" href="{% static 'css/index.css' %}">
+{% endblock css %}
+
+{% block content %}
+    <!-- Hero -->
+    <section class="text-center section">
+    <div class="container">
+        <h1 class="fw-bold">Discover & Promote the Best SaaS Products</h1>
+        <p class="text-muted">Join a community of developers sharing and reviewing SaaS apps</p>
+        <a class="btn btn-primary m-2">Explore Apps</a>
+        <a class="btn btn-outline-primary m-2">Submit Your SaaS</a>
+    </div>
+    </section>
+
+    <!-- Social Proof -->
+    <section class="section bg-light text-center">
+    <div class="container">
+        <div class="row">
+        <div class="col-md-4"><h3>120+</h3><p>Apps</p></div>
+        <div class="col-md-4"><h3>5K+</h3><p>Users</p></div>
+        <div class="col-md-4"><h3>1K+</h3><p>Reviews</p></div>
+        </div>
+    </div>
+    </section>
+
+    <!--Trending Apps-->
+    <section class="section">
+        <div class="container">
+            <h2 class="mb-4">🔥 Trending Today</h2>
+
+            <div class="d-flex overflow-auto gap-3 pb-2">
+
+            {% for i in "12345678" %}
+            <div style="min-width: 300px;">
+                <div class="card p-3 h-100">
+                <h5>App Name</h5>
+                <p>Short description of SaaS product</p>
+                <span class="badge bg-primary">AI Tool</span>
+                <button class="btn btn-sm btn-outline-primary mt-2">⬆ 120</button>
+                </div>
+            </div>
+            {% endfor %}
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="section bg-light">
+        <div class="container">
+            <h2 class="mb-4">Categories</h2>
+
+            <div class="d-flex overflow-auto gap-3 pb-2">
+
+            <div style="min-width: 200px;">
+                <div class="card p-3 text-center">AI Tools</div>
+            </div>
+
+            <div style="min-width: 200px;">
+                <div class="card p-3 text-center">Developer Tools</div>
+            </div>
+
+            <div style="min-width: 200px;">
+                <div class="card p-3 text-center">Marketing</div>
+            </div>
+
+            <div style="min-width: 200px;">
+                <div class="card p-3 text-center">Productivity</div>
+            </div>
+
+            <div style="min-width: 200px;">
+                <div class="card p-3 text-center">Finance</div>
+            </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Discussion -->
+    <section class="section">
+        <div class="container">
+            <h2 class="mb-4">Hot Discussions</h2>
+
+            <div style="max-height: 300px; overflow-y: auto;">
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between">
+                        Best SaaS for startups?
+                        <span class="badge bg-secondary">12</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        How to market SaaS?
+                        <span class="badge bg-secondary">8</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        Which SaaS stack is best?
+                        <span class="badge bg-secondary">5</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        Indie hackers growth tips
+                        <span class="badge bg-secondary">10</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        Best backend for SaaS apps?
+                        <span class="badge bg-secondary">7</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        Best backend for SaaS apps?
+                        <span class="badge bg-secondary">7</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        Best backend for SaaS apps?
+                        <span class="badge bg-secondary">7</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        Best backend for SaaS apps?
+                        <span class="badge bg-secondary">7</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        Best backend for SaaS apps?
+                        <span class="badge bg-secondary">7</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section text-center bg-primary text-white">
+    <div class="container">
+        <h2>Have a SaaS Product? Submit it now</h2>
+        <a class="btn btn-light mt-3">Submit Your App</a>
+    </div>
+    </section>
+{% endblock content %}

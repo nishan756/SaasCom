@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Apps
+{% endblock title %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/apps.css' %}"> 
+{% endblock css %}
+
+
+{% block content %}
+<div class="container-fluid py-3">
+
+  <!-- TOP BAR -->
+  <div class="row align-items-center mb-3">
+    <div class="col-12 col-lg-4 mb-2 mb-lg-0">
+      <h4 class="fw-bold mb-0">🚀 App Feed</h4>
+    </div>
+
+    <div class="col-6 col-lg-2 mb-2 mb-lg-0">
+      <select class="form-select form-select-sm rounded-3" name="sort">
+        <option value="latest">Latest</option>
+        <option value="popular">Popular</option>
+        <option value="oldest">Oldest</option>
+      </select>
+    </div>
+
+    <div class="col-12 col-lg-4 mb-2 mb-lg-0">
+      <form method="GET" class="d-flex gap-2">
+        <input type="text" name="q" class="form-control form-control-sm rounded-3" placeholder="Search apps...">
+        <button class="btn btn-dark btn-sm rounded-3">Search</button>
+      </form>
+    </div>
+    
+  </div>
+
+  <!-- CATEGORY CHIPS -->
+  <div class="mb-3 position-relative">
+    <div class="chip-scroll d-flex gap-2 flex-nowrap overflow-auto pb-2" id="chipContainer">
+      <a href="#" class="chip active">All</a>
+      <a href="#" class="chip">SaaS</a>
+      <a href="#" class="chip">AI</a>
+      <a href="#" class="chip">Productivity</a>
+      <a href="#" class="chip">Developer Tools</a>
+    </div>
+  </div>
+
+  <!-- GRID -->
+  <div class="row g-3">
+
+    
+    {% for app in apps %}
+
+
+      <!-- ✅ CHANGE: card এখন auto height responsive (no fixed height) -->
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
+        <div class="app-card p-3 w-100 d-flex flex-column">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge bg-primary">{% if app.category %} {{app.category.first}} {% endif %}</span>
+            <small class="text-muted">
+              {{app.total_upvote}} <img src="{% static 'icons/up.png'%}" class="icon">
+              <img src="{% static 'icons/down.png'%}" class="icon"> {{app.total_downvote}} 
+            </small>
+          </div>
+
+          <h6 class="fw-bold mb-1">{{app.name}}</h6>
+
+          
+          <!-- Short Description -->
+          {% if app.short_description %}
+            <p class="text-muted small mb-3 app-desc">
+              {{app.short_description}}
+            </p>
+          {% endif %}
+
+          <div class="mt-auto d-flex justify-content-between align-items-center">
+            <small class="text-muted">{{app.added_at|date}}</small>
+            <a href="{% url 'app-detail' app.id %}"><button class="btn btn-sm btn-outline-dark rounded-3">View</button></a>
+          </div>
+        </div>
+      </div>
+    
+    {% endfor %}
+
+  </div>
+
+</div>
+
+{% block js %}
+    <script src="{% static 'js/apps.js' %}"></script>
+{% endblock js %}
+
+{% endblock content %}

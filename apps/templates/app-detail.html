@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Detail of {{ app.name }}{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/app-detail.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+    <div class="row g-4">
+
+        <!-- LEFT: Developer Card -->
+        <div class="col-lg-3">
+
+            <div class="card dev-card sticky-top">
+                <div class="card-body text-center">
+
+                    <!-- Avatar -->
+                    <div class="dev-avatar-wrapper">
+
+                        {% if app.founder.image %}
+                            <img src="{{ app.founder.image.url }}" class="dev-avatar">
+                        {% else %}
+                            <img src="{% static 'icons/'|add:app.founder.gender|add:'-sign.png' %}" style="height:80px;width:80px;border-radius:50%;">
+                        {% endif %}
+
+                    </div>
+
+                    <!-- Info -->
+                    <h6 class="mb-1">{{ app.founder.full_name }}</h6>
+                    <p class="text-muted small">{{ app.founder.email }}</p>
+
+                    <div class="d-flex justify-content-center gap-2">
+                        <button class="btn btn-outline-primary btn-sm">Follow</button>
+                        <a href="#" class="btn btn-outline-secondary btn-sm">Profile</a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- CENTER: APP DETAIL -->
+        <div class="col-lg-6">
+
+            <h3 class='text-secondary'>{{app.name}}</h3>
+
+            {% if app.categories %}
+                <!-- Category -->
+                <div class="app-category">
+                    Categoriers : 
+                    {% for cat in app.category.all %}
+                        <span class='primary'>{{ cat.name }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if app.tags %}
+                <!-- Tags -->
+                <div class="app-tags">
+                    Tags : 
+                    {% for tag in app.tags.all %}
+                        <span class="badge">{{ tag.title }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+
+            <!--App Images (Screen Shots)-->
+            <div class="image-scroll">
+            {% for image in app.app_images.all %}
+                <img 
+                    src="{{ image.image.url }}" 
+                    class="app-image preview-img"
+                    data-index="{{ forloop.counter0 }}">
+            {% endfor %}
+            </div>
+
+            <!-- Description -->
+            <div class="app-description">
+                {{ app.detail|safe }}
+            </div>
+
+            <!-- Votes -->
+            <div class="vote-box">
+
+                <form method="post" action="{% url 'vote' app.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="vote_type" value="upvote">
+                    <button class="vote-btn upvote" type="submit">
+                        ⬆ {% if user_vote and user_vote ==  "upvote" %} Remove {% endif %}
+                    </button>
+                </form>
+
+                <form method="post" action="{% url 'vote' app.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="vote_type" value="downvote">
+                    <button class="vote-btn downvote" type="submit">
+                        ⬇ {% if user_vote and user_vote ==  "downvote" %} Remove {% endif %}
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT: COMMENTS -->
+        <div class="col-lg-3">
+
+            <div class="card comment-card">
+                <div class="card-body">
+
+                    <!-- Comment Form -->
+                    <form method="POST" action = "">
+                        {% csrf_token %}
+                        <textarea class="form-control review-input" 
+                                  name="content" 
+                                  placeholder="Write a comment..."></textarea>
+
+                        <button class="btn btn-dark w-100 mt-2">
+                            Post
+                        </button>
+                    </form>
+
+                    <hr>
+
+                    <!-- Comments -->
+                    {% for comment in comments %}
+
+                        <div class="review">
+
+                            <strong>{{ comment.user.username }}</strong>
+                            <p>{{ comment.content }}</p>
+
+                            <a class="reply-toggle">↳ Reply</a>
+
+                            {% for reply in comment.replies.all %}
+                                <div class="reply">
+                                    ↳ <strong>{{ reply.user.username }}</strong>
+                                    <p>{{ reply.content }}</p>
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+                    {% empty %}
+                        <p class="text-muted">No comments yet</p>
+                    {% endfor %}
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Image Lightbox -->
+    <div id="imageViewer" class="image-viewer">
+
+        <span class="close-btn">&times;</span>
+
+        <!-- Left Arrow -->
+        <span class="nav-arrow left">&#10094;</span>
+
+        <!-- Image -->
+        <img id="viewerImage">
+
+        <!-- Right Arrow -->
+        <span class="nav-arrow right">&#10095;</span>
+
+    </div>
+</div>
+
+{% block js %} 
+    <script src="{% static 'js/app-detail.js'%}"></script>
+{% endblock js %}
+
+{% endblock %}
