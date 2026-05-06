@@ -16,9 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path , include
+from debug_toolbar.toolbar import debug_toolbar_urls
+
+from apps.views import home
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('home/', include("apps.urls")),
+    path('home/', home , name = "home"),
+    path('apps/', include("apps.urls")),
+    path('session/', include("session.urls")),
     path("summernote/" , include("django_summernote.urls"))
-]
+] + debug_toolbar_urls()
