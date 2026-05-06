@@ -1,0 +1,58 @@
+{% extends 'base.html'%}
+
+{% load static %}
+
+{% block title %}
+    Login
+{% endblock title %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock css %}
+
+
+{% block content %}
+    <div class="container d-flex justify-content-center align-items-center login-container">
+        <div class="col-12 col-sm-10 col-md-6 col-lg-4">
+            
+            <div class="card shadow login-card p-4">
+                
+                <h3 class="text-center mb-4">Login</h3>
+
+                <form method="POST" action="login">
+                    {% csrf_token %}
+
+                    <!-- Username or Email -->
+
+                    {% for field in form %}
+                        <div class="mb-3">
+                            {{field.label_tag}}
+                            {{field}}
+                        </div>
+                    {% endfor %}
+
+                    <!-- Remember -->
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input">
+                        <label class="form-check-label">Remember me</label>
+                    </div>
+
+                    <!-- Button -->
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+
+                    <!-- Extra Links -->
+                    <div class="text-center mt-3">
+                        <a href="#" class="text-decoration-none">Forgot password?</a>
+                    </div>
+
+                    <div class="text-center mt-2">
+                        <small>Don't have an account? <a href="#">Register</a></small>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock content %}
