@@ -24,13 +24,14 @@ class VoteService:
         return self.repo.get_vote(app , user)
     
     def has_vote(self , app , user):
-        user_vote = self.repo.has_vote(app , user)
-        if user_vote:
-            if user_vote.vote_type == "upvote":
-                return "upvote"
-            else:
-                return "downvote"
-        return None
+        if user.is_authenticated:
+            user_vote = self.repo.has_vote(app , user)
+            if user_vote:
+                if user_vote.vote_type == "upvote":
+                    return "upvote"
+                else:
+                    return "downvote"
+            return None
 
     def vote(self , app_id , user , vote_type):
         app = AppService().get_app(id = app_id)
