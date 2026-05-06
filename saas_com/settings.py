@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import sys
 
 load_dotenv()
 
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "debug_toolbar",
     'django_summernote',
     'community',
     'session',
@@ -49,7 +51,6 @@ INSTALLED_APPS = [
     'cloudinary',
 
 ]
-
 
 AUTH_USER_MODEL = "session.CustomUser"
 
@@ -61,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'saas_com.urls'
@@ -139,3 +141,18 @@ cloudinary.config(
   	api_key = os.getenv("CLOUDINARY_API_KEY"),
   	api_secret = os.getenv("CLOUDINARY_API_SECRET")
 )
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+    "localhost",
+]
+
+TESTING = "test" in sys.argv or "PYTEST_VERSION" in os.environ
+
+if not TESTING:
+    INSTALLED_APPS = [
+        *INSTALLED_APPS,
+    ]
+    MIDDLEWARE = [
+        *MIDDLEWARE,
+    ]
