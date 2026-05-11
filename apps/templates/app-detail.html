@@ -112,15 +112,13 @@
         <!-- RIGHT: COMMENTS -->
         <div class="col-lg-3">
 
-            <div class="card comment-card">
+            <div class="card review-card">
                 <div class="card-body">
 
                     <!-- Comment Form -->
-                    <form method="POST" action = "">
+                    <form method="POST" action = "{% url 'add-review' app.id%}">
                         {% csrf_token %}
-                        <textarea class="form-control review-input" 
-                                  name="content" 
-                                  placeholder="Write a comment..."></textarea>
+                        {{form.review}}
 
                         <button class="btn btn-dark w-100 mt-2">
                             Post
@@ -128,24 +126,81 @@
                     </form>
 
                     <hr>
-
+                    
                     <!-- Comments -->
-                    {% for comment in comments %}
+                    {% for review in reviews %}
 
                         <div class="review">
 
-                            <strong>{{ comment.user.username }}</strong>
-                            <p>{{ comment.content }}</p>
+                            <div class="d-flex justify-content-between align-items-start">
 
-                            <a class="reply-toggle">↳ Reply</a>
+                                <!-- LEFT -->
+                                <div class="d-flex align-items-center gap-2">
 
-                            {% for reply in comment.replies.all %}
-                                <div class="reply">
-                                    ↳ <strong>{{ reply.user.username }}</strong>
-                                    <p>{{ reply.content }}</p>
+                                    {% if review.user.image %}
+                                        <img src="{{ review.user.image.url }}" class="user-profile">
+                                    {% else %}
+                                        <img src="{% static 'icons/'|add:review.user.gender|add:'-sign.png'%}" 
+                                            class="user-profile">
+                                    {% endif %}
+
+                                    <strong>{{ review.user.username }}</strong>
+
                                 </div>
-                            {% endfor %}
 
+                                <!-- RIGHT -->
+                                {% if request.user == review.user %} 
+
+                                    <div class="dropdown">
+
+                                        <button class="btn btn-sm border-0 shadow-none"
+                                                data-bs-toggle="dropdown">
+
+                                            ⋮
+
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-menu-end">
+
+                                            <li>
+
+                                                <form method="POST"
+                                                    action="{% url 'del-review' review.id %}">
+
+                                                    {% csrf_token %}
+
+                                                    <button type="submit"
+                                                            class="dropdown-item text-danger">
+
+                                                        Delete
+
+                                                    </button>
+
+                                                </form>
+
+                                            </li>
+
+                                        </ul>
+
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            
+                            <p>{{ review.review }}</p>
+
+                            <strong>Did you find this helpful?</strong>
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    <span>
+                                        <button type="submit" class='btn btn-primary' name="yes" value="yes">Yes</button>
+                                        <button type="submit" class='btn btn-outline-danger' name="no" value="no">No</button>
+                                    </span>
+                            </form>
+                            
                         </div>
 
                     {% empty %}
