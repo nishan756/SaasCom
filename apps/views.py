@@ -1,4 +1,5 @@
 from django.shortcuts import render , redirect
+from django.utils.http import url_has_allowed_host_and_scheme
 
 # ===================MODELS================
 from .models import App
@@ -9,7 +10,7 @@ from django.views.decorators.http import require_GET , require_POST
 from django.contrib.auth.decorators import login_required
 
 # ==================EXCEPTIONS=============
-from .exceptions import AlreadyReviewed , AppNotFound
+from .exceptions import AlreadyReviewed , AppNotFound, PermissionDenied
 from session.exceptions import UserNotFound
 
 # =================FORMS=================
@@ -23,20 +24,30 @@ vote_service = VoteService()
 app_image_service = AppImageService()
 review_service = ReviewService()
 
+def is_safe_url(url , allowed_hosts):
+    if url_has_allowed_host_and_scheme(url , allowed_hosts = allowed_hosts):
+        return url
+    return "/"
+
+@require_GET
 def home(request):
     return render(request , "index.html")
 
+
+@require_GET
 def all_apps(request):
     order_by = request.GET.get("order_by" , None)
     context = {}
     context["apps"] = app_service.all_apps(order_by = order_by)
     return render(request , "apps.html" , context)
 
+@require_GET
 def app_detail(request , id):
     context = {}
     context["app"] = app_service.get_app(id = id)
     context["images"] = app_image_service.get_images(id)
     context["user_vote"] = vote_service.has_vote(context["app"], request.user)
+    context["reviews"] = review_service.get_reviews(context['app'])
     context["form"] = ReviewForm()
     return render(request , "app-detail.html" , context)
 
@@ -51,12 +62,25 @@ def vote(request , id):
         messages.error(request , message = e)
     return redirect("app-detail" , id)
 
-
+@require_POST
+@login_required(login_url = "login")
 def add_review(request , id):
     try:
-        msg = review_service.add_review(app_id = id , user = request.user)["msg"]
-        messages.success(request , msg)
+        review = request.POST.get("review")
+        review_service.add_review(app_id = id , user = request.user , review = review)
+        messages.success(request , "Thanks for your review!")
     except AlreadyReviewed as e:
-        return messages.info(request , str(e))
+        messages.info(request , str(e))
     return redirect("app-detail" , id = id)    
+
+@require_POST
+@login_required(login_url = "login")
+def del_review(request , id):
+    HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER") , allowed_hosts = {request.get_host()})
+    try:
+        review_service.del_review(id = id , user = request.user)
+        messages.success(request , "Review deleted successfully!")
+    except PermissionDenied as e:
+        messages.error(request , str(e))
+    return redirect(HTTP_REFERER)    
 
