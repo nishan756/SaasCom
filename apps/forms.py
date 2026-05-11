@@ -11,6 +11,7 @@ class ReviewForm(forms.ModelForm):
                 attrs = {
                     "placeholder":"Write your review here...",
                     "class":"form-control comment-input",
+                    "rows":5
                 }
             )
         }
