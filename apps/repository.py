@@ -70,14 +70,17 @@ class ReviewRepo:
             return Review.objects.get(id = id)
         except Review.DoesNotExist:
             raise ReviewNotFound("Review not found")
-    
+    def get_reviews(self , app):
+        return self.queryset.filter(app = app).select_related("user")
+
     def has_user_review(self ,  app , user):
         return self.queryset.filter(app = app , user = user).exists()
 
-    def add_review(self , app , user):
+    def add_review(self , app , user , review):
         Review.objects.create(
             app = app , 
             user = user,
+            review = review
         )
         return
 
