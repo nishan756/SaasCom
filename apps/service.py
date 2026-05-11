@@ -1,6 +1,6 @@
 from .repository import AppRepo , VoteRepo , AppImageRepo , ReviewRepo
 from django.utils.timezone import now
-from .exceptions import AlreadyReviewed , PermissionDenied
+from .exceptions import AlreadyReviewed , PermissionDenied 
 
 class AppService:
     repo = AppRepo()
@@ -55,20 +55,20 @@ class ReviewService:
 
     def get_review(self , id):
         return self.repo.get_review(id = id)
+
+    def get_reviews(self , app):
+        return self.repo.get_reviews(app = app)
     
     def has_user_review(self , app , user):
         return self.repo.has_user_review(app = app , user =  user)
     
-    def add_review(self , app_id , user):
+    def add_review(self , app_id , user , review):
         app = AppService().get_app(id = app_id)
-        prev_review = self.repo.get_review()
-        if app.founder == user:
-            raise ValueError("Can't give review on self project")
-        elif prev_review:
+        prev_review = self.repo.has_user_review(app = app , user = user)
+        if prev_review:
             raise AlreadyReviewed("You already reviewed on this app")
         else:
-            self.repo.add_review(app , user)
-            return {"msg":"Thanks for your review"}
+            self.repo.add_review(app , user , review)
     
     def del_review(self , id , user):
         review = ReviewService().get_review(id = id)
