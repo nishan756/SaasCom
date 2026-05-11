@@ -111,18 +111,6 @@
     border-bottom: 1px solid #eee;
 }
 
-.reply {
-    margin-left: 12px;
-    font-size: 0.9rem;
-    color: #555;
-}
-
-.reply-toggle {
-    font-size: 12px;
-    color: #888;
-    cursor: pointer;
-}
-
 
 /* Image Viewer */
 .image-viewer {
@@ -172,4 +160,11 @@
 
 .nav-arrow.right {
     right: 20px;
+}
+
+
+.user-profile{
+    height:40px;
+    width:40px;
+    border-radius:50%;
 }
