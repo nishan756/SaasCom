@@ -1,15 +1,18 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth import login , logout , authenticate
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.http import require_GET , require_POST
-from .exceptions import InvalidForm , UserNotFound
+from .exceptions import InvalidForm , UserNotFound , FollowException
+from apps.views import is_safe_url
 
 # =================FORMS=================
 from .forms import LoginForm
 
 # =================SERVICES=============
-from .service import UserService
+from .service import UserService , FollowService
 user_service = UserService()
+follow_service = FollowService()
 
 
 def user_login(request):
@@ -30,8 +33,40 @@ def user_login(request):
     
     return render(request , "login.html" , {"form":form})
 
-
+@login_required(login_url = "login")
+@require_GET
 def user_logout(request):
     logout(request)
     messages.success(request , "You have been logged out successfully.")
     return redirect("home")
+
+
+@login_required(login_url = "login")
+@require_POST
+def follow(request , id):
+    HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER") , allowed_hosts=request.get_host())
+    following_user = user_service.repo.get_user(id)
+    follower = request.user
+    try:
+        follow_service.follow(follower, following_user)
+        messages.success(request, f"You have started following {following_user.full_name()}.")
+    except UserNotFound as e:
+        messages.error(request, str(e))
+    except FollowException as e:
+        messages.error(request, str(e))
+    return redirect(HTTP_REFERER)
+
+@login_required(login_url = "login")
+@require_POST
+def unfollow(request , id):
+    HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER") , allowed_hosts=request.get_host())
+    following_user = user_service.repo.get_user(id)
+    follower = request.user
+    try:
+        follow_service.unfollow(follower, following_user)
+        messages.success(request, f"You have unfollowed {following_user.full_name()}.")
+    except UserNotFound as e:
+        messages.error(request, str(e))
+    except FollowException as e:
+        messages.error(request, str(e))
+    return redirect(HTTP_REFERER)
