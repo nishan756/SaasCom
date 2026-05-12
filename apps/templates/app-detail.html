@@ -34,7 +34,17 @@
                     <p class="text-muted small">{{ app.founder.email }}</p>
 
                     <div class="d-flex justify-content-center gap-2">
-                        <button class="btn btn-outline-primary btn-sm">Follow</button>
+                        {% if is_following %}
+                            <form method="POST" action="{% url 'unfollow' app.founder.id %}">
+                                {% csrf_token %}
+                                <button class="btn btn-outline-primary btn-sm">Following</button>
+                            </form>
+                        {% else %}
+                            <form method="POST" action="{% url 'follow' app.founder.id %}">
+                                {% csrf_token %}
+                                <button class="btn btn-outline-primary btn-sm">Follow</button>
+                            </form>
+                        {% endif %}
                         <a href="#" class="btn btn-outline-secondary btn-sm">Profile</a>
                     </div>
 
@@ -128,7 +138,7 @@
                     <hr>
                     
                     <!-- Comments -->
-                    {% for review in reviews %}
+                    {% for review in app.reviews.all %}
 
                         <div class="review">
 
