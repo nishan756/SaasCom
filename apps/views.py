@@ -5,6 +5,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from .models import App
 # ====================SERVICES=============
 from .service import AppService , VoteService , AppImageService , ReviewService
+from session.service import FollowService , UserService
 from django.contrib import messages
 from django.views.decorators.http import require_GET , require_POST
 from django.contrib.auth.decorators import login_required
@@ -23,6 +24,8 @@ app_service = AppService()
 vote_service = VoteService()
 app_image_service = AppImageService()
 review_service = ReviewService()
+user_service = UserService()
+follow_service = FollowService()
 
 def is_safe_url(url , allowed_hosts):
     if url_has_allowed_host_and_scheme(url , allowed_hosts = allowed_hosts):
@@ -44,11 +47,11 @@ def all_apps(request):
 @require_GET
 def app_detail(request , id):
     context = {}
-    context["app"] = app_service.get_app(id = id)
-    context["images"] = app_image_service.get_images(id)
+    context["app"] = app_service.get_app_detail(id = id)
     context["user_vote"] = vote_service.has_vote(context["app"], request.user)
-    context["reviews"] = review_service.get_reviews(context['app'])
     context["form"] = ReviewForm()
+    context["user_vote"] = vote_service.has_vote(context["app"], request.user) if request.user.is_authenticated else None
+    context["is_following"] = follow_service.is_following(request.user, context["app"].founder) if request.user.is_authenticated else False
     return render(request , "app-detail.html" , context)
 
 @require_POST
