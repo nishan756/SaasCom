@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
+from .models import Follow
 
 User = get_user_model()
 
@@ -51,4 +52,9 @@ class UserAdmin(admin.ModelAdmin):
     ]
 
 
-    
+@admin.register(Follow)
+class FollowAdmin(admin.ModelAdmin):
+    list_display = ["follower" , "following"]
+    list_per_page = 100
+    search_fields = ["follower__username" , "following__username"]
+
