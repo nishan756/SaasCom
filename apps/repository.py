@@ -33,7 +33,12 @@ class AppRepo:
         except App.DoesNotExist:
             raise AppNotFound("App not found")
 
-
+    def get_app_detail(self , id):
+        try:
+            return App.objects.select_related("founder").prefetch_related("category" , "tags" , "app_images" , "reviews" , "reviews__user").get(id = id)
+        except App.DoesNotExist:
+            raise AppNotFound("App not found")
+        
 class AppImageRepo:
     queryset = AppImages.objects.all()
 
@@ -54,7 +59,7 @@ class VoteRepo:
             return None
     
     def has_vote(self , app , user):
-        return AppVote.objects.filter(app = app , user = user).first()
+        return AppVote.objects.filter(app = app , user = user).only("vote_type").first()
 
     def vote(self , app , user , vote_type):
         new_vote = AppVote(app = app , user = user , vote_type = vote_type)
