@@ -1,0 +1,361 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {{ profile.username }}'s Profile
+{% endblock title %}
+
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock css %}
+{% block content %}
+
+<div class="container py-5">
+
+    <!-- PROFILE HEADER -->
+    <div class="profile-header shadow-sm">
+        <div class="d-flex flex-column flex-md-row align-items-center gap-4">
+
+            <div class="profile-image-wrapper">
+                {% if profile.image %}
+                    <img src="{{ profile.image.url }}" class="profile-image">
+                {% else %}
+                    <img src="{% static 'images/default-user.png' %}" class="profile-image">
+                {% endif %}
+            </div>
+
+            <div class="flex-grow-1">
+                <h2 class="mb-1">{{ profile.full_name|default:profile.username }}</h2>
+
+                <p class="text-muted mb-2">
+                    {{ profile.bio|default:"No bio added yet." }}
+                </p>
+
+                <!-- ========================= -->
+                <!-- ADDED : FOLLOW & REPORT BUTTON -->
+                <!-- ========================= -->
+
+                <div class="profile-action-buttons">
+
+                    <!-- Follow Button -->
+
+                        {% if request.user in profile.followers.all %}
+                            <form method="POST" action="{% url 'unfollow' profile.id %}">
+                                {% csrf_token %}
+                                <button class="btn unfollow-btn">
+                                    Following
+                                </button>
+                            </form>
+
+                        {% else %}
+                            <form method="POST" action="{% url 'follow' profile.id %}">
+                                {% csrf_token %}
+                                <button class="btn follow-btn">
+                                    Follow
+                                </button>
+                            </form>
+                        {% endif %}
+                    </form>
+
+
+                    <!-- Report Button -->
+                    <button class="btn report-btn"
+                            data-bs-toggle="modal"
+                            data-bs-target="#reportModal">
+
+                        Report
+
+                    </button>
+
+                </div>
+
+            </div>
+
+                <div class="profile-stats">
+                    <div>
+                        <strong>{{ profile.apps.count|default:"0" }}</strong>
+                        <span>Apps</span>
+                    </div>
+
+                    <div>
+                        <strong>{{ profile.discussions.count|default:"0" }}</strong>
+                        <span>Discussions</span>
+                    </div>
+
+                    <div>
+                        <strong>{{ profile.followers.count|default:"0" }}</strong>
+                        <span>Followers</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ADDED : REPORT MODAL -->
+    <!-- ========================= -->
+
+    <div class="modal fade"
+        id="reportModal"
+        tabindex="-1">
+
+        <div class="modal-dialog modal-dialog-centered">
+
+            <div class="modal-content border-0 rounded-4">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Report User
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+                </div>
+
+                <form method="POST" action="">
+
+                    {% csrf_token %}
+
+                    <div class="modal-body">
+
+                        <label class="form-label">
+                            Reason
+                        </label>
+
+                        <textarea class="form-control"
+                                rows="5"
+                                name="reason"
+                                placeholder="Write report reason..."
+                                required></textarea>
+
+                    </div>
+
+                    <div class="modal-footer">
+
+                        <button type="button"
+                                class="btn btn-light"
+                                data-bs-dismiss="modal">
+
+                            Cancel
+
+                        </button>
+
+                        <button type="submit"
+                                class="btn btn-danger">
+
+                            Submit Report
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TABS -->
+    <ul class="nav nav-pills custom-tabs mt-4 mb-4 justify-content-center" id="profileTabs">
+
+        <li class="nav-item">
+            <button class="nav-link active"
+                    data-bs-toggle="pill"
+                    data-bs-target="#apps-tab">
+                Apps
+            </button>
+        </li>
+
+        <li class="nav-item">
+            <button class="nav-link"
+                    data-bs-toggle="pill"
+                    data-bs-target="#discussion-tab">
+                Discussions
+            </button>
+        </li>
+
+        <li class="nav-item">
+            <button class="nav-link"
+                    data-bs-toggle="pill"
+                    data-bs-target="#about-tab">
+                About
+            </button>
+        </li>
+
+    </ul>
+
+
+    <!-- TAB CONTENT -->
+    <div class="tab-content">
+
+        <!-- APPS TAB -->
+        <div class="tab-pane fade show active"
+             id="apps-tab">
+
+            <div class="row g-4">
+
+                {% for app in apps %}
+
+                    <div class="col-lg-4 col-md-6">
+
+                        <div class="app-card">
+
+                            <img src="{{ app.thumbnail.url }}"
+                                 class="app-image">
+
+                            <div class="p-3">
+
+                                <h5 class="app-title">
+                                    {{ app.name }}
+                                </h5>
+
+                                <p class="app-description">
+                                    {{ app.description|truncatechars:90 }}
+                                </p>
+
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+
+                                    <span class="badge bg-dark">
+                                        {{ app.category.name }}
+                                    </span>
+
+                                    <a href="{% url 'app_detail' app.slug %}"
+                                       class="btn btn-sm btn-primary">
+                                        View
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% empty %}
+
+                    <div class="col-12">
+                        <div class="empty-box">
+                            No apps found.
+                        </div>
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+
+        <!-- DISCUSSION TAB -->
+        <div class="tab-pane fade"
+             id="discussion-tab">
+
+            <div class="row g-4">
+
+                {% for discussion in discussions %}
+
+                    <div class="col-lg-4 col-md-6">
+
+                        <div class="discussion-card">
+
+                            <div class="discussion-top">
+                                <span class="discussion-tag">
+                                    {{ discussion.category.name }}
+                                </span>
+
+                                <small class="text-muted">
+                                    {{ discussion.created_at|timesince }} ago
+                                </small>
+                            </div>
+
+                            <h5 class="discussion-title mt-3">
+                                {{ discussion.title }}
+                            </h5>
+
+                            <p class="discussion-body">
+                                {{ discussion.content|truncatechars:100 }}
+                            </p>
+
+                            <div class="discussion-footer">
+
+                                <div class="discussion-stats">
+                                    <span>
+                                        💬 {{ discussion.comments.count }}
+                                    </span>
+
+                                    <span>
+                                        ❤️ {{ discussion.likes.count }}
+                                    </span>
+                                </div>
+
+                                <a href="{% url 'discussion_detail' discussion.slug %}"
+                                   class="btn btn-sm btn-outline-dark">
+                                    Open
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% empty %}
+
+                    <div class="col-12">
+                        <div class="empty-box">
+                            No discussions found.
+                        </div>
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ABOUT TAB -->
+        <div class="tab-pane fade"
+             id="about-tab">
+
+            <div class="about-card">
+
+                <h4>About User</h4>
+
+                <p class="mt-3">
+                    {{ profile.bio|default:"No information available." }}
+                </p>
+
+                <div class="mt-4">
+
+                    <div class="about-item">
+                        <strong>Joined :</strong>
+                        {{ profile.date_joined|date:"d M Y" }}
+                    </div>
+
+                    <div class="about-item">
+                        <strong>Email :</strong>
+                        {{ profile.email }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
