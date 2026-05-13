@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractBaseUser , BaseUserManager , Perm
 import uuid
 from cloudinary.models import CloudinaryField
 from django.utils.timezone import now
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 
 
@@ -118,12 +120,33 @@ class Report(models.Model):
     id = models.UUIDField(primary_key = True , default = uuid.uuid4 , editable = False)
     reported_profile = models.ForeignKey(User , on_delete = models.CASCADE , related_name = "reports")
     reporter = models.ForeignKey(User , on_delete = models.CASCADE , related_name = "my_reports")
-    reason = models.TextField()
+
+    class ReportTypeChoices(models.TextChoices):
+        SPAM = "spam", "Spam",
+        FAKE = "fake", "Fake Information",
+        HARASSMENT = "harassment", "Harassment",
+        COPYRIGHT = "copyright", "Copyright",
+        NSFW = "nsfw", "NSFW",
+        SCAM = "scam", "Scam",
+        OTHER = "other", "Other",
+    
+    report_type = models.CharField(max_length = 20 , choices = ReportTypeChoices.choices , blank = True , null = True)
+    reason = models.TextField(blank = True , null = True)
     reported_at = models.DateTimeField(default = now)
+
+    content_type = models.ForeignKey(ContentType , on_delete = models.CASCADE)
+    object_id = models.UUIDField()
+    content_object = GenericForeignKey("content_type", "object_id")
 
     def __init__(self):
         return f"Report by {self.reporter.username} to {self.reported_profile.username}"
 
     class Meta:
-        unique_together = ["reported_profile" , "reporter"]
+        unique_together = ["reporter" , "content_type" , "object_id"]
+        indexes = [
+            models.Index(fields = ["content_type" , "object_id"]),
+            models.Index(fields = ["reporter"]),
+            models.Index(fields = ["report_type"]),
+            models.Index(fields = ["reported_at"])
+        ]
 
