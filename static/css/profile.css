@@ -1,0 +1,282 @@
+
+/* PROFILE HEADER */
+
+.profile-header{
+    background: white;
+    padding: 30px;
+    border-radius: 18px;
+}
+
+.profile-image{
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #f1f1f1;
+}
+
+.profile-stats{
+    display: flex;
+    gap: 30px;
+    margin-top: 15px;
+}
+
+.profile-stats div{
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-stats strong{
+    font-size: 18px;
+}
+
+
+
+/* TABS */
+
+.custom-tabs{
+    display: flex;
+    justify-content: center;   /* center alignment */
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+
+/* OPTIONAL : better tab sizing */
+
+.custom-tabs .nav-item{
+    display: flex;
+}
+
+
+/* OPTIONAL : mobile responsive */
+
+@media(max-width:768px){
+
+    .custom-tabs{
+        justify-content: center;
+    }
+
+}
+
+.custom-tabs .nav-link{
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-weight: 500;
+    color: #333;
+}
+
+.custom-tabs .nav-link.active{
+    background: #0d6efd;
+}
+
+
+
+
+/* APP CARD */
+
+.app-card{
+    background: white;
+    border-radius: 18px;
+    overflow: hidden;
+    transition: .3s;
+    box-shadow: 0 3px 10px rgba(0,0,0,.06);
+    height: 100%;
+}
+
+.app-card:hover{
+    transform: translateY(-5px);
+}
+
+.app-image{
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.app-title{
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.app-description{
+    color: #666;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+
+
+/* DISCUSSION CARD */
+
+.discussion-card{
+    background: white;
+    border-radius: 18px;
+    padding: 20px;
+    height: 100%;
+    box-shadow: 0 3px 10px rgba(0,0,0,.06);
+    transition: .3s;
+}
+
+.discussion-card:hover{
+    transform: translateY(-5px);
+}
+
+.discussion-top{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.discussion-tag{
+    background: #eef2ff;
+    color: #4f46e5;
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-size: 13px;
+}
+
+.discussion-title{
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.discussion-body{
+    color: #666;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.discussion-footer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.discussion-stats{
+    display: flex;
+    gap: 15px;
+    font-size: 14px;
+}
+
+
+
+/* ABOUT */
+
+.about-card{
+    background: white;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 3px 10px rgba(0,0,0,.06);
+}
+
+.about-item{
+    margin-bottom: 12px;
+}
+
+
+
+/* EMPTY */
+
+.empty-box{
+    background: white;
+    border-radius: 18px;
+    padding: 50px;
+    text-align: center;
+    color: #666;
+}
+
+
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    .profile-header{
+        text-align: center;
+    }
+
+    .profile-stats{
+        justify-content: center;
+    }
+
+}
+
+/* ================================= */
+/* ADDED : ACTION BUTTONS STYLE */
+/* ================================= */
+
+.profile-action-buttons{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+/* FOLLOW BUTTON */
+
+.follow-btn{
+    background: #0d6efd;
+    color: white;
+    border-radius: 12px;
+    padding: 10px 22px;
+    font-weight: 500;
+    border: none;
+    transition: .3s;
+}
+
+.follow-btn:hover{
+    background: #0b5ed7;
+    color: white;
+}
+
+
+/* UNFOLLOW BUTTON */
+
+.unfollow-btn{
+    background: #e9ecef;
+    color: #333;
+    border-radius: 12px;
+    padding: 10px 22px;
+    font-weight: 500;
+    border: none;
+    transition: .3s;
+}
+
+.unfollow-btn:hover{
+    background: #dfe3e7;
+}
+
+
+/* REPORT BUTTON */
+
+.report-btn{
+    background: #fff0f0;
+    color: #dc3545;
+    border-radius: 12px;
+    padding: 10px 22px;
+    font-weight: 500;
+    border: 1px solid #ffd4d8;
+    transition: .3s;
+}
+
+.report-btn:hover{
+    background: #dc3545;
+    color: white;
+}
+
+
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    .profile-action-buttons{
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+}
