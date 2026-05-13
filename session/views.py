@@ -70,3 +70,9 @@ def unfollow(request , id):
     except FollowException as e:
         messages.error(request, str(e))
     return redirect(HTTP_REFERER)
+
+
+@require_GET
+def view_profile(request , username):
+    profile = user_service.repo.view_profile(username)
+    return render(request , "profile.html" , {"profile":profile})
