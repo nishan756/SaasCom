@@ -14,7 +14,7 @@ class UserRepo:
 
     def view_profile(self , username):
         try:
-            return self.queryset.prefetch_related("followers" , "following").get(username = username)
+            return self.queryset.prefetch_related("followers" , "following" , "apps").get(username = username)
         except User.DoesNotExist:
             raise UserNotFound("User not found")
     
