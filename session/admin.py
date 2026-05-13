@@ -28,6 +28,14 @@ class UserAdmin(admin.ModelAdmin):
             },
             
         ),
+
+        (
+            "Bio",
+            {
+                "fields":["bio"],
+            },
+            
+        ),
         
         (
             "User Type",
