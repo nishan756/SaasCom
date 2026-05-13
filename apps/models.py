@@ -58,6 +58,7 @@ class App(models.Model):
         indexes = [
             models.Index(fields = ["added_at"]),
             models.Index(fields = ["status"]),
+            models.Index(fields = ["founder"]),
         ]
 
 
@@ -112,7 +113,7 @@ class Review(models.Model):
         ordering = ["-added_at"]
         unique_together = ["user" , "app"]
         indexes = [
-            models.Index(fields = ["app" , "user"])
+            models.Index(fields = ["app" , "user"]),
         ]
 
 class ReviewVote(models.Model):
