@@ -59,7 +59,7 @@ class CustomUser(AbstractBaseUser , PermissionsMixin):
 
     first_name = models.CharField(max_length = 50)
     last_name = models.CharField(max_length = 50)
-    image = CloudinaryField("User Image" , folder = "saas_com/assets/images/user_images")
+    image = CloudinaryField("User Image" , folder = "saas_com/assets/images/user_images" , blank = True , null = True)
 
     username = models.CharField(max_length = 30 , unique = True)
     email = models.EmailField(unique = True)
