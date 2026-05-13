@@ -114,4 +114,16 @@ class Follow(models.Model):
             models.Index(fields = ["follower"]),
         ]
 
+class Report(models.Model):
+    id = models.UUIDField(primary_key = True , default = uuid.uuid4 , editable = False)
+    reported_profile = models.ForeignKey(User , on_delete = models.CASCADE , related_name = "reports")
+    reporter = models.ForeignKey(User , on_delete = models.CASCADE , related_name = "my_reports")
+    reason = models.TextField()
+    reported_at = models.DateTimeField(default = now)
+
+    def __init__(self):
+        return f"Report by {self.reporter.username} to {self.reported_profile.username}"
+
+    class Meta:
+        unique_together = ["reported_profile" , "reporter"]
 
