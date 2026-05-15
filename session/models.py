@@ -118,7 +118,6 @@ class Follow(models.Model):
 
 class Report(models.Model):
     id = models.UUIDField(primary_key = True , default = uuid.uuid4 , editable = False)
-    reported_profile = models.ForeignKey(User , on_delete = models.CASCADE , related_name = "reports")
     reporter = models.ForeignKey(User , on_delete = models.CASCADE , related_name = "my_reports")
 
     class ReportTypeChoices(models.TextChoices):
@@ -138,8 +137,8 @@ class Report(models.Model):
     object_id = models.UUIDField()
     content_object = GenericForeignKey("content_type", "object_id")
 
-    def __init__(self):
-        return f"Report by {self.reporter.username} to {self.reported_profile.username}"
+    def __str__(self):
+        return f"Report by {self.reporter} to {self.content_type}-{self.object_id} for {self.report_type} "
 
     class Meta:
         unique_together = ["reporter" , "content_type" , "object_id"]
