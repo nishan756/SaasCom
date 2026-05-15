@@ -70,6 +70,6 @@ class FollowAdmin(admin.ModelAdmin):
 @admin.register(Report)
 class ReportAdmin(admin.ModelAdmin):
     list_display = ["reporter" , "reason" , "reported_at"]
-    readonly_fields = ["object_id" , "reported_at"]
+    readonly_fields = ["reported_at"]
     list_per_page = 100
-    search_fields = ["reporter__username" , "reported_profile__username" , "reason"]
+    search_fields = ["reporter__username" , "reason"]
