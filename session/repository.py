@@ -1,6 +1,7 @@
-from .models import User , Follow
-from .exceptions import UserNotFound
+from .models import User , Follow , Report
+from .exceptions import InvalidContentType, UserNotFound , ReportNotFound
 from django.contrib.auth import authenticate
+from django.contrib.contenttypes.models import ContentType
 
 class UserRepo:
     queryset = User.objects.all()
@@ -39,3 +40,25 @@ class FollowRepo:
     def unfollow(self , follower , following):
         follow = self.queryset.get(follower = follower , following = following)
         follow.delete()
+
+
+class ReportRepo:
+    queryset = Report.objects.all()
+
+    def get_report(self , id):
+        try:
+            return self.queryset.get(id = id)
+        except Report.DoesNotExist:
+            raise ReportNotFound("Report not found")
+    
+    def add_report(self , reporter , report_type , content_type , id , reason = None):
+        new_report = Report(
+            reporter = reporter,
+            content_type = content_type,
+            object_id = id,
+            reason = reason if reason else None,
+            report_type = report_type
+        )
+        new_report.save()
+    
+    
