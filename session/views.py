@@ -3,16 +3,17 @@ from django.contrib.auth import login , logout , authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.http import require_GET , require_POST
-from .exceptions import InvalidForm , UserNotFound , FollowException
+from .exceptions import InvalidForm , UserNotFound , FollowException , InvalidContentType
 from apps.views import is_safe_url
 
 # =================FORMS=================
-from .forms import LoginForm
+from .forms import LoginForm , ReportForm
 
 # =================SERVICES=============
-from .service import UserService , FollowService
+from .service import UserService , FollowService , ReportService
 user_service = UserService()
 follow_service = FollowService()
+report_service = ReportService()
 
 
 def user_login(request):
@@ -75,4 +76,23 @@ def unfollow(request , id):
 @require_GET
 def view_profile(request , username):
     profile = user_service.repo.view_profile(username)
-    return render(request , "profile.html" , {"profile":profile})
+    form = ReportForm()
+    return render(request , "profile.html" , {"profile":profile , "form":form})
+
+@require_POST
+@login_required(login_url = "login")
+def report(request , content_type , id):
+    HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER") , allowed_hosts=request.get_host())
+    try:
+        report_service.add_report(reporter=request.user, content_type=content_type, id=id, form=ReportForm(request.POST))
+        messages.success(request, "Your report has been submitted successfully.")
+
+    except InvalidContentType as e:
+        messages.error(request, str(e))
+    
+    except InvalidForm as e:
+        messages.error(request, str(e))
+    
+    except Exception as e:
+        messages.error(request, "An error occurred while submitting your report. Please try again later.")
+    return redirect(HTTP_REFERER)
