@@ -138,7 +138,7 @@
                                 App Images
                             </label>
 
-                            {{ form.images }}
+                            <input type="file" name="images" multiple accept="image/*"></input>
 
                             {% if form.images.errors %}
                                 <div class="text-danger small mt-1">
