@@ -43,6 +43,13 @@ class AppAdmin(admin.ModelAdmin):
         except Exception as e:
             messages.error(request , f"An error occurred: {str(e)}")
 
+@admin.register(AppImages)
+class AppImagesAdmin(admin.ModelAdmin):
+    list_display = ["app" , "view_image"]
+
+    def view_image(self , obj):
+        return mark_safe(f"<img src={obj.image.url} width = '50px' height = '40px'>")
+
 @admin.register(AppVote)
 class AppVoteAdmin(admin.ModelAdmin):
     list_display = ["user" , "app" , "vote_type" , "added_at"]
