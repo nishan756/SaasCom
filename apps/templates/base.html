@@ -14,7 +14,7 @@
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="#">SaaS Hub</a>
+            <a class="navbar-brand" href="{% url 'home' %}">SaaS Hub</a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
             <span class="navbar-toggler-icon"></span>
@@ -22,12 +22,12 @@
 
             <div class="collapse navbar-collapse" id="nav">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Explore</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Categories</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Discussion</a></li>
             </ul>
-            <a class="btn btn-primary ms-3">Submit App</a>
+            <a class="btn btn-primary ms-3" href="{% url 'create-app' %}">Create App</a>
             </div>
         </div>
         </nav>
