@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {{request.user.full_name}} | Create New App
+{% endblock title %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/create-app.css'%}">
+{% endblock css %}
+
+{% block content %}
+
+<div class="container mt-5 mb-5">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-dark text-white">
+                    <h3 class="mb-0">Create New App</h3>
+                </div>
+
+                <div class="card-body p-4">
+
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- Cloudinary Media -->
+                        {{ form.media }}
+
+                        <!-- Name -->
+                        <div class="mb-3">
+                            <label class="form-label">
+                                App Name
+                            </label>
+
+                            {{ form.name }}
+
+                            {% if form.name.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.name.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Logo -->
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Logo
+                            </label>
+
+                            {{ form.logo }}
+
+                            {% if form.logo.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.logo.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                        <!-- Category -->
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Category
+                            </label>
+
+                            {{ form.category }}
+
+                            {% if form.category.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.category.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Tags
+                            </label>
+
+                            {{ form.tags }}
+
+                            {% if form.tags.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.tags.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- Short Description -->
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Short Description
+                            </label>
+
+                            {{ form.short_description }}
+
+                            {% if form.short_description.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.short_description.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                        <!-- Detail -->
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Detail
+                            </label>
+
+                            {{ form.detail }}
+
+                            {% if form.detail.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.detail.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                        <!-- Multiple Images -->
+                        <div class="mb-4">
+
+                            <label class="form-label">
+                                App Images
+                            </label>
+
+                            {{ form.images }}
+
+                            {% if form.images.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.images.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                        <!-- Preview -->
+                        <div class="row" id="previewContainer"></div>
+
+                        <!-- Submit -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-dark btn-lg">
+                                Publish App
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block js %}
+
+<script src="{% static 'js/create-app.js'%}"></script>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<!-- Summernote -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-bs5.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-bs5.min.js"></script>
+
+{% endblock js %}
