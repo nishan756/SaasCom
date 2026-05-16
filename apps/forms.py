@@ -20,17 +20,6 @@ class ReviewForm(forms.ModelForm):
 
 class AppForm(forms.ModelForm):
 
-    images = CloudinaryJsFileField(
-        attrs = {
-            'multiple': True,
-            'class': 'form-control',
-        },
-        options = {
-            "folder": "saas_com/assets/images/app_images"
-        },
-        required = False
-    )
-
     class Meta:
         model = App
 
