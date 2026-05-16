@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Category , App , AppImages , AppVote , Review , Tag
 from django.utils.safestring import mark_safe
+from django.contrib import messages
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -21,9 +22,26 @@ class AppAdmin(admin.ModelAdmin):
     list_filter = ["status"]
     search_fields = ["name"]
     inlines = [AppImagesInline,]
+    actions = ["mark_selected_apps_as_approved" , "mark_selected_apps_as_rejected"]
 
     def view_logo(self , obj):
         return mark_safe(f"<img src={obj.logo.url} width = '50px' height = '40px'>")
+    
+    @admin.action(description = "Mark selected apps as approved")
+    def mark_selected_apps_as_approved(self , request , queryset):
+        try:
+            updated_count = queryset.update(status = "approved")
+            messages.success(request , f"{updated_count} apps marked as approved")
+        except Exception as e:
+            messages.error(request , f"An error occurred: {str(e)}")
+    
+    @admin.action(description = "Mark selected apps as rejected")
+    def mark_selected_apps_as_rejected(self , request , queryset):
+        try:
+            updated_count = queryset.update(status = "rejected")
+            messages.success(request , f"{updated_count} apps marked as rejected")
+        except Exception as e:
+            messages.error(request , f"An error occurred: {str(e)}")
 
 @admin.register(AppVote)
 class AppVoteAdmin(admin.ModelAdmin):
