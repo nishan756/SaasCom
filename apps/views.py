@@ -11,11 +11,11 @@ from django.views.decorators.http import require_GET , require_POST
 from django.contrib.auth.decorators import login_required
 
 # ==================EXCEPTIONS=============
-from .exceptions import AlreadyReviewed , AppNotFound, PermissionDenied
-from session.exceptions import UserNotFound
+from .exceptions import AlreadyReviewed , AppNotFound, PermissionDenied , TooManyImage
+from session.exceptions import InvalidForm
 
 # =================FORMS=================
-from .forms import ReviewForm
+from .forms import ReviewForm , AppForm
 
 
 
@@ -34,7 +34,13 @@ def is_safe_url(url , allowed_hosts):
 
 @require_GET
 def home(request):
-    return render(request , "index.html")
+    total_apps = app_service.total_apps()
+    total_users = user_service.total_user()
+    content = {
+        "total_apps": total_apps,
+        "total_users": total_users
+    }
+    return render(request , "index.html" , content)
 
 
 @require_GET
@@ -47,12 +53,40 @@ def all_apps(request):
 @require_GET
 def app_detail(request , id):
     context = {}
-    context["app"] = app_service.get_app_detail(id = id)
+    try:
+        context["app"] = app_service.get_app_detail(id = id)
+    except AppNotFound as e:
+        messages.info(request , str(e))
+        return redirect("all-apps")
     context["user_vote"] = vote_service.has_vote(context["app"], request.user)
     context["form"] = ReviewForm()
     context["user_vote"] = vote_service.has_vote(context["app"], request.user) if request.user.is_authenticated else None
     context["is_following"] = follow_service.is_following(request.user, context["app"].founder) if request.user.is_authenticated else False
     return render(request , "app-detail.html" , context)
+
+@login_required(login_url = "login")
+def create_app(request):
+    if request.method == "POST":
+        form = AppForm(request.POST , request.FILES)
+        try:
+            new_app = app_service.create_app(founder = request.user , form = form)
+            images = request.FILES.getlist("images")
+            if images:
+                app_image_service.add_images(app = new_app , images = images)
+            return redirect("app-detail" , id = new_app.id)
+        except InvalidForm as e:
+            messages.error(request , str(e))
+            return render(request , "create-app.html" , {"form":form})
+        
+        except TooManyImage as e:
+            messages.info(request , str(e))
+        
+        except Exception as e:
+            messages.info("Something went wrong. Please try again later")
+    else:
+        form = AppForm()
+        return render(request , "create-app.html" , {"form":form})
+
 
 @require_POST
 @login_required(login_url = "login")
