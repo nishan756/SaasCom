@@ -1,9 +1,13 @@
 from .repository import AppRepo , VoteRepo , AppImageRepo , ReviewRepo
 from django.utils.timezone import now
-from .exceptions import AlreadyReviewed , PermissionDenied 
+from .exceptions import AlreadyReviewed , PermissionDenied , TooManyImage
+from session.exceptions import InvalidForm
 
 class AppService:
     repo = AppRepo()
+
+    def total_apps(self):
+        return self.repo.total_apps()
 
     def all_apps(self , order_by = None):
         return self.repo.all_apps(order_by = order_by)
@@ -13,12 +17,31 @@ class AppService:
     
     def get_app_detail(self , id):
         return self.repo.get_app_detail(id = id)
+    
+        
+    def create_app(self , founder , form):
+        if form.is_valid():
+            name = form.cleaned_data.get("name")
+            category = form.cleaned_data.get("category")
+            tags = form.cleaned_data.get("tags")
+            logo = form.cleaned_data.get("logo")
+            short_description = form.cleaned_data.get("short_description")
+            detail = form.cleaned_data.get("detail")
+            app = self.repo.create_app(founder , name , category , tags , logo , short_description , detail)
+            return app
+        else:
+            raise InvalidForm("Invalid form data")
 
 
 class AppImageService:
     repo = AppImageRepo()
     def get_images(self , id):
         return self.repo.get_images(id)
+    
+    def add_images(self , app , images):
+        if len(images) > 5:
+            raise TooManyImage("Maximum 5 image is allowed")
+        return self.repo.add_images(app , images)
 
 class VoteService:
     repo = VoteRepo()
