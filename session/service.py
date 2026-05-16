@@ -7,6 +7,9 @@ from django.contrib.contenttypes.models import ContentType
 class UserService:
     repo = UserRepo()
 
+    def total_user(self):
+        return self.repo.total_user()
+
     def get_user(self , id):
         return self.repo.get_user(id)
 

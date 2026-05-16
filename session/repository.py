@@ -6,6 +6,9 @@ from django.contrib.contenttypes.models import ContentType
 class UserRepo:
     queryset = User.objects.all()
 
+    def total_user(self):
+        return self.queryset.filter(is_active = True).count()
+
 
     def get_user(self , id):
         try:
