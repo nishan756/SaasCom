@@ -1,7 +1,7 @@
 from .repository import AppRepo , VoteRepo , AppImageRepo , ReviewRepo
 from django.utils.timezone import now
 from .exceptions import AlreadyReviewed , PermissionDenied , TooManyImage
-from session.exceptions import InvalidForm
+from session.exceptions import InvalidForm , InvalidPassword
 
 class AppService:
     repo = AppRepo()
@@ -31,6 +31,22 @@ class AppService:
             return app
         else:
             raise InvalidForm("Invalid form data")
+
+    def del_app(self, id, user, form):
+        app = self.get_app(id=id)
+
+        if app.founder != user:
+            raise PermissionDenied("You can't delete this app")
+
+        if not form.is_valid():
+            raise InvalidForm("Invalid form data")
+
+        password = form.cleaned_data.get("password")
+
+        if not user.check_password(password):
+            raise InvalidPassword("Invalid password")
+
+        return self.repo.del_app(app)
 
 
 class AppImageService:

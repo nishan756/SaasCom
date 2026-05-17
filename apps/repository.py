@@ -50,6 +50,9 @@ class AppRepo:
         new_app.category.set(category)
         new_app.tags.set(tags)
         return new_app
+    
+    def del_app(self , app):
+        return app.delete()
 
 class AppImageRepo:
     queryset = AppImages.objects.all()
