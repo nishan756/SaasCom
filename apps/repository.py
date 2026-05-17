@@ -1,5 +1,5 @@
 from .models import App , AppImages , AppVote , Review
-from .exceptions import AppNotFound , ReviewNotFound
+from .exceptions import ObjectNotFound
 from session.exceptions import UserNotFound
 from django.db.models import Prefetch
 from django.db.models import Count , Q
@@ -31,13 +31,13 @@ class AppRepo:
         try:
             return App.objects.get(id = id)
         except App.DoesNotExist:
-            raise AppNotFound("App not found")
+            raise ObjectNotFound("App not found")
 
     def get_app_detail(self , id):
         try:
             return App.objects.select_related("founder").prefetch_related("category" , "tags" , "app_images" , "reviews" , "reviews__user").get(id = id)
         except App.DoesNotExist:
-            raise AppNotFound("App not found")
+            raise ObjectNotFound("App not found")
         
     def create_app(self , founder , name , category , tags , logo , short_description , detail):
         new_app = App.objects.create(
@@ -58,6 +58,12 @@ class AppImageRepo:
         app = AppRepo().get_app(id = id)
         return self.queryset.filter(app = app)
     
+    def get_image(self , id):
+        try:
+            return AppImages.objects.get(id = id)
+        except AppImages.DoesNotExist:
+            raise ObjectNotFound("Image not found")
+    
     def add_images(self , app , images):
         for image in images:
             AppImages.objects.create(
@@ -65,6 +71,9 @@ class AppImageRepo:
                 image = image
             )
         return
+    
+    def del_image(self , img_obj):
+        img_obj.delete()
     
     
     
@@ -95,7 +104,7 @@ class ReviewRepo:
         try:
             return Review.objects.get(id = id)
         except Review.DoesNotExist:
-            raise ReviewNotFound("Review not found")
+            raise ObjectNotFound("Review not found")
     def get_reviews(self , app):
         return self.queryset.filter(app = app).select_related("user")
 

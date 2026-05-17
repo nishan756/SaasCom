@@ -35,13 +35,22 @@ class AppService:
 
 class AppImageService:
     repo = AppImageRepo()
-    def get_images(self , id):
+    def get_app_images(self , id):
         return self.repo.get_images(id)
+    
+    def get_image(self , id):
+        return self.repo.get_image(id)
     
     def add_images(self , app , images):
         if len(images) > 5:
             raise TooManyImage("Maximum 5 image is allowed")
         return self.repo.add_images(app , images)
+    
+    def del_image(self , id , founder):
+        img_obj = self.get_image(id = id)
+        if img_obj.app.founder == founder:
+            return self.repo.del_image(img_obj)
+        raise PermissionDenied("You can\'t delete this image")
 
 class VoteService:
     repo = VoteRepo()
