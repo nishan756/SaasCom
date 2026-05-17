@@ -60,7 +60,75 @@
         <div class="col-lg-6">
 
             <h3 class='text-secondary'>{{app.name}}</h3>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">{{ app.name }}</h2>
+
+                <!-- 3 DOT MENU -->
+                <div class="dropdown">
+                    <button class="btn btn-light btn-sm" type="button" data-bs-toggle="dropdown">
+                        ⋮
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" href="">
+                                Update
+                            </a>
+                        </li>
+
+                        <li>
+                            <button class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                Delete
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- End of 3 DOT MENU -->
+
+            <!--App deletion confirmation modal-->
+
+            <div class="modal fade" id="deleteModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title text-danger">Delete App</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <form method="POST" action="{% url 'del-app' app.id %}">
+                            {% csrf_token %}
+
+                            <div class="modal-body">
+
+                                <p>To delete this app , confirm these fields</p>
+
+                                <div class="mb-3">
+                                    {{app_del_form.as_p}}
+                                </div>
+
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    Cancel
+                                </button>
+
+                                <button type="submit" class="btn btn-danger">
+                                    Delete
+                                </button>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
             
+            <!--End of app deletion confirmation modal-->
+
             {% if app.category %}
                 <!-- Category -->
                 <div class="app-category">
