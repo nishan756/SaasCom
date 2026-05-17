@@ -1,5 +1,4 @@
-class AppNotFound(Exception):pass
-class ReviewNotFound(Exception):pass
+class ObjectNotFound(Exception):pass
 class AlreadyReviewed(Exception):pass
 class PermissionDenied(Exception):pass
 class TooManyImage(Exception):pass
