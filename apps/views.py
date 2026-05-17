@@ -1,21 +1,21 @@
 from django.shortcuts import render , redirect
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.contrib import messages
+from django.views.decorators.http import require_GET , require_POST
+from django.contrib.auth.decorators import login_required
 
 # ===================MODELS================
 from .models import App
 # ====================SERVICES=============
 from .service import AppService , VoteService , AppImageService , ReviewService
 from session.service import FollowService , UserService
-from django.contrib import messages
-from django.views.decorators.http import require_GET , require_POST
-from django.contrib.auth.decorators import login_required
 
 # ==================EXCEPTIONS=============
 from .exceptions import AlreadyReviewed , ObjectNotFound, PermissionDenied , TooManyImage
-from session.exceptions import InvalidForm
+from session.exceptions import InvalidForm , InvalidPassword
 
 # =================FORMS=================
-from .forms import ReviewForm , AppForm
+from .forms import ReviewForm , AppForm , AppDeletionConfirmationForm
 
 
 
@@ -62,6 +62,7 @@ def app_detail(request , id):
     context["form"] = ReviewForm()
     context["user_vote"] = vote_service.has_vote(context["app"], request.user) if request.user.is_authenticated else None
     context["is_following"] = follow_service.is_following(request.user, context["app"].founder) if request.user.is_authenticated else False
+    context["app_del_form"] = AppDeletionConfirmationForm()
     return render(request , "app-detail.html" , context)
 
 @login_required(login_url = "login")
@@ -86,6 +87,27 @@ def create_app(request):
     else:
         form = AppForm()
         return render(request , "create-app.html" , {"form":form})
+
+@require_POST
+@login_required(login_url = "login")
+def del_app(request , id):
+    HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER" , "/") , request.get_host())
+    form = AppDeletionConfirmationForm(data = request.POST)
+    user= request.user
+    try:
+        app_service.del_app(id , user , form)
+        messages.success(request , "Successfully deleted your app")
+        return redirect("all-apps")
+    
+    except PermissionDenied as e:
+        messages.warning(request , str(e))
+    
+    except InvalidForm as e:
+        messages.error(request , str(e))
+    
+    except InvalidPassword as e:
+        messages.error(request , str(e))
+    return redirect(HTTP_REFERER)
 
 @require_POST
 @login_required(login_url = "login")
