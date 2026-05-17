@@ -11,7 +11,7 @@ from django.views.decorators.http import require_GET , require_POST
 from django.contrib.auth.decorators import login_required
 
 # ==================EXCEPTIONS=============
-from .exceptions import AlreadyReviewed , AppNotFound, PermissionDenied , TooManyImage
+from .exceptions import AlreadyReviewed , ObjectNotFound, PermissionDenied , TooManyImage
 from session.exceptions import InvalidForm
 
 # =================FORMS=================
@@ -55,7 +55,7 @@ def app_detail(request , id):
     context = {}
     try:
         context["app"] = app_service.get_app_detail(id = id)
-    except AppNotFound as e:
+    except ObjectNotFound as e:
         messages.info(request , str(e))
         return redirect("all-apps")
     context["user_vote"] = vote_service.has_vote(context["app"], request.user)
@@ -87,6 +87,21 @@ def create_app(request):
         form = AppForm()
         return render(request , "create-app.html" , {"form":form})
 
+@require_POST
+@login_required(login_url = "login")
+def del_image(request , id):
+    founder = request.user
+    HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER" , "/") , request.get_host())
+    try:
+        app_image_service.del_image(id , founder)
+        messages.success(request , "Successfully deleted image")
+    except ObjectNotFound as e:
+        messages.error(request , str(e))
+    except PermissionDenied as e:
+        messages.warning(request , str(e))
+    except Exception as e:
+        messages.info(request , "Something went wrong while deleting this image. Try again later")
+    return redirect(HTTP_REFERER)
 
 @require_POST
 @login_required(login_url = "login")
@@ -95,7 +110,7 @@ def vote(request , id):
     try:
         msg = vote_service.vote(app_id = id , user = request.user , vote_type = vote_type)
         messages.success(request , msg)
-    except AppNotFound as e:
+    except ObjectNotFound as e:
         messages.error(request , message = e)
     return redirect("app-detail" , id)
 
@@ -118,6 +133,8 @@ def del_review(request , id):
         review_service.del_review(id = id , user = request.user)
         messages.success(request , "Review deleted successfully!")
     except PermissionDenied as e:
+        messages.error(request , str(e))
+    except ObjectNotFound as e:
         messages.error(request , str(e))
     return redirect(HTTP_REFERER)    
 
