@@ -79,3 +79,15 @@ class AppForm(forms.ModelForm):
             if App.objects.filter(name__iexact = name).exists():
                 raise forms.ValidationError("App with this name already exists")
 
+class AppDeletionConfirmationForm(forms.Form):
+    password = forms.CharField(
+        widget = forms.PasswordInput(
+            attrs = {
+                "class": "form-control",
+                "placeholder":"Enter your password",
+            }
+        ),
+        required = True,
+        label = "Password",
+        label_suffix = ""
+    )
