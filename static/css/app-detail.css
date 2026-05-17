@@ -135,6 +135,50 @@
     border-radius: 10px;
 }
 
+/* IMAGE WRAPPER */
+.image-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* DELETE BUTTON */
+.delete-image-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+
+    width: 28px;
+    height: 28px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+
+    font-size: 18px;
+    line-height: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    opacity: 0;
+    transition: 0.2s;
+}
+
+/* SHOW ON HOVER */
+.image-wrapper:hover .delete-image-btn {
+    opacity: 1;
+}
+
+/* HOVER EFFECT */
+.delete-image-btn:hover {
+    background: red;
+}
+
 /* Close Button */
 .close-btn {
     position: absolute;

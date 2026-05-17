@@ -81,7 +81,43 @@
                 </div>
             {% endif %}
             
+            
 
+            <div class="image-scroll">
+
+                {% for image in app.app_images.all %}
+
+                    <div class="image-wrapper">
+
+                        <!-- IMAGE -->
+                        <img 
+                            src="{{ image.image.url }}" 
+                            class="app-image preview-img"
+                            data-index="{{ forloop.counter0 }}">
+
+                        <!-- DELETE BUTTON -->
+                        {% if request.user == app.founder %}
+
+                            <form method="POST" action="{% url 'del-image' image.id %}" class="delete-image-form">
+
+                                {% csrf_token %}
+
+                                <button type="submit" class="delete-image-btn">
+
+                                    &times;
+
+                                </button>
+
+                            </form>
+
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+            {% comment %}
             <!--App Images (Screen Shots)-->
             <div class="image-scroll">
             {% for image in app.app_images.all %}
@@ -91,6 +127,7 @@
                     data-index="{{ forloop.counter0 }}">
             {% endfor %}
             </div>
+            {% endcomment %}
 
             <!-- Description -->
             <div class="app-description">
