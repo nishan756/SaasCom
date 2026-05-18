@@ -41,10 +41,9 @@
 
                         <!-- USER IMAGE -->
                         {% if request.user.image %}
-                            <img src="{{ request.user.image.url }}"
-                                class="navbar-user-img">
+                            <img src="{{ request.user.image.url }}" class="navbar-user-img">
                         {% else %}
-                            <img src="" class="navbar-user-img">
+                            <img src="{% static 'img/unknown_avatar.jpg'%}" class="navbar-user-img">
                         {% endif %}
 
                     </a>

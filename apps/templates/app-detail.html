@@ -325,8 +325,7 @@
                                     {% if review.user.image %}
                                         <img src="{{ review.user.image.url }}" class="user-profile">
                                     {% else %}
-                                        <img src="{% static 'icons/'|add:review.user.gender|add:'-sign.png'%}" 
-                                            class="user-profile">
+                                        <img src="{% static 'img/unknown_avatar.jpg'%}"  class="user-profile">
                                     {% endif %}
 
                                     <strong>{{ review.user.username }}</strong>
