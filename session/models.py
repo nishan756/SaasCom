@@ -63,7 +63,10 @@ class CustomUser(AbstractBaseUser , PermissionsMixin):
     bio = models.CharField(max_length = 50 , blank = True , null = True)
     username = models.CharField(max_length = 30 , unique = True)
     email = models.EmailField(unique = True)
-
+    class UserTypeChoices(models.TextChoices):
+        COPMANY = "company" , "Company"
+        DEVELOPER = "developer" , "Developer"
+    user_type = models.CharField(max_length = 9 , choices = UserTypeChoices.choices , default = UserTypeChoices.DEVELOPER)
     class GenderChoices(models.TextChoices):
         MALE = "male" , "Male"
         FEMALE = "female" , "Female"
@@ -92,6 +95,14 @@ class CustomUser(AbstractBaseUser , PermissionsMixin):
     
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
+    
+    @property
+    def is_developer(self):
+        return self.user_type == self.UserTypeChoices.DEVELOPER
+    
+    @property
+    def is_company(self):
+        return self.user_type == self.UserTypeChoices.COPMANY
 
 
 from django.contrib.auth import get_user_model
