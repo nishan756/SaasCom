@@ -1,4 +1,4 @@
-from .views import user_login , user_logout , follow , unfollow , view_profile , report
+from .views import user_login , user_logout , follow , unfollow , view_profile , report , del_report
 from django.urls import path
 
 
@@ -9,4 +9,5 @@ urlpatterns = [
     path("unfollow/<str:id>/" , unfollow , name = "unfollow"),
     path("profile/<str:username>/" , view_profile , name = "profile"),
     path("report/<str:content_type>/<str:id>/" , report , name = "report"),
+    path("report/delete/<str:id>/" , del_report , name = "del-report"),
 ]
