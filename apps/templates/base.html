@@ -22,10 +22,114 @@
 
             <div class="collapse navbar-collapse" id="nav">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Explore</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Categories</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Discussion</a></li>
+                <li class="nav-item"><a class="nav-link m-2" href="{% url 'home' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link m-2" href="#">Explore</a></li>
+                <li class="nav-item"><a class="nav-link m-2" href="#">Categories</a></li>
+                <li class="nav-item"><a class="nav-link m-2" href="#">Discussion</a></li>
+                <!-- ====================================== -->
+                <!-- USER DROPDOWN (PROFILE IMAGE ICON) -->
+                <!-- ====================================== -->
+
+                <li class="nav-item dropdown">
+
+                    <!-- PROFILE IMAGE BUTTON -->
+                    <a class="nav-link dropdown-toggle d-flex align-items-center"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+
+                        <!-- USER IMAGE -->
+                        {% if request.user.image %}
+                            <img src="{{ request.user.image.url }}"
+                                class="navbar-user-img">
+                        {% else %}
+                            <img src="" class="navbar-user-img">
+                        {% endif %}
+
+                    </a>
+
+
+                    <!-- DROPDOWN MENU -->
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                        {% if request.user.is_authenticated %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'profile' request.user.username %}">
+                                    Profile
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="">
+                                    Settings
+                                </a>
+                            </li>
+
+                            <li><hr class="dropdown-divider"></li>
+
+                            <!-- ====================================== -->
+                            <!-- ACTIVITY DROPDOWN (NESTED) -->
+                            <!-- ====================================== -->
+
+                            <li class="dropdown-submenu">
+
+                                <a class="dropdown-item dropdown-toggle" href="#">
+                                    Activity
+                                </a>
+
+                                <ul class="dropdown-menu">
+
+                                    <li>
+                                        <a class="dropdown-item" href="">
+                                            Reviews
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item" href="">
+                                            Reports
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item" href="">
+                                            Apps
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item" href="">
+                                            Discussions
+                                        </a>
+                                    </li>
+
+                                </ul>
+
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                                    Logout
+                                </a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'login' %}">
+                                    Login
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="">
+                                    SignUp
+                                </a>
+                            </li>
+
+                        {% endif %}
+                    </ul>
+
+                </li>
             </ul>
             <a class="btn btn-primary ms-3" href="{% url 'create-app' %}">Create App</a>
             </div>
