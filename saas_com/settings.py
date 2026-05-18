@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'apps',
     'cloudinary_storage',
     'cloudinary',
+    'jobs',
 
 ]
 
