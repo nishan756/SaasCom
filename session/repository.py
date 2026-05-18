@@ -1,5 +1,6 @@
 from .models import User , Follow , Report
-from .exceptions import InvalidContentType, UserNotFound , ReportNotFound
+from .exceptions import InvalidContentType , ReportNotFound
+from apps.exceptions import ObjectNotFound
 from django.contrib.auth import authenticate
 from django.contrib.contenttypes.models import ContentType
 
@@ -14,19 +15,19 @@ class UserRepo:
         try:
             return self.queryset.get(id = id)
         except User.DoesNotExist:
-            raise UserNotFound("User not found")
+            raise ObjectNotFound("User not found")
 
     def view_profile(self , username):
         try:
             return self.queryset.prefetch_related("followers" , "following" , "apps").get(username = username)
         except User.DoesNotExist:
-            raise UserNotFound("User not found")
+            raise ObjectNotFound("User not found")
     
     def authenticated(self , request , username , password):
         user = authenticate(request , username = username , password = password)
         if user is not None:
             return user
-        raise UserNotFound("Invalid username or password")
+        raise ObjectNotFound("Invalid username or password")
         
 
 
@@ -54,6 +55,9 @@ class ReportRepo:
         except Report.DoesNotExist:
             raise ReportNotFound("Report not found")
     
+    def has_user_report(self ,content_type , object_id , reporter):
+        return self.queryset.filter(content_type = content_type , reporter = reporter , object_id = object_id).exists()
+    
     def add_report(self , reporter , report_type , content_type , id , reason = None):
         new_report = Report(
             reporter = reporter,
@@ -63,5 +67,8 @@ class ReportRepo:
             report_type = report_type
         )
         new_report.save()
+    
+    def del_report(self , report):
+        report.delete()
     
     

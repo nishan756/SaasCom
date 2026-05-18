@@ -1,5 +1,6 @@
 from .repository import ReportRepo, UserRepo , FollowRepo
 from .exceptions import FollowException, InvalidForm , InvalidContentType
+from apps.exceptions import PermissionDenied
 from .models import User
 from apps.models import App
 from django.contrib.contenttypes.models import ContentType
@@ -50,6 +51,12 @@ class ReportService:
         "app":App
     }
 
+    def get_report(self , id):
+        return self.repo.get_report(id = id)
+    
+    def has_user_report(self ,content_type ,  object_id , reporter):
+        model = ContentType.objects.get_for_model(model = self.CONTENT_TYPES[content_type])
+        return self.repo.has_user_report(content_type = model , object_id = object_id , reporter =  reporter)
 
     def add_report(self , reporter , content_type , id , form):
         if content_type not in self.CONTENT_TYPES:
@@ -61,3 +68,9 @@ class ReportService:
             return self.repo.add_report(reporter = reporter, content_type = content_type, id = id, reason = reason , report_type = report_type)
         raise InvalidForm("Invalid form data.")
     
+    def del_report(self , id , user):
+        report = self.get_report(id = id)
+        if report.reporter == user:
+            return self.repo.del_report(report)
+        raise PermissionDenied("You can\'t delete this report")
+        
