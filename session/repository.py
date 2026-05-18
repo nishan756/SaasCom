@@ -16,6 +16,9 @@ class UserRepo:
             return self.queryset.get(id = id)
         except User.DoesNotExist:
             raise ObjectNotFound("User not found")
+    
+    def get_users(self , user_type):
+        return self.queryset.prefetch_related("apps" , "followers" , "following").filter(user_type = user_type)
 
     def view_profile(self , username):
         try:

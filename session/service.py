@@ -13,6 +13,9 @@ class UserService:
 
     def get_user(self , id):
         return self.repo.get_user(id)
+    
+    def get_users(self , user_type):
+        return self.repo.get_users(user_type = user_type)
 
     def authenticated(self , form , request):
         if form.is_valid():
