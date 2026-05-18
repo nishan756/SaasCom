@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} {{user_type}} {% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h2 class="fw-bold mb-1">{{user_type}}</h2>
+            <p class="text-muted mb-0">
+                {% if user_type == 'Company'%}
+                    Explore software companies and organizations.
+                {% else %}
+                    Explore developers
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- Search -->
+        <form method="GET" class="d-flex" style="max-width: 350px; width:100%;">
+            <input 
+                type="text"
+                name="search"
+                class="form-control me-2"
+                placeholder="Search {% if user_type == 'Company'%}Company{% else %}Developer{% endif %}..."
+                value="{{ request.GET.search }}"
+            >
+            <button class="btn btn-dark">
+                Search
+            </button>
+        </form>
+    </div>
+
+    <!-- Companies -->
+    <div class="row">
+
+        {% for user in users %}
+
+        <div class="col-xl-3 col-lg-4 col-md-6 mb-3">
+
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                <div class="card-body p-">
+
+                    <!-- Top -->
+                    <div class="d-flex align-items-center mb-2">
+
+                        {% if user.image %}
+                            <img 
+                                src="{{ user.image.url }}"
+                                class="rounded-circle me-2"
+                                width="50"
+                                height="50"
+                                style="object-fit: cover;"
+                            >
+                        {% else %}
+                            <img 
+                                src="{% static 'img/unknown_avatar.jpg' %}"
+                                class="rounded-circle me-3"
+                                width="65"
+                                height="65"
+                                style="object-fit: cover;"
+                            >
+                        {% endif %}
+
+                        <div class="overflow-hidden">
+                            <h6 class="mb-0 text-truncate">
+                                <a 
+                                    href="{% url 'profile' user.username %}"
+                                    class="text-decoration-none text-dark"
+                                >
+                                    {{ user.full_name }}
+                                </a>
+                            </h6>
+
+                            <small class="text-muted">
+                                Joined {{ user.joined_at|date:"M Y" }}
+                            </small>
+                        </div>
+
+                    </div>
+
+                    <!-- Bio -->
+                    {% if company.bio %}
+                        <p class="text-muted small mb-2" style="font-size: 13px;">
+                            {{ user.bio|truncatechars:120 }}
+                        </p>
+                    {% else %}
+                        <p class="text-muted small mb-3">
+                            No bio added.
+                        </p>
+                    {% endif %}
+
+                    <!-- Stats -->
+                    <div class="d-flex justify-content-between border-top pt-2 text-center">
+
+                        <div class="fw-bold small">
+                            <h6 class="mb-0 fw-bold">
+                                {{ user.apps.count }}
+                            </h6>
+                            <small class="text-muted">Apps</small>
+                        </div>
+
+                        <div class="fw-bold small">
+                            <h6 class="mb-0 fw-bold">
+                                {{ user.followers.count }}
+                            </h6>
+                            <small class="text-muted">Followers</small>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="col-12 text-center py-5">
+            <h5>No companies found</h5>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}
