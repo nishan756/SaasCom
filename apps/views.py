@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from .models import App
 # ====================SERVICES=============
 from .service import AppService , VoteService , AppImageService , ReviewService
-from session.service import FollowService , UserService
+from session.service import FollowService , UserService , ReportService
 
 # ==================EXCEPTIONS=============
 from .exceptions import AlreadyReviewed , ObjectNotFound, PermissionDenied , TooManyImage
@@ -16,6 +16,7 @@ from session.exceptions import InvalidForm , InvalidPassword
 
 # =================FORMS=================
 from .forms import ReviewForm , AppForm , AppDeletionConfirmationForm
+from session.forms import ReportForm
 
 
 
@@ -26,6 +27,7 @@ app_image_service = AppImageService()
 review_service = ReviewService()
 user_service = UserService()
 follow_service = FollowService()
+report_service = ReportService()
 
 def is_safe_url(url , allowed_hosts):
     if url_has_allowed_host_and_scheme(url , allowed_hosts = allowed_hosts):
@@ -63,6 +65,8 @@ def app_detail(request , id):
     context["user_vote"] = vote_service.has_vote(context["app"], request.user) if request.user.is_authenticated else None
     context["is_following"] = follow_service.is_following(request.user, context["app"].founder) if request.user.is_authenticated else False
     context["app_del_form"] = AppDeletionConfirmationForm()
+    context["report_form"] = ReportForm()
+    context["user_report"] = report_service.has_user_report(content_type = "app" , object_id = id , reporter = request.user)
     return render(request , "app-detail.html" , context)
 
 @login_required(login_url = "login")
