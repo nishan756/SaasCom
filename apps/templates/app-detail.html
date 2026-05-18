@@ -24,7 +24,7 @@
                         {% if app.founder.image %}
                             <img src="{{ app.founder.image.url }}" class="dev-avatar">
                         {% else %}
-                            <img src="{% static 'icons/'|add:app.founder.gender|add:'-sign.png' %}" style="height:80px;width:80px;border-radius:50%;">
+                            <img src="{% static 'img/unknown_avatar.jpg' %}" style="height:80px;width:80px;border-radius:50%;">
                         {% endif %}
 
                     </div>
