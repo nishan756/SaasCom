@@ -3,7 +3,8 @@ from django.contrib.auth import login , logout , authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.http import require_GET , require_POST
-from .exceptions import InvalidForm , UserNotFound , FollowException , InvalidContentType
+from .exceptions import InvalidForm , FollowException , InvalidContentType
+from apps.exceptions import ObjectNotFound , PermissionDenied
 from apps.views import is_safe_url
 
 # =================FORMS=================
@@ -11,9 +12,11 @@ from .forms import LoginForm , ReportForm
 
 # =================SERVICES=============
 from .service import UserService , FollowService , ReportService
+from apps.service import ReviewService
 user_service = UserService()
 follow_service = FollowService()
 report_service = ReportService()
+review_service = ReviewService()
 
 
 def user_login(request):
@@ -26,7 +29,7 @@ def user_login(request):
             return redirect("home")
         except InvalidForm:
             messages.error(request, "Invalid form data.")
-        except UserNotFound:
+        except ObjectNotFound:
             messages.error(request, "Invalid username or password.")
         return redirect("login")
     else:
@@ -51,7 +54,7 @@ def follow(request , id):
     try:
         follow_service.follow(follower, following_user)
         messages.success(request, f"You have started following {following_user.full_name()}.")
-    except UserNotFound as e:
+    except ObjectNotFound as e:
         messages.error(request, str(e))
     except FollowException as e:
         messages.error(request, str(e))
@@ -66,7 +69,7 @@ def unfollow(request , id):
     try:
         follow_service.unfollow(follower, following_user)
         messages.success(request, f"You have unfollowed {following_user.full_name()}.")
-    except UserNotFound as e:
+    except ObjectNotFound as e:
         messages.error(request, str(e))
     except FollowException as e:
         messages.error(request, str(e))
@@ -95,4 +98,17 @@ def report(request , content_type , id):
     
     except Exception as e:
         messages.error(request, "An error occurred while submitting your report. Please try again later.")
+    return redirect(HTTP_REFERER)
+
+@require_POST
+@login_required(login_url = "login")
+def del_report(request , id):
+    HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER" , "/") , request.get_host())
+    try:
+        report_service.del_report(id = id)
+        messages.success(request , "Successfully deleted your report")
+    except ObjectNotFound as e:
+        messages.error(request , str(e))
+    except PermissionDenied as e:
+        messages.warning(request , "You can\'t delete this report")
     return redirect(HTTP_REFERER)
