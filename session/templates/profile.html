@@ -21,7 +21,7 @@
                 {% if profile.image %}
                     <img src="{{ profile.image.url }}" class="profile-image">
                 {% else %}
-                    <img src="{% static 'icons/'|add:profile.gender|add:'-sign.png' %}" height="80px" width="80px">
+                    <img src="{% static 'img/unknown_avatar.jpg' %}" height="80px" width="80px">
                 {% endif %}
             </div>
 
