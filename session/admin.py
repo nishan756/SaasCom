@@ -40,7 +40,7 @@ class UserAdmin(admin.ModelAdmin):
         (
             "User Type",
             {
-                "fields":["is_superuser" , "is_staff"],
+                "fields":["is_superuser" , "is_staff" , "user_type"],
             },
         ),
 
