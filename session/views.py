@@ -112,3 +112,9 @@ def del_report(request , id):
     except PermissionDenied as e:
         messages.warning(request , "You can\'t delete this report")
     return redirect(HTTP_REFERER)
+
+def users(request , user_type):
+    context = {}
+    context["user_type"] = user_type.capitalize()
+    context["users"] = user_service.get_users(user_type = user_type)
+    return render(request , "users.html" , context)
