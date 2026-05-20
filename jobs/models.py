@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django_summernote.fields import SummernoteTextField
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
+from cloudinary.models import CloudinaryField
 
 User = get_user_model()
 
@@ -17,6 +18,20 @@ class JobCategory(models.Model):
 
     class Meta:
         ordering = ["title"]
+        verbose_name_plural = "Job Categories"
+
+class Currency(models.Model):
+    code = models.CharField(max_length = 10 , unique = True)
+    
+    def __str__(self):
+        return self.code
+    
+    def clean(self):
+        if Currency.objects.filter(code__iexact = self.code).exists():
+            raise ValidationError(message = "Currency with this code is already exists")
+        
+    class Meta:
+        verbose_name_plural = "Currencies"
 
 class JobQueryset(models.QuerySet):
 
@@ -41,7 +56,8 @@ class JobQueryset(models.QuerySet):
         return self.filter(category__title__iexact = category)
     
     def experience(self , experience):
-        return self.filter(experience = self.experience)
+        return self.filter(experience = experience)
+
 
 class JobManager(models.Manager):
     
@@ -70,10 +86,12 @@ class Job(models.Model):
     company = models.ForeignKey(User , on_delete = models.CASCADE , limit_choices_to = {"user_type":"company"})
     title = models.CharField(max_length = 100)
     category = models.ForeignKey(JobCategory , on_delete = models.SET_NULL , null = True , blank = True , related_name = "jobs")
+    short_description = models.TextField(blank = True , null = True)
     description = SummernoteTextField()
 
     max_salary = models.PositiveIntegerField(blank = True , null = True)
     min_salary = models.PositiveIntegerField(blank = True , null = True)
+    currency = models.ForeignKey(Currency , on_delete = models.SET_NULL , blank = True , null = True , related_name = "jobs" , help_text = "If you left this field blank , then it will set to USD")
     location = models.CharField(max_length = 70 , blank = True , null = True)
 
     class JobTypeChoices(models.TextChoices):
@@ -114,3 +132,31 @@ class Job(models.Model):
             models.Index(fields = ["is_active" , "job_type"]),
         ]
         ordering = ["-posted_at"]
+
+
+class Application(models.Model):
+    id = models.UUIDField(primary_key = True , default = uuid.uuid4 , editable = False)
+    job = models.ForeignKey(Job , on_delete = models.CASCADE , limit_choices_to = {"is_active":True} , related_name = "applications")
+    candidate = models.ForeignKey(User , on_delete = models.CASCADE , limit_choices_to = {"user_type":"developer"} , related_name = "applications")
+    cover_letter = CloudinaryField(folder = "saas_com/assets/jobs/cover_letter")
+    resume = CloudinaryField(folder = "saas_com/assets/jobs/resume")
+    class StatusChoices(models.TextChoices):
+        PENDING = "pending" , "Pending"
+        APPROVED = "approved" , "Approved"
+        REJECTED = "rejected" , "Rejected"
+        SHORTLISTED = "shortlisted" , "Shortlisted"
+    status = models.CharField(max_length = 15 , choices = StatusChoices.choices , default = StatusChoices.PENDING)
+    hr_messages = models.TextField(blank = True , null = True) 
+    applied_at = models.DateTimeField(auto_now_add = True)
+
+    def __str__(self):
+        return f"{self.candidate.full_name()} applied to {self.job.title}"
+
+    class Meta:
+        ordering = ["job" , "applied_at"]
+        unique_together = ["job" , "candidate"]
+        indexes = [
+            models.Index(fields = ["job"]),
+            models.Index(fields = ["job" , "candidate"]),
+        ]
+
