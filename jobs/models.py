@@ -3,6 +3,7 @@ import uuid
 from django.contrib.auth import get_user_model
 from django_summernote.fields import SummernoteTextField
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 
 User = get_user_model()
 
@@ -38,6 +39,9 @@ class JobQueryset(models.QuerySet):
 
     def category(self , category):
         return self.filter(category__title__iexact = category)
+    
+    def experience(self , experience):
+        return self.filter(experience = self.experience)
 
 class JobManager(models.Manager):
     
@@ -56,6 +60,9 @@ class JobManager(models.Manager):
 
     def category(self , category):
         return self.get_queryset().category(category = category) 
+    
+    def experience(self , experience):
+        return self.get_queryset().experience(experience = self.experience)
     
 
 class Job(models.Model):
@@ -76,7 +83,17 @@ class Job(models.Model):
         CONTRACT = "contract" , "Contract"
         REMOTE = "remote" , "Remote"
     job_type = models.CharField(max_length = 20 , choices = JobTypeChoices.choices)
-
+    class ExperienceType(models.TextChoices):
+        SENIOR = "senior" , "Senior"
+        MID = "mid" , "Mid"
+        JUNIOR = "junior" , "Junior"
+    expericen = models.CharField(max_length = 6 , choices = ExperienceType.choices , default = ExperienceType.JUNIOR)
+    vacancy = models.PositiveIntegerField(
+        validators = [
+            MinValueValidator(limit_value = 1 , message = "Vacancy must be equal or greater than 1"),
+        ] , 
+        default = 1
+    )
     posted_at = models.DateTimeField(auto_now_add = True)
     deadline = models.DateTimeField(blank = True , null = True)
 
@@ -86,10 +103,7 @@ class Job(models.Model):
 
     def __str__(self):
         return f"{self.company} posted a new job "
-
-    def clean(self):
-        if self.deadline and self.deadline < self.posted_at:
-            raise ValidationError("Deadline can\'t be in the past")
+    
     class Meta:
         indexes = [
             models.Index(fields = ["company"]),
