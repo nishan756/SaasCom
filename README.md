@@ -110,7 +110,7 @@ The goal of this project is to create a centralized ecosystem where developers, 
 ## 📂 Project Structure
 
 ```bash
-saas-hub-community/
+SaasCom/
 │
 ├── apps/
 ├── community/
@@ -131,7 +131,7 @@ saas-hub-community/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/your-repository.git
+git clone https://github.com/your-username/SaasCom.git
 cd your-repository
 ```
 
