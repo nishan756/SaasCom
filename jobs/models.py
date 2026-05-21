@@ -105,7 +105,7 @@ class Job(models.Model):
         SENIOR = "senior" , "Senior"
         MID = "mid" , "Mid"
         JUNIOR = "junior" , "Junior"
-    expericen = models.CharField(max_length = 6 , choices = ExperienceType.choices , default = ExperienceType.JUNIOR)
+    experience = models.CharField(max_length = 6 , choices = ExperienceType.choices , default = ExperienceType.JUNIOR)
     vacancy = models.PositiveIntegerField(
         validators = [
             MinValueValidator(limit_value = 1 , message = "Vacancy must be equal or greater than 1"),
