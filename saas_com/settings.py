@@ -143,6 +143,15 @@ cloudinary.config(
   	api_secret = os.getenv("CLOUDINARY_API_SECRET")
 )
 
+STORAGES = {
+    "default":{
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
 INTERNAL_IPS = [
     "127.0.0.1",
     "localhost",
