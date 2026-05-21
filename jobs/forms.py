@@ -38,6 +38,12 @@ class JobForm(forms.ModelForm):
                 "class": "form-control",
                 "type": "datetime-local"
             }),
+            "experience": forms.Select(attrs={
+                "class": "form-select",
+            }),
+            "vacancy": forms.NumberInput(attrs={
+                "class": "form-control",
+            }),
         }
 
 
