@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    Explore Jobs
+{% endblock title %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/jobs.css' %}">
+{% endblock css %}
+
+{% block content %}
+
+
+<div class="jobs-page">
+
+    <!-- Filter Section -->
+    <div class="top-filter-bar">
+        <form method="GET" class="filter-form">
+
+            <div class="filter-item">
+                <input type="text" name="title" placeholder="Search jobs...">
+            </div>
+
+            <div class="filter-item">
+                <select name="category">
+                    <option value="">Category</option>
+                    <option value="backend">Backend</option>
+                    <option value="frontend">Frontend</option>
+                    <option value="uiux">UI/UX</option>
+                </select>
+            </div>
+
+            <div class="filter-item">
+                <select name="job_type">
+                    <option value="">Job Type</option>
+                    <option value="full">Full Time</option>
+                    <option value="part">Part Time</option>
+                    <option value="remote">Remote</option>
+                </select>
+            </div>
+
+            <div class="filter-item">
+                <select name="experience">
+                    <option value="">Experience</option>
+                    <option value="junior">Junior</option>
+                    <option value="mid">Mid</option>
+                    <option value="senior">Senior</option>
+                </select>
+            </div>
+
+            <button type="submit" class="filter-btn">
+                Apply Filter
+            </button>
+
+        </form>
+    </div>
+
+
+    <!-- Jobs Feed -->
+    <div class="jobs-feed">
+
+        {% for job in jobs %}
+            <!-- Job Card -->
+            <div class="job-card">
+
+                <div class="job-top">
+
+                    <div class="company-section">
+                        {% if job.company.image %}
+                            <img src={{job.company.image.url}} alt="logo">
+                        {% else %}
+                            <img src="{% static 'img/unknown_avatar.jpg'%}" alt="logo">
+                        {% endif %}
+
+                        <div class="job-info">
+                            <h2>{{job.title}}</h2>
+                            {% if job.is_active %}
+                                <span class="active">Active</span>
+                            {% else %}
+                                <span class="active">Inactive</span>
+                            {% endif %}
+
+                            <div class="company-row">
+                                <span class="company-name">{{job.company.full_name}}</span>
+                            </div>
+
+                            <p class="location">
+                                {{job.job_type}} • {{job.location}}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="job-time">
+                        {{job.posted_at|date}} at {{job.posted_at|time}}
+                    </div>
+
+                </div>
+
+
+                <p class="job-description">
+                    Looking for an experienced Django developer to build scalable backend systems and REST APIs.
+                </p>
+
+
+                <div class="job-tags">
+                    <span>Python</span>
+                    <span>Django</span>
+                    <span>REST API</span>
+                    <span>Remote</span>
+                </div>
+
+
+                <div class="job-bottom">
+
+                    <div class="salary">
+                        {% if job.max_salary and job.min_salary %}
+                            {{job.max_salary}} - {{job.min_salary}}
+                        {% endif %}
+
+                        {% if job.currency %}
+                            {{job.currency}}
+                        {% else %}
+                            USD 
+                        {% endif %}
+                    </div>
+
+                    <a href="{% url 'job-detail' job.id %}" class="apply-btn">
+                        View
+                    </a>
+
+                </div>
+
+            </div>
+        {% endfor %}
+
+        <nav>
+            <ul class="pagination justify-content-center">
+
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Prev</a>
+                </li>
+                {% endif %}
+
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+                {% endif %}
+
+            </ul>
+        </nav>
+
+    </div>
+
+</div>
+
+{% endblock content %}
