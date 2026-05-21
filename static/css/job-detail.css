@@ -1,0 +1,356 @@
+/* =========================
+   JOB DETAIL PAGE
+========================= */
+
+.job-detail-container{
+    width: 95%;
+    max-width: 1400px;
+    margin: 30px auto;
+
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 25px;
+}
+
+
+/* =========================
+   MAIN CONTENT
+========================= */
+
+.job-main-content{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+
+/* =========================
+   CARDS
+========================= */
+
+.job-header-card,
+.job-section-card,
+.sidebar-card{
+    background: #fff;
+    border-radius: 12px;
+    padding: 22px;
+    border: 1px solid #eaeaea;
+}
+
+
+/* =========================
+   JOB HEADER
+========================= */
+
+.job-top{
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.company-logo img{
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.job-title-section h1{
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: #111827;
+}
+
+.job-meta{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.job-meta span{
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.job-meta i{
+    margin-right: 6px;
+}
+
+
+/* =========================
+   ACTIONS
+========================= */
+
+.job-actions{
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.action-btn{
+    border: none;
+    background: #f3f4f6;
+    padding: 10px 16px;
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    transition: 0.3s;
+}
+
+.action-btn:hover{
+    background: #e5e7eb;
+}
+
+.upvote-btn:hover{
+    background: #dcfce7;
+}
+
+.downvote-btn:hover{
+    background: #fee2e2;
+}
+
+.bookmark-btn:hover{
+    background: #dbeafe;
+}
+
+.report-btn:hover{
+    background: #fff7ed;
+}
+
+
+/* =========================
+   SECTION
+========================= */
+
+.job-section-card h2{
+    margin-bottom: 18px;
+    font-size: 22px;
+    color: #111827;
+}
+
+.job-section-card p{
+    line-height: 1.8;
+    color: #4b5563;
+}
+
+
+/* =========================
+   APPLICATION FORM
+========================= */
+
+.application-form{
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-group{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label{
+    font-weight: 600;
+    color: #374151;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select{
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    outline: none;
+    transition: 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus{
+    border-color: #2563eb;
+}
+
+.apply-btn{
+    border: none;
+    background: #2563eb;
+    color: white;
+
+    padding: 13px;
+    border-radius: 8px;
+
+    cursor: pointer;
+    font-weight: 600;
+
+    transition: 0.3s;
+}
+
+.apply-btn:hover{
+    background: #1d4ed8;
+}
+
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.job-sidebar{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sidebar-card h3{
+    margin-bottom: 20px;
+    color: #111827;
+}
+
+
+/* =========================
+   OVERVIEW
+========================= */
+
+.overview-item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.overview-item span{
+    color: #6b7280;
+}
+
+.overview-item strong{
+    color: #111827;
+}
+
+
+/* =========================
+   COMPANY BTN
+========================= */
+
+.company-btn{
+    display: inline-block;
+
+    margin-top: 15px;
+
+    text-decoration: none;
+
+    background: #111827;
+    color: white;
+
+    padding: 10px 18px;
+    border-radius: 8px;
+
+    transition: 0.3s;
+}
+
+.company-btn:hover{
+    background: #000;
+}
+
+
+/* =========================
+   MODAL
+========================= */
+
+.modal-content{
+    border-radius: 14px;
+    border: none;
+}
+
+.modal-header{
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.modal-footer{
+    border-top: 1px solid #f1f1f1;
+}
+
+.cancel-btn{
+    border: none;
+    background: #f3f4f6;
+
+    padding: 10px 18px;
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+.report-submit-btn{
+    border: none;
+    background: #dc2626;
+    color: white;
+
+    padding: 10px 18px;
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width: 992px){
+
+    .job-detail-container{
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media(max-width: 768px){
+
+    .job-top{
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .job-title-section h1{
+        font-size: 24px;
+    }
+
+    .job-actions{
+        width: 100%;
+    }
+
+    .action-btn{
+        flex: 1;
+        justify-content: center;
+    }
+
+}
+
+@media(max-width: 500px){
+
+    .job-detail-container{
+        width: 100%;
+        padding: 0 12px;
+    }
+
+    .job-header-card,
+    .job-section-card,
+    .sidebar-card{
+        padding: 18px;
+    }
+
+    .job-title-section h1{
+        font-size: 22px;
+    }
+
+}
+.accordion-button:focus{
+    box-shadow: none;
+}
