@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Post a Job{% endblock %}
+
+
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-4 p-lg-5">
+
+                    <div class="mb-4">
+                        <h2 class="fw-bold mb-1">Post a New Job</h2>
+                        <p class="text-muted mb-0">
+                            Create a job post to hire developers for your company.
+                        </p>
+                    </div>
+
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                Job Title
+                            </label>
+                            {{ form.title }}
+
+                            {% if form.title.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.title.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label fw-semibold">
+                                    Category
+                                </label>
+                                {{ form.category }}
+
+                                {% if form.category.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.category.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label fw-semibold">
+                                    Job Type
+                                </label>
+                                {{ form.job_type }}
+
+                                {% if form.job_type.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.job_type.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label fw-semibold">
+                                    Minimum Salary
+                                </label>
+                                {{ form.min_salary }}
+
+                                {% if form.min_salary.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.min_salary.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label fw-semibold">
+                                    Maximum Salary
+                                </label>
+                                {{ form.max_salary }}
+
+                                {% if form.max_salary.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.max_salary.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label fw-semibold">
+                                    Experience
+                                </label>
+                                {{ form.experience }}
+                                
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label fw-semibold">
+                                    Vacancy
+                                </label>
+                                {{ form.vacancy }}
+                                
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                Location
+                            </label>
+                            {{ form.location }}
+
+                            {% if form.location.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.location.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                Application Deadline
+                            </label>
+                            {{ form.deadline }}
+
+                            {% if form.deadline.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.deadline.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4 summernote-wrapper">
+                            <label class="form-label fw-semibold mb-2">
+                                Job Description
+                            </label>
+
+                            <div class="summernote-editor">
+                                {{ form.description }}
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-5">
+                            <a href="" class="btn btn-light px-4">
+                                Cancel
+                            </a>
+
+                            <button type="submit" class="btn btn-dark px-4">
+                                Publish Job
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
