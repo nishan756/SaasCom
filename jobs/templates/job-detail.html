@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {{ job.title }}
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/job-detail.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="job-detail-container">
+
+    <!-- LEFT -->
+    <div class="job-main-content">
+
+        <!-- Job Header -->
+        <div class="job-header-card">
+
+            <div class="job-top">
+
+                <div class="company-logo">
+                    {% if job.company.image %}
+                        <img src="{{ job.company.image.url }}" alt="">
+                    {% else %}
+                        <img src="{% static 'img/unknown_avatar.jpg' %}" alt="">
+                    {% endif %}
+                </div>
+
+                <div class="job-title-section">
+
+                    <h1>{{ job.title }}</h1>
+
+                    <div class="job-meta">
+
+                        <span>
+                            <i class="fa-solid fa-building"></i>
+                            {{ job.company.full_name }}
+                        </span>
+
+                        <span>
+                            <i class="fa-solid fa-location-dot"></i>
+                            {{ job.location }}
+                        </span>
+
+                        <span>
+                            <i class="fa-solid fa-briefcase"></i>
+                            {{ job.job_type }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Actions -->
+            <div class="job-actions">
+                
+                <!-- Bookmark -->
+                <form method="POST">
+                    {% csrf_token %}
+                    <button class="action-btn bookmark-btn">
+
+                        {% if is_bookmarked %}
+                            <i class="fa-solid fa-bookmark"></i>
+                        {% else %}
+                            <i class="fa-regular fa-bookmark"></i>
+                        {% endif %}
+
+                    </button>
+                </form>
+
+                <!-- Report Button -->
+                <button class="action-btn report-btn"
+                        data-bs-toggle="modal"
+                        data-bs-target="#reportModal">
+
+                    <i class="fa-solid fa-flag"></i>
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- About -->
+        <div class="job-section-card">
+
+            <h2>About The Job</h2>
+
+            <p>
+                {{ job.description|safe }}
+            </p>
+
+        </div>
+
+        {% comment %}
+        <!-- Requirements -->
+        <div class="job-section-card">
+
+            <h2>Requirements</h2>
+
+            <p>
+                {{ job.requirements|linebreaks }}
+            </p>
+
+        </div>
+
+        <!-- Responsibilities -->
+        <div class="job-section-card">
+
+            <h2>Responsibilities</h2>
+
+            <p>
+                {{ job.responsibilities|linebreaks }}
+            </p>
+
+        </div>
+        {% endcomment %}
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="job-sidebar">
+
+        <!-- Job Overview -->
+        <div class="sidebar-card">
+
+            <h3>Job Overview</h3>
+
+            <div class="overview-item">
+                <span>Salary</span>
+
+                <strong>
+                    {% if job.max_salary and job.min_salary %}
+                        {{ job.max_salary }} - {{job.min_salary}}
+                    {% elif job.max_salary %}
+                        {{ job.max_salary }}
+                    {% elif job.min_salary %}
+                        {{job.min_salary}}
+                    {% else %}
+                        N/A
+                    {% if job.currency %}
+                        Paid with : {{ job.currency.code }}
+                    {% endif %}
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="overview-item">
+                <span>Currency</span>
+
+                <strong>
+                    {% if job.currency %}
+                        {{ job.currency.code }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="overview-item">
+                <span>Experience</span>
+
+                <strong>
+                    {% if job.experience %}{{ job.experience_level }}
+                    {% else %}
+                    N/A
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="overview-item">
+                <span>Job Type</span>
+
+                <strong>
+                    {{ job.job_type.capitalize }}
+                </strong>
+            </div>
+
+            <div class="overview-item">
+                <span>Category</span>
+
+                <strong>
+                    {{ job.category.title }}
+                </strong>
+            </div>
+
+            <div class="overview-item">
+                <span>Posted</span>
+
+                <strong>
+                    {{ job.posted_at|timesince }} ago
+                </strong>
+            </div>
+
+        </div>
+
+        <div class="sidebar-card">
+
+            <a href="{% url 'profile' job.company.username %}" class="company-btn">
+
+                View Company
+
+            </a>
+
+        </div>
+
+        <!-- APPLICATION SECTION -->
+        <div class="sidebar-card">
+
+            <div class="accordion"
+                id="applicationAccordion">
+
+                <div class="accordion-item">
+
+                    <h2 class="accordion-header">
+
+                        <button class="accordion-button collapsed"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#applicationCollapse">
+
+                            Apply For This Job
+
+                        </button>
+
+                    </h2>
+
+                    <div id="applicationCollapse"
+                        class="accordion-collapse collapse"
+                        data-bs-parent="#applicationAccordion">
+
+                        <div class="accordion-body">
+
+                            <form method="POST" enctype="multipart/form-data" class="application-form">
+
+                                {% csrf_token %}
+
+                                {% for field in application_form %}
+                                    <div class="mb-3">
+
+                                        <label class="form-label">
+                                            {{field.label_tag}}
+                                        </label>
+
+                                        {{field}}
+
+                                    </div>
+                                {% endfor %}
+
+                                <button class="apply-btn w-100">
+
+                                    Submit Application
+
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- REPORT MODAL -->
+
+<div class="modal fade"
+     id="reportModal"
+     tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    Report Job
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <form method="POST" action="{% url 'report' 'job' job.id %}">
+
+                {% csrf_token %}
+
+                <div class="modal-body">
+
+                    {% for field in report_form %}
+                        <div class="form-group">
+
+                            {{field.label}}
+
+                            {{field}}
+
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="cancel-btn"
+                            data-bs-dismiss="modal">
+
+                        Cancel
+
+                    </button>
+
+                    <button class="report-submit-btn">
+
+                        Submit Report
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
