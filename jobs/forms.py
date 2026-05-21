@@ -1,10 +1,10 @@
-from .models import Job
+from .models import Job , Application
 from django import forms 
 
 class JobForm(forms.ModelForm):
     class Meta:
         model = Job
-        exclude = ["company"]
+        exclude = ["company" , "is_active"]
         widgets = {
             "title": forms.TextInput(attrs={
                 "class": "form-control",
@@ -38,4 +38,19 @@ class JobForm(forms.ModelForm):
                 "class": "form-control",
                 "type": "datetime-local"
             }),
+        }
+
+
+class ApplicationForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        exclude = ["job" , "candidate" , "applied_at" , "hr_messages" , "status"]
+        widgets = {
+            "cover_letter": forms.FileInput(attrs={
+                "class": "form-control",
+            }),
+            "resume": forms.FileInput(attrs={
+                "class": "form-control",
+            }),
+            
         }
