@@ -22,6 +22,8 @@ bookmark_service = BookmarkService()
 
 
 def user_login(request):
+    if request.user.is_authenticated:
+        return redirect("home")
     if request.method == "POST":
         form = LoginForm(request.POST)
         try:
@@ -131,7 +133,7 @@ def add_bookmark(request , content_type , object_id):
     HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER") , allowed_hosts = request.get_host())
     try:
         bookmark_service.add_bookmark(user = request.user , content_type = content_type , object_id = object_id)
-        messages.success(request , f"{content_type} added to your bookmark")
+        messages.success(request , f"This {content_type} is added to your bookmark")
 
     except InvalidContentType as e:
         messages.error(request , str(e))
