@@ -15,36 +15,72 @@
 
     <!-- Filter Section -->
     <div class="top-filter-bar">
-        <form method="GET" class="filter-form">
+        <form method="GET" class="filter-form" action="{% url 'all-jobs' %}">
 
             <div class="filter-item">
-                <input type="text" name="title" placeholder="Search jobs...">
+                <input type="text" name="title" {% if request.GET.title %}value="{{request.GET.title}}" {% endif %} placeholder="Search jobs...">
             </div>
 
             <div class="filter-item">
                 <select name="category">
                     <option value="">Category</option>
-                    <option value="backend">Backend</option>
-                    <option value="frontend">Frontend</option>
-                    <option value="uiux">UI/UX</option>
+                    {% for cat in categories %}
+                        <option value="{{cat.title.lower}}" {% if request.GET.category == cat.title %}selected{% endif %}>
+                            {{cat.title}} ({{cat.active_jobs}})
+                        </option>
+                    {% endfor %}
                 </select>
             </div>
 
             <div class="filter-item">
                 <select name="job_type">
                     <option value="">Job Type</option>
-                    <option value="full">Full Time</option>
-                    <option value="part">Part Time</option>
-                    <option value="remote">Remote</option>
+
+                    <option value="full_time"
+                        {% if request.GET.job_type == "full_time" %}selected{% endif %}>
+                        Full Time
+                    </option>
+
+                    <option value="part_time"
+                        {% if request.GET.job_type == "part_time" %}selected{% endif %}>
+                        Part Time
+                    </option>
+
+                    <option value="full_time"
+                        {% if request.GET.job_type == "intern" %}selected{% endif %}>
+                        Intern
+                    </option>
+
+                    <option value="remote"
+                        {% if request.GET.job_type == "remote" %}selected{% endif %}>
+                        Remote
+                    </option>
+
+                    <option value="remote"
+                        {% if request.GET.job_type == "contract" %}selected{% endif %}>
+                        Contract
+                    </option>
                 </select>
             </div>
 
             <div class="filter-item">
                 <select name="experience">
                     <option value="">Experience</option>
-                    <option value="junior">Junior</option>
-                    <option value="mid">Mid</option>
-                    <option value="senior">Senior</option>
+                    <option value="junior"
+                        {% if request.GET.experience == "junior" %}selected{% endif %}>
+                        Junior
+                    </option>
+
+                    <option value="mid"
+                        {% if request.GET.experience == "mid" %}selected{% endif %}>
+                        Mid
+                    </option>
+
+                    <option value="senior"
+                        {% if request.GET.experience == "senior" %}selected{% endif %}>
+                        Senior
+                    </option>
+                    
                 </select>
             </div>
 
@@ -151,6 +187,9 @@
 
             </ul>
         </nav>
+        {% if not jobs %}
+        <h2 class="h2 text-center">No blogs found</h2>
+        {% endif %}
 
     </div>
 
