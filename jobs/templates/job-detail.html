@@ -60,11 +60,11 @@
             <div class="job-actions">
                 
                 <!-- Bookmark -->
-                <form method="POST">
+                <form method="POST" action="{% if bookmark %}{% url 'del-bookmark'  bookmark.id %}{% else %}{% url 'add-bookmark' 'job' job.id %}{% endif %}">
                     {% csrf_token %}
                     <button class="action-btn bookmark-btn">
 
-                        {% if is_bookmarked %}
+                        {% if bookmark %}
                             <i class="fa-solid fa-bookmark"></i>
                         {% else %}
                             <i class="fa-regular fa-bookmark"></i>
@@ -297,7 +297,7 @@
 
             </div>
 
-            <form method="POST" action="{% url 'report' 'job' job.id %}">
+            <form method="POST" action="{% url 'add-report' 'job' job.id %}">
 
                 {% csrf_token %}
 
