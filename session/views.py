@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.http import require_GET , require_POST
 from .exceptions import InvalidForm , FollowException , InvalidContentType
+from apps.exceptions import AlreadyExists
 from apps.exceptions import ObjectNotFound , PermissionDenied
 from apps.views import is_safe_url
 
@@ -11,12 +12,13 @@ from apps.views import is_safe_url
 from .forms import LoginForm , ReportForm
 
 # =================SERVICES=============
-from .service import UserService , FollowService , ReportService
+from .service import UserService , FollowService , ReportService , BookmarkService
 from apps.service import ReviewService
 user_service = UserService()
 follow_service = FollowService()
 report_service = ReportService()
 review_service = ReviewService()
+bookmark_service = BookmarkService()
 
 
 def user_login(request):
@@ -96,6 +98,9 @@ def report(request , content_type , id):
     except InvalidForm as e:
         messages.error(request, str(e))
     
+    except AlreadyExists as e:
+        messages.info(request , str(e))
+    
     except Exception as e:
         messages.error(request, "An error occurred while submitting your report. Please try again later.")
     return redirect(HTTP_REFERER)
@@ -113,8 +118,37 @@ def del_report(request , id):
         messages.warning(request , "You can\'t delete this report")
     return redirect(HTTP_REFERER)
 
+@require_GET
 def users(request , user_type):
     context = {}
     context["user_type"] = user_type.capitalize()
     context["users"] = user_service.get_users(user_type = user_type)
     return render(request , "users.html" , context)
+
+@login_required(login_url = "login")
+@require_POST
+def add_bookmark(request , content_type , object_id):
+    HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER") , allowed_hosts = request.get_host())
+    try:
+        bookmark_service.add_bookmark(user = request.user , content_type = content_type , object_id = object_id)
+        messages.success(request , f"{content_type} added to your bookmark")
+
+    except InvalidContentType as e:
+        messages.error(request , str(e))
+    
+    except AlreadyExists as e:
+        messages.info(request , str(e))
+    return redirect(HTTP_REFERER)
+
+@login_required(login_url = "login")
+@require_POST
+def del_bookmark(request  , id):
+    HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER") , allowed_hosts = request.get_host())
+    try:
+        bookmark_service.delete_bookmark(user = request.user  , id = id)
+        messages.success(request , f"Bookmarked removed")
+
+    except ObjectNotFound as e:
+        messages.error(request , str(e))
+    
+    return redirect(HTTP_REFERER)
