@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 import uuid
 from django.contrib.auth import get_user_model
 from django_summernote.fields import SummernoteTextField
@@ -27,8 +28,18 @@ class Currency(models.Model):
         return self.code
     
     def clean(self):
-        if Currency.objects.filter(code__iexact = self.code).exists():
-            raise ValidationError(message = "Currency with this code is already exists")
+
+        qs = Currency.objects.filter(
+            code__iexact=self.code
+        )
+
+        if self.pk:
+            qs = qs.exclude(pk=self.pk)
+
+        if qs.exists():
+            raise ValidationError(
+                "Currency with this code already exists"
+            )
         
     class Meta:
         verbose_name_plural = "Currencies"
@@ -53,7 +64,7 @@ class JobQueryset(models.QuerySet):
         return self
 
     def category(self , category):
-        return self.filter(category__title__iexact = category)
+        return self.filter(Q(category__title__iexact = category)|Q(category__parent__title__iexact = category))
     
     def experience(self , experience):
         return self.filter(experience = experience)
@@ -63,22 +74,6 @@ class JobManager(models.Manager):
     
     def get_queryset(self):
         return JobQueryset(model = self.model , using = self._db)
-    
-    def job_type(self , job_type):
-        return self.get_queryset().job_type(job_type = job_type)
-    
-    def active_jobs(self):
-        return self.get_queryset().active_jobs()
-    
-    
-    def salary(self , max_salary = None , min_salary = None):
-        return self.get_queryset().salary(max_salary = max_salary , min_salary = min_salary)
-
-    def category(self , category):
-        return self.get_queryset().category(category = category) 
-    
-    def experience(self , experience):
-        return self.get_queryset().experience(experience = self.experience)
     
 
 class Job(models.Model):
