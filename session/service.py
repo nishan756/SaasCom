@@ -1,8 +1,9 @@
-from .repository import ReportRepo, UserRepo , FollowRepo
+from .repository import ReportRepo, UserRepo , FollowRepo , BookmarkRepo
 from .exceptions import FollowException, InvalidForm , InvalidContentType
-from apps.exceptions import PermissionDenied
-from .models import User
+from apps.exceptions import PermissionDenied , AlreadyExists
+from .models import User , Report
 from apps.models import App
+from jobs.models import Job
 from django.contrib.contenttypes.models import ContentType
 
 class UserService:
@@ -51,7 +52,8 @@ class ReportService:
     repo = ReportRepo()
     CONTENT_TYPES = {
         "user":User,
-        "app":App
+        "app":App,
+        "job":Job
     }
 
     def get_report(self , id):
@@ -62,8 +64,13 @@ class ReportService:
         return self.repo.has_user_report(content_type = model , object_id = object_id , reporter =  reporter)
 
     def add_report(self , reporter , content_type , id , form):
+
+        if self.has_user_report(content_type , object_id = id , reporter = reporter):
+            raise AlreadyExists("You already report on this {}".format(content_type))
+        
         if content_type not in self.CONTENT_TYPES:
             raise InvalidContentType("Invalid content type.")
+        
         content_type = ContentType.objects.get_for_model(model = self.CONTENT_TYPES[content_type])
         if form.is_valid():
             reason = form.cleaned_data.get("reason" , None)
@@ -76,4 +83,38 @@ class ReportService:
         if report.reporter == user:
             return self.repo.del_report(report)
         raise PermissionDenied("You can\'t delete this report")
+
+
+class BookmarkService:
+    repo = BookmarkRepo()
+    CONTENT_TYPES = {
+        "app" : App,
+        "job":Job,
+    }
+
+    def bookmarks(self , user):
+        return self.repo.bookmarks(user = user)
+    
+    def is_bookmarked(self , user , content_type , object_id):
+        if content_type not in self.CONTENT_TYPES:
+            raise InvalidContentType("Invalid content type")
+        content_type = ContentType.objects.get_for_model(model = self.CONTENT_TYPES[content_type])
+        return self.repo.is_bookmarked(user = user , content_type = content_type , object_id = object_id)
+    
+    def get_bookamark(self , user , id):
+        return self.repo.get_bookamark(user , id)
+    
+    def add_bookmark(self , user , content_type , object_id):
+        if content_type not in self.CONTENT_TYPES:
+            raise InvalidContentType("you\'re trying to add invalid content type")
         
+        if self.is_bookmarked(user , content_type , object_id):
+            raise AlreadyExists("Already bookmarked")
+        content_type = ContentType.objects.get_for_model(model = self.CONTENT_TYPES[content_type])
+        return self.repo.add_bookmark(user , content_type , object_id)
+    
+    def delete_bookmark(self , user , id):
+        bookmark = self.repo.get_bookamark(user = user , id = id)
+        return self.repo.delete_bookmark(bookmark)
+    
+
