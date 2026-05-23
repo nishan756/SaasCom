@@ -12,5 +12,5 @@ urlpatterns = [
     path("add-report/<str:content_type>/<str:id>/" , report , name = "add-report"),
     path("del-report/delete/<str:id>/" , del_report , name = "del-report"),
     path("add-bookmark/<str:content_type>/<str:object_id>" , add_bookmark , name = "add-bookmark"),
-    path("del-bookmark/<str:id>" , del_bookmark , name = "delete-bookmark"),
+    path("del-bookmark/<str:id>" , del_bookmark , name = "del-bookmark"),
 ]
