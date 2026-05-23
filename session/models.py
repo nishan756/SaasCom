@@ -160,7 +160,7 @@ class Report(models.Model):
             models.Index(fields = ["reported_at"])
         ]
 
-class BookMark(models.Model):
+class Bookmark(models.Model):
     id = models.UUIDField(primary_key = True , default = uuid.uuid4 , editable = False)
     user = models.ForeignKey(User , on_delete = models.CASCADE , related_name = "bookmarks")
     content_type = models.ForeignKey(ContentType , on_delete = models.CASCADE)
