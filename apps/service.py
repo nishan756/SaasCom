@@ -1,6 +1,6 @@
 from .repository import AppRepo , VoteRepo , AppImageRepo , ReviewRepo
 from django.utils.timezone import now
-from .exceptions import AlreadyReviewed , PermissionDenied , TooManyImage
+from .exceptions import AlreadyExists , PermissionDenied , TooManyImage
 from session.exceptions import InvalidForm , InvalidPassword
 
 class AppService:
@@ -116,7 +116,7 @@ class ReviewService:
         app = AppService().get_app(id = app_id)
         prev_review = self.repo.has_user_review(app = app , user = user)
         if prev_review:
-            raise AlreadyReviewed("You already reviewed on this app")
+            raise AlreadyExists("You already reviewed on this app")
         else:
             self.repo.add_review(app , user , review)
     
