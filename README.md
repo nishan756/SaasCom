@@ -131,7 +131,7 @@ SaasCom/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/SaasCom.git
+git clone https://github.com/nishan756/SaasCom.git
 cd your-repository
 ```
 
