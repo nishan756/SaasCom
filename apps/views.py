@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from .models import App
 # ====================SERVICES=============
 from .service import AppService , VoteService , AppImageService , ReviewService
-from session.service import FollowService , UserService , ReportService
+from session.service import FollowService , UserService , ReportService , BookmarkService
 
 # ==================EXCEPTIONS=============
 from .exceptions import AlreadyExists , ObjectNotFound, PermissionDenied , TooManyImage
@@ -28,6 +28,7 @@ review_service = ReviewService()
 user_service = UserService()
 follow_service = FollowService()
 report_service = ReportService()
+bookmark_service = BookmarkService()
 
 def is_safe_url(url , allowed_hosts):
     if url_has_allowed_host_and_scheme(url , allowed_hosts = allowed_hosts):
@@ -60,13 +61,16 @@ def app_detail(request , id):
     except ObjectNotFound as e:
         messages.info(request , str(e))
         return redirect("all-apps")
-    context["user_vote"] = vote_service.has_vote(context["app"], request.user)
-    context["form"] = ReviewForm()
-    context["user_vote"] = vote_service.has_vote(context["app"], request.user) if request.user.is_authenticated else None
-    context["is_following"] = follow_service.is_following(request.user, context["app"].founder) if request.user.is_authenticated else False
+    # Checking if the user is authenticated 
+    if request.user.is_authenticated:
+        context["user_vote"] = vote_service.has_vote(context["app"], request.user)
+        context["is_following"] = follow_service.is_following(follower = request.user , following = context["app"].founder)
+        context["user_report"] = report_service.has_user_report(content_type = "app" , object_id = id , reporter = request.user)
+        context["bookmark"] = bookmark_service.is_bookmarked(user = request.user , content_type = 'app' , object_id = id)
+    
     context["app_del_form"] = AppDeletionConfirmationForm()
     context["report_form"] = ReportForm()
-    context["user_report"] = report_service.has_user_report(content_type = "app" , object_id = id , reporter = request.user)
+    context["form"] = ReviewForm()
     return render(request , "app-detail.html" , context)
 
 @login_required(login_url = "login")
