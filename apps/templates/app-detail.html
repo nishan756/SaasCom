@@ -162,7 +162,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
 
-                            <form method="POST" action="{% url 'report' 'app' app.id %}">
+                            <form method="POST" action="{% url 'add-report' 'app' app.id %}">
                                 {% csrf_token %}
 
                                 <div class="modal-body">

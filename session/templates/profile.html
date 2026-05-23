@@ -118,7 +118,7 @@
                         </button>
                     </div>
 
-                    <form method="POST" action="{% url 'report' 'user' profile.id %}">
+                    <form method="POST" action="{% url 'add-report' 'user' profile.id %}">
 
                         {% csrf_token %}
 
