@@ -20,11 +20,13 @@
     </div>
 
     <div class="col-6 col-lg-2 mb-2 mb-lg-0">
-      <select class="form-select form-select-sm rounded-3" name="sort">
-        <option value="latest">Latest</option>
-        <option value="popular">Popular</option>
-        <option value="oldest">Oldest</option>
-      </select>
+      <form method="GET" action="{% url 'all-apps' %}">
+        <select class="form-select form-select-sm rounded-3" name="sort">
+          <option value="latest">Latest</option>
+          <option value="popular">Popular</option>
+          <option value="oldest">Oldest</option>
+        </select>
+      </form>
     </div>
 
     <div class="col-12 col-lg-4 mb-2 mb-lg-0">
@@ -54,7 +56,6 @@
     {% for app in apps %}
 
 
-      <!-- ✅ CHANGE: card এখন auto height responsive (no fixed height) -->
       <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
         <div class="app-card p-3 w-100 d-flex flex-column">
           <div class="d-flex justify-content-between align-items-center mb-2">
