@@ -3,13 +3,16 @@ from django.views.decorators.http import require_GET , require_POST
 from django.contrib.auth.decorators import login_required
 from apps.views import is_safe_url
 from django.contrib import messages
+from django.contrib.contenttypes.models import ContentType
+from .models import Job
 
 # =============Forms===============
 from .forms import JobForm , ApplicationForm
 from session.forms import ReportForm
 
 # ============Service==============
-from .service import JobService
+from .service import JobService , JobCatService
+from session.service import BookmarkService
 
 # ===========Exceptions============
 from session.exceptions import InvalidForm
@@ -17,15 +20,21 @@ from apps.exceptions import ObjectNotFound
 
 
 job_service = JobService()
+job_cat_service = JobCatService()
+bookmark_service = BookmarkService()
 
 
 
 @require_GET
 def all_jobs(request):
-    page_num = request.GET.get("page_num")
-    jobs = job_service.all_jobs(page_num = page_num)
+    # Query
+    query_set = request.GET.dict()
+    page_num = request.GET.get("page" , 1)
+    jobs = job_service.all_jobs(page_num = page_num , **query_set)
+    categories = job_cat_service.categories()
     context = {
-        "jobs":jobs
+        "jobs":jobs,
+        "categories":categories
     }
     return render(request , "jobs.html" , context)
 
@@ -34,12 +43,13 @@ def job_detail(request , id):
     job_form = JobForm()
     report_form = ReportForm()
     application_form = ApplicationForm()
+    bookmark = bookmark_service.is_bookmarked(user= request.user ,content_type = "job", object_id = id) if request.user.is_authenticated else None
     try:
         job = job_service.job_detail(id = id)
     except ObjectNotFound as e:
         messages.error(request , "The job you looking for doesn\'t found")
         return redirect("all-jobs")
-    return render(request , "job-detail.html" , context = {"job":job , "job_form":job_form , "report_form":report_form , "application_form":application_form})
+    return render(request , "job-detail.html" , context = {"job":job , "job_form":job_form , "report_form":report_form , "application_form":application_form , "bookmark":bookmark})
 
 @login_required(login_url = "login" , redirect_field_name = "post-job")
 def post_job(request):
@@ -52,6 +62,8 @@ def post_job(request):
     context["form"] = form
     if request.method == "POST" and request.user.is_company:
         form = JobForm(data = request.POST)
+        if not form.is_valid():
+            return messages.error(request , "Invalid Form data")
         try:
             job = job_service.post_job(company = request.user , form = form)
             messages.success(request , "Successfully posted your job")
