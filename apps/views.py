@@ -11,7 +11,7 @@ from .service import AppService , VoteService , AppImageService , ReviewService
 from session.service import FollowService , UserService , ReportService
 
 # ==================EXCEPTIONS=============
-from .exceptions import AlreadyReviewed , ObjectNotFound, PermissionDenied , TooManyImage
+from .exceptions import AlreadyExists , ObjectNotFound, PermissionDenied , TooManyImage
 from session.exceptions import InvalidForm , InvalidPassword
 
 # =================FORMS=================
@@ -147,7 +147,7 @@ def add_review(request , id):
         review = request.POST.get("review")
         review_service.add_review(app_id = id , user = request.user , review = review)
         messages.success(request , "Thanks for your review!")
-    except AlreadyReviewed as e:
+    except AlreadyExists as e:
         messages.info(request , str(e))
     return redirect("app-detail" , id = id)    
 
