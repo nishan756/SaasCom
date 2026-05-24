@@ -236,30 +236,33 @@
 
                         <div class="accordion-body">
 
-                            <form method="POST" enctype="multipart/form-data" class="application-form">
+                            {% if not application %}
+                                <form method="POST" enctype="multipart/form-data" class="application-form" action="{% url 'apply-job' job.id %}">
 
-                                {% csrf_token %}
+                                    {% csrf_token %}
 
-                                {% for field in application_form %}
-                                    <div class="mb-3">
+                                    {% for field in application_form %}
+                                        <div class="mb-3">
 
-                                        <label class="form-label">
-                                            {{field.label_tag}}
-                                        </label>
+                                            <label class="form-label">
+                                                {{field.label_tag}}
+                                            </label>
 
-                                        {{field}}
+                                            {{field}}
 
-                                    </div>
-                                {% endfor %}
+                                        </div>
+                                    {% endfor %}
 
-                                <button class="apply-btn w-100">
+                                    <button class="apply-btn w-100">
 
-                                    Submit Application
+                                        Submit Application
 
-                                </button>
+                                    </button>
 
-                            </form>
-
+                                </form>
+                            {% else %}
+                                <h2 class='text-center'>You already applied for this post</h2>
+                            {% endif %}
                         </div>
 
                     </div>
