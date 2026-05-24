@@ -1,4 +1,4 @@
-from .repository import JobRepo , JobCatRepo
+from .repository import JobRepo , JobCatRepo ,  ApplicationRepo
 from session.exceptions import InvalidForm
 from django.core.paginator import Paginator
 
@@ -27,3 +27,17 @@ class JobCatService:
 
     def categories(self):
         return self.repo.categories()
+
+class ApplicationService:
+    repo = ApplicationRepo()
+
+    def has_application(self , job_id , candidate):
+        return self.repo.has_application(job_id , candidate)
+
+    def apply(self , candidate , form , job_id):
+        job = JobService().job_detail(id = job_id)
+        application = form.save(commit = False)
+        application.job = job
+        application.candidate = candidate
+        return self.repo.apply(application)
+    

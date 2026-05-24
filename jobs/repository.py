@@ -1,4 +1,4 @@
-from .models import Job , JobCategory
+from .models import Job , JobCategory , Application
 from django.db.models import Count , Q
 from apps.exceptions import ObjectNotFound
 
@@ -31,4 +31,13 @@ class JobCatRepo:
         return JobCategory.objects.prefetch_related("jobs").annotate(
             active_jobs = Count("jobs" , filter = Q(jobs__is_active = True)),
         )
+
+
+class ApplicationRepo:
+
+    def has_application(self , job_id , candidate):
+        return Application.objects.filter(Q(job__id = job_id) , Q(candidate = candidate)).exists()
+
+    def apply(self , application):
+        return application.save()
     
