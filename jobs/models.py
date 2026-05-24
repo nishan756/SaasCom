@@ -115,7 +115,7 @@ class Job(models.Model):
     objects = JobManager()
 
     def __str__(self):
-        return f"{self.company} posted a new job "
+        return self.title
     
     class Meta:
         indexes = [
