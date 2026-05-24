@@ -53,6 +53,9 @@ class ReportRepo:
         except Report.DoesNotExist:
             raise ReportNotFound("Report not found")
     
+    def get_reports(self , content_type , object_id):
+        return Report.objects.filter(content_type = content_type , object_id = object_id)
+    
     def has_user_report(self ,content_type , object_id , reporter):
         return Report.objects.filter(content_type = content_type , reporter = reporter , object_id = object_id).exists()
     

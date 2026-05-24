@@ -6,6 +6,12 @@ from apps.models import App
 from jobs.models import Job
 from django.contrib.contenttypes.models import ContentType
 
+
+def get_content_type(content_type , valid_content_types):
+    if content_type not in valid_content_types:
+        raise InvalidContentType("Invalid content type")
+    return ContentType.objects.get_for_model(valid_content_types[content_type])
+
 class UserService:
     repo = UserRepo()
 
@@ -58,6 +64,10 @@ class ReportService:
 
     def get_report(self , id):
         return self.repo.get_report(id = id)
+    
+    def get_reports(self , content_type , object_id):
+        content_type = get_content_type(content_type , self.CONTENT_TYPES)
+        return self.repo.get_reports(content_type , object_id)
     
     def has_user_report(self ,content_type ,  object_id , reporter):
         model = ContentType.objects.get_for_model(model = self.CONTENT_TYPES[content_type])
