@@ -12,7 +12,7 @@ from session.forms import ReportForm
 
 # ============Service==============
 from .service import JobService , JobCatService , ApplicationService
-from session.service import BookmarkService
+from session.service import BookmarkService , ReportService
 
 # ===========Exceptions============
 from session.exceptions import InvalidForm
@@ -23,6 +23,7 @@ job_service = JobService()
 application_service = ApplicationService()
 job_cat_service = JobCatService()
 bookmark_service = BookmarkService()
+report_service = ReportService()
 
 
 
@@ -41,17 +42,23 @@ def all_jobs(request):
 
 @require_GET
 def job_detail(request , id):
-    job_form = JobForm()
-    report_form = ReportForm()
-    application_form = ApplicationForm()
-    bookmark = bookmark_service.is_bookmarked(user= request.user ,content_type = "job", object_id = id) if request.user.is_authenticated else None
-    application = application_service.has_application(job_id = id , candidate = request.user) if request.user.is_authenticated else None
     try:
         job = job_service.job_detail(id = id)
     except ObjectNotFound as e:
         messages.error(request , "The job you looking for doesn\'t found")
         return redirect("all-jobs")
-    return render(request , "job-detail.html" , context = {"job":job , "job_form":job_form , "report_form":report_form , "application_form":application_form , "bookmark":bookmark , "application":application})
+
+    context = {}
+    context["job"] = job
+    context["job_form"] = JobForm()
+    context["report_form"] = ReportForm()
+    context["application_form"] = ApplicationForm()
+    context["bookmark"] = bookmark_service.is_bookmarked(user= request.user ,content_type = "job", object_id = id) if request.user.is_authenticated else None
+    context["application"] = application_service.has_application(job_id = id , candidate = request.user) if request.user.is_authenticated else None
+    context["total_applicants"] = application_service.total_applicants(job)
+    context["reports"] = report_service.get_reports(content_type = "job" , object_id = id)
+    
+    return render(request , "job-detail.html" , context)
 
 @login_required(login_url = "login" , redirect_field_name = "post-job")
 def post_job(request):
