@@ -350,7 +350,11 @@
                                         </span>
 
                                         <p class="text-secondary mb-0 mt-3">
-                                            {{report.reason}}
+                                            {% if report.reason %}
+                                                {{report.reason}}
+                                            {% else %}
+                                                No explanation
+                                            {% endif %}
                                         </p>
 
                                     </div>
