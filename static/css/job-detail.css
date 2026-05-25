@@ -354,3 +354,21 @@
 .accordion-button:focus{
     box-shadow: none;
 }
+
+#reportCollapse .card-body{
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+#reportCollapse .card-body::-webkit-scrollbar{
+    width: 6px;
+}
+
+#reportCollapse .card-body::-webkit-scrollbar-track{
+    background: transparent;
+}
+
+#reportCollapse .card-body::-webkit-scrollbar-thumb{
+    background: #9ca3af;
+    border-radius: 20px;
+}
