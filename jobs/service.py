@@ -41,3 +41,5 @@ class ApplicationService:
         application.candidate = candidate
         return self.repo.apply(application)
     
+    def total_applicants(self , job):
+        return self.repo.total_applicants(job)

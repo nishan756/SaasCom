@@ -41,3 +41,6 @@ class ApplicationRepo:
     def apply(self , application):
         return application.save()
     
+    def total_applicants(self , job):
+        return Application.objects.filter(job = job).count()
+    
