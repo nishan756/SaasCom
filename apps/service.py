@@ -1,6 +1,6 @@
 from .repository import AppRepo , VoteRepo , AppImageRepo , ReviewRepo
 from django.utils.timezone import now
-from saas_com.core.exceptions import AlreadyExists , PermissionDenied , TooManyImage , InvalidForm , InvalidPassword
+from saas_com.core.exceptions import AlreadyExists , PermissionDenied , TooManyObject , InvalidForm , InvalidPassword
 
 class AppService:
     repo = AppRepo()

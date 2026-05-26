@@ -10,7 +10,7 @@ from session.service import FollowService , UserService , BookmarkService
 from report.service import ReportService
 
 # ==================EXCEPTIONS=============
-from saas_com.core.exceptions import AlreadyExists , ObjectNotFound, PermissionDenied , TooManyImage , InvalidForm , InvalidPassword
+from saas_com.core.exceptions import AlreadyExists , ObjectNotFound, PermissionDenied , TooManyObject , InvalidForm , InvalidPassword
 
 # =================FORMS=================
 from .forms import ReviewForm , AppForm , AppDeletionConfirmationForm
