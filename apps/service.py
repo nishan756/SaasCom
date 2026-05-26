@@ -58,7 +58,7 @@ class AppImageService:
     
     def add_images(self , app , images):
         if len(images) > 5:
-            raise TooManyImage("Maximum 5 image is allowed")
+            raise TooManyObject("Maximum 5 image is allowed")
         return self.repo.add_images(app , images)
     
     def del_image(self , id , founder):

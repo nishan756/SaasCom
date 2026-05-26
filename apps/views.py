@@ -80,7 +80,7 @@ def create_app(request):
             messages.error(request , str(e))
             return render(request , "create-app.html" , {"form":form})
         
-        except TooManyImage as e:
+        except TooManyObject as e:
             messages.info(request , str(e))
         
         except Exception as e:
