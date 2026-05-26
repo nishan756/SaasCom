@@ -2,6 +2,7 @@ from django.shortcuts import render , redirect
 from django.views.decorators.http import require_GET , require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.decorators import permission_required
 
 # =============Forms===============
 from .forms import JobForm , ApplicationForm
@@ -13,7 +14,7 @@ from session.service import BookmarkService
 from report.service import ReportService
 
 # ===========Exceptions============
-from saas_com.core.exceptions import InvalidForm , ObjectNotFound
+from saas_com.core.exceptions import InvalidForm , ObjectNotFound , PermissionDenied
 
 
 job_service = JobService()
@@ -99,3 +100,23 @@ def apply(request , id):
     except Exception as e:
         messages.error(request , "Something went wrong")
     return redirect("job-detail" , id = id)
+
+@login_required(login_url = "login")
+@require_GET
+def applications(request , id):
+    context = {}
+    try:
+        applications = application_service.applications(id , request.user)
+    except ObjectNotFound as e:
+        messages.error(request , str(e))
+        return redirect("profile" , request.user.username)
+    except PermissionDenied as e:
+        messages.warning(request , str(e))
+        return redirect("profile" , request.user.username)
+    except Exception as e:
+        messages.info(request , "Something went wrong")
+        print(e)
+        return redirect("profile" , request.user.username)
+    context['applications'] = applications
+    return render(request , 'applications.html' , context)
+
