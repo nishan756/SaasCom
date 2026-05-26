@@ -26,5 +26,6 @@ urlpatterns = [
     path('apps/', include("apps.urls")),
     path('session/', include("session.urls")),
     path('jobs/', include("jobs.urls")),
+    path('report', include("report.urls")),
     path("summernote/" , include("django_summernote.urls"))
 ] + debug_toolbar_urls()
