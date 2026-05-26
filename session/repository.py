@@ -7,9 +7,9 @@ class UserRepo:
     def total_user(self):
         return User.objects.filter(is_active = True).count()
 
-    def get_user(self , id):
+    def get_user(self , username):
         try:
-            return User.objects.get(id = id)
+            return User.objects.get(username = username)
         except User.DoesNotExist:
             raise ObjectNotFound("User not found")
     
@@ -18,7 +18,7 @@ class UserRepo:
 
     def view_profile(self , username):
         try:
-            return User.objects.prefetch_related("followers" , "following" , "apps").get(username = username)
+            return User.objects.prefetch_related("apps" , "jobs").get(username = username)
         except User.DoesNotExist:
             raise ObjectNotFound("User not found")
     
@@ -34,6 +34,12 @@ class FollowRepo:
 
     def is_following(self , follower , following):
         return Follow.objects.filter(follower = follower , following = following).exists()
+    
+    def total_follower(self , user):
+        return Follow.objects.filter(following = user).count()
+    
+    def total_following(self , user):
+        return Follow.objects.filter(follower = user).count()
 
     def follow(self , follower , following):
         new_follow = Follow(follower = follower , following = following)
