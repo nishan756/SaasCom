@@ -5,8 +5,8 @@ from django.urls import path
 urlpatterns = [
     path("login" , user_login , name = "login"),
     path("logout" , user_logout , name = "logout"),
-    path("follow/<str:id>/" , follow , name = "follow"),
-    path("unfollow/<str:id>/" , unfollow , name = "unfollow"),
+    path("follow/<str:username>/" , follow , name = "follow"),
+    path("unfollow/<str:username>/" , unfollow , name = "unfollow"),
     path("users/<str:user_type>/" , users , name = "users"),
     path("profile/<str:username>/" , view_profile , name = "profile"),
     path("add-bookmark/<str:content_type>/<str:object_id>" , add_bookmark , name = "add-bookmark"),
