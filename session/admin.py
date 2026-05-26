@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
-from .models import Follow , Report , Bookmark
+from .models import Follow , Bookmark
 
 User = get_user_model()
 
@@ -66,13 +66,6 @@ class FollowAdmin(admin.ModelAdmin):
     list_per_page = 100
     search_fields = ["follower__username" , "following__username"]
 
-
-@admin.register(Report)
-class ReportAdmin(admin.ModelAdmin):
-    list_display = ["reporter" ,"report_type" ,"content_type" , "reported_at"]
-    readonly_fields = ["reported_at"]
-    list_per_page = 100
-    search_fields = ["reporter__username" , "reason"]
 
 @admin.register(Bookmark)
 class BookmarkAdmin(admin.ModelAdmin):
