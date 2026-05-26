@@ -1,22 +1,19 @@
 from django.shortcuts import render , redirect
 from django.views.decorators.http import require_GET , require_POST
 from django.contrib.auth.decorators import login_required
-from apps.views import is_safe_url
 from django.contrib import messages
-from django.contrib.contenttypes.models import ContentType
-from .models import Job
 
 # =============Forms===============
 from .forms import JobForm , ApplicationForm
-from session.forms import ReportForm
+from report.forms import ReportForm
 
 # ============Service==============
 from .service import JobService , JobCatService , ApplicationService
-from session.service import BookmarkService , ReportService
+from session.service import BookmarkService
+from report.service import ReportService
 
 # ===========Exceptions============
-from session.exceptions import InvalidForm
-from apps.exceptions import ObjectNotFound
+from saas_com.core.exceptions import InvalidForm , ObjectNotFound
 
 
 job_service = JobService()
