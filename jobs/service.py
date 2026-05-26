@@ -1,5 +1,5 @@
 from .repository import JobRepo , JobCatRepo ,  ApplicationRepo
-from session.exceptions import InvalidForm
+from saas_com.core.exceptions import InvalidForm
 from django.core.paginator import Paginator
 
 class JobService:

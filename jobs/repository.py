@@ -1,6 +1,6 @@
 from .models import Job , JobCategory , Application
 from django.db.models import Count , Q
-from apps.exceptions import ObjectNotFound
+from saas_com.core.exceptions import ObjectNotFound
 
 class JobRepo:
 
