@@ -1,9 +1,7 @@
 from .models import App , AppImages , AppVote , Review
-from .exceptions import ObjectNotFound
+from saas_com.core.exceptions import ObjectNotFound
 from django.db.models import Prefetch
 from django.db.models import Count , Q
-from .models import User
-from django.utils.timezone import now
 
 class AppRepo:
     queryset = App.objects.all()
