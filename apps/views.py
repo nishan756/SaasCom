@@ -1,22 +1,20 @@
 from django.shortcuts import render , redirect
-from django.utils.http import url_has_allowed_host_and_scheme
 from django.contrib import messages
 from django.views.decorators.http import require_GET , require_POST
 from django.contrib.auth.decorators import login_required
+from saas_com.core.service import is_safe_url
 
-# ===================MODELS================
-from .models import App
 # ====================SERVICES=============
 from .service import AppService , VoteService , AppImageService , ReviewService
-from session.service import FollowService , UserService , ReportService , BookmarkService
+from session.service import FollowService , UserService , BookmarkService
+from report.service import ReportService
 
 # ==================EXCEPTIONS=============
-from .exceptions import AlreadyExists , ObjectNotFound, PermissionDenied , TooManyImage
-from session.exceptions import InvalidForm , InvalidPassword
+from saas_com.core.exceptions import AlreadyExists , ObjectNotFound, PermissionDenied , TooManyImage , InvalidForm , InvalidPassword
 
 # =================FORMS=================
 from .forms import ReviewForm , AppForm , AppDeletionConfirmationForm
-from session.forms import ReportForm
+from report.forms import ReportForm
 
 
 
@@ -29,11 +27,6 @@ user_service = UserService()
 follow_service = FollowService()
 report_service = ReportService()
 bookmark_service = BookmarkService()
-
-def is_safe_url(url , allowed_hosts):
-    if url_has_allowed_host_and_scheme(url , allowed_hosts = allowed_hosts):
-        return url
-    return "/"
 
 @require_GET
 def home(request):
