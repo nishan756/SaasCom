@@ -16,6 +16,15 @@ class JobRepo:
             jobs = jobs.filter(title__icontains = query_set["title"])
         return jobs
     
+    def get_company_jobs(self , company):
+        return Job.objects.filter(company = company)
+    
+    def get_job(self , id):
+        try:
+            return Job.objects.select_related("company").get(id = id)
+        except Job.DoesNotExist:
+            raise ObjectNotFound("Job post not found")
+    
     def job_detail(self , id):
         try:
             return Job.objects.select_related("company" , "category").get(id = id)
@@ -43,4 +52,7 @@ class ApplicationRepo:
     
     def total_applicants(self , job):
         return Application.objects.filter(job = job).count()
+    
+    def applications(self , job):
+        return Application.objects.select_related("candidate" , "job__company").filter(job = job)
     

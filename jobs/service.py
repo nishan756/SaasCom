@@ -1,5 +1,5 @@
 from .repository import JobRepo , JobCatRepo ,  ApplicationRepo
-from saas_com.core.exceptions import InvalidForm
+from saas_com.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 
 class JobService:
@@ -13,8 +13,14 @@ class JobService:
         jobs = paginator.get_page(page_num)
         return jobs
     
+    def get_company_jobs(self , company):
+        return self.repo.get_company_jobs(company)
+    
     def job_detail(self , id):
         return self.repo.job_detail(id = id)
+    
+    def get_job(self , id):
+        return self.repo.get_job(id = id)
     
     def post_job(self , company , form):
        job = form.save(commit = False)
@@ -43,3 +49,9 @@ class ApplicationService:
     
     def total_applicants(self , job):
         return self.repo.total_applicants(job)
+    
+    def applications(self , id , company):
+        job = JobRepo().get_job(id)
+        if job.company != company:
+            raise PermissionDenied("You can\'t see applicants for this job")
+        return self.repo.applications(job = job)
