@@ -10,8 +10,11 @@ class UserService:
     def total_user(self):
         return self.repo.total_user()
 
-    def get_user(self , id):
-        return self.repo.get_user(id)
+    def get_user(self , username):
+        return self.repo.get_user(username)
+    
+    def view_profile(self , username):
+        return self.repo.view_profile(username)
     
     def get_users(self , user_type):
         return self.repo.get_users(user_type = user_type)
@@ -29,6 +32,12 @@ class FollowService:
 
     def is_following(self , follower , following):
         return self.repo.is_following(follower, following)
+    
+    def total_follower(self , user):
+        return self.repo.total_follower(user = user)
+    
+    def total_following(self , user):
+        return self.repo.total_following(user = user)
 
     def follow(self , follower , following):
         if follower == following:
