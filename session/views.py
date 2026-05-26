@@ -12,11 +12,15 @@ from report.forms import ReportForm
 
 # =================SERVICES=============
 from .service import UserService , FollowService , BookmarkService
+from report.service import ReportService
+from jobs.service import JobService
 from apps.service import ReviewService
 user_service = UserService()
 follow_service = FollowService()
 review_service = ReviewService()
 bookmark_service = BookmarkService()
+job_service = JobService()
+report_service = ReportService()
 
 
 def user_login(request):
@@ -49,9 +53,9 @@ def user_logout(request):
 
 @login_required(login_url = "login")
 @require_POST
-def follow(request , id):
+def follow(request , username):
     HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER") , allowed_hosts=request.get_host())
-    following_user = user_service.repo.get_user(id)
+    following_user = user_service.repo.get_user(username)
     follower = request.user
     try:
         follow_service.follow(follower, following_user)
@@ -64,9 +68,9 @@ def follow(request , id):
 
 @login_required(login_url = "login")
 @require_POST
-def unfollow(request , id):
+def unfollow(request , username):
     HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER") , allowed_hosts=request.get_host())
-    following_user = user_service.repo.get_user(id)
+    following_user = user_service.repo.get_user(username)
     follower = request.user
     try:
         follow_service.unfollow(follower, following_user)
@@ -80,9 +84,18 @@ def unfollow(request , id):
 
 @require_GET
 def view_profile(request , username):
-    profile = user_service.repo.view_profile(username)
-    form = ReportForm()
-    return render(request , "profile.html" , {"profile":profile , "form":form})
+    context = {}
+    context["profile"] = user_service.view_profile(username)
+    context["total_follower"] = follow_service.total_follower(user = context["profile"])
+    context["total_following"] = follow_service.total_following(user = context["profile"])
+    context["report_form"] = ReportForm()
+
+    if request.user.is_authenticated:
+        context["is_following"] = follow_service.is_following(follower = request.user , following = context["profile"])
+    if context["profile"].is_company:
+        context["jobs"] = job_service.get_company_jobs(context["profile"])
+    
+    return render(request , "profile.html" , context)
 
 @require_GET
 def users(request , user_type):
