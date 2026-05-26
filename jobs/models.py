@@ -78,7 +78,7 @@ class JobManager(models.Manager):
 
 class Job(models.Model):
     id = models.UUIDField(primary_key = True , default = uuid.uuid4 , editable = False)
-    company = models.ForeignKey(User , on_delete = models.CASCADE , limit_choices_to = {"user_type":"company"})
+    company = models.ForeignKey(User , on_delete = models.CASCADE , limit_choices_to = {"user_type":"company"} , related_name = "jobs")
     title = models.CharField(max_length = 100)
     category = models.ForeignKey(JobCategory , on_delete = models.SET_NULL , null = True , blank = True , related_name = "jobs")
     short_description = models.TextField(blank = True , null = True)
