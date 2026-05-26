@@ -1,4 +1,4 @@
-from .views import post_job , all_jobs , job_detail , apply
+from .views import post_job , all_jobs , job_detail , apply , applications
 
 from django.urls import path
 
@@ -8,5 +8,7 @@ urlpatterns = [
     path("job-detail/<str:id>/" , job_detail , name = "job-detail"),
 
     # Application
-    path("apply/<str:id>/" , apply , name = "apply-job")
+    path("apply/<str:id>/" , apply , name = "apply-job"),
+    path("applications/<str:id>/" , applications , name = "applications"),
+    
 ]
