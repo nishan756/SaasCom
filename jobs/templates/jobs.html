@@ -172,23 +172,23 @@
         <nav>
             <ul class="pagination justify-content-center">
 
-                {% if page_obj.has_previous %}
+                {% if jobs.has_previous %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Prev</a>
+                    <a class="page-link" href="?page={{ jobs.previous_page_number }}">Prev</a>
                 </li>
                 {% endif %}
 
 
-                {% if page_obj.has_next %}
+                {% if jobs.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    <a class="page-link" href="?page={{ jobs.next_page_number }}">Next</a>
                 </li>
                 {% endif %}
 
             </ul>
         </nav>
         {% if not jobs %}
-        <h2 class="h2 text-center">No blogs found</h2>
+            <h2 class="h2 text-center">No blogs found</h2>
         {% endif %}
 
     </div>
