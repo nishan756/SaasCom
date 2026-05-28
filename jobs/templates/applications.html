@@ -27,6 +27,8 @@
 
             <form method="GET" class="filter-form">
 
+                
+
                 <div class="row g-3">
 
                     <div class="col-md-4">
@@ -45,15 +47,15 @@
                                 Pending
                             </option>
 
-                            <option value="reviewed"
-                            {% if request.GET.status == "approved" %}
+                            <option value="rejected"
+                            {% if request.GET.status == "rejected" %}
                                 selected
                             {% endif %}
                             >
-                                Reviewed
+                                Rejected
                             </option>
 
-                            <option value="rejected"
+                            <option value="accepted"
                             {% if request.GET.status == "accepted" %}
                                 selected
                             {% endif %}
@@ -62,7 +64,7 @@
                             </option>
 
                             <option value="shortlisted"
-                            {% if request.GET.status == "rejected" %}
+                            {% if request.GET.status == "shortlisted" %}
                                 selected
                             {% endif %}
                             >
@@ -71,6 +73,10 @@
 
                         </select>
 
+                    </div>
+
+                    <div class='col-md-2'>
+                        <input type="text" name="username" class="form-control" placeholder="Enter Username" {% if request.GET.username%}value="{{request.GET.username}}"{% endif %}></input>
                     </div>
 
                     <div class="col-md-2">
@@ -188,7 +194,7 @@
                                     <td>
 
                                         <a
-                                            href=""
+                                            href="{% url 'application-detail' application.id %}"
                                             class="btn btn-sm btn-outline-dark"
                                         >
                                             Details
@@ -225,6 +231,24 @@
             {% endif %}
 
         </div>
+        <nav>
+            <ul class="pagination justify-content-center">
+
+                {% if applications.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ applications.previous_page_number }}">Prev</a>
+                    </li>
+                {% endif %}
+
+
+                {% if applications.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ applications.next_page_number }}">Next</a>
+                    </li>
+                {% endif %}
+
+            </ul>
+        </nav>
 
     </div>
 
