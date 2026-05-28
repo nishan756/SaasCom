@@ -39,6 +39,9 @@ class ApplicationService:
 
     def has_application(self , job_id , candidate):
         return self.repo.has_application(job_id , candidate)
+    
+    def get_application(self , id , company):
+        return self.repo.get_application(id , company)
 
     def apply(self , candidate , form , job_id):
         job = JobService().job_detail(id = job_id)
@@ -50,8 +53,23 @@ class ApplicationService:
     def total_applicants(self , job):
         return self.repo.total_applicants(job)
     
-    def applications(self , id , company):
+    def applications(self , id , company , page_num , **query_set):
         job = JobRepo().get_job(id)
         if job.company != company:
             raise PermissionDenied("You can\'t see applicants for this job")
-        return self.repo.applications(job = job)
+        # Quering
+        supported_q_fields = ["username" ,  "status"]
+        query_set = {key:value for key , value in query_set.items() if key in supported_q_fields}
+        
+        # Pagination
+        jobs = self.repo.applications(job = job , **query_set)
+        paginator = Paginator(jobs , 20)
+        jobs = paginator.get_page(page_num)
+        return jobs
+    
+    def update_application_status(self , id , company , status , hr_message = None):
+        application = self.get_application(id , company)
+        if application.status != status:
+            return self.repo.update_application_status(application , status , hr_message)
+        
+            

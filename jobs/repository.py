@@ -46,6 +46,12 @@ class ApplicationRepo:
 
     def has_application(self , job_id , candidate):
         return Application.objects.filter(Q(job__id = job_id) , Q(candidate = candidate)).exists()
+    
+    def get_application(self , id , company):
+        try:
+            return Application.objects.select_related("candidate").get(id = id , job__company = company)
+        except Application.DoesNotExist:
+            raise ObjectNotFound("Application not found")
 
     def apply(self , application):
         return application.save()
@@ -53,6 +59,18 @@ class ApplicationRepo:
     def total_applicants(self , job):
         return Application.objects.filter(job = job).count()
     
-    def applications(self , job):
-        return Application.objects.select_related("candidate" , "job__company").filter(job = job)
+    def applications(self , job , **query_set):
+        applications = Application.objects.select_related("candidate").filter(job = job)
+        if query_set.get("username"):
+            applications = applications.filter(candidate__username = query_set["username"])
+        if query_set.get("status"):
+            applications = applications.filter(status = query_set["status"])
+        return applications
+    
+    def update_application_status(self , application , status , hr_message = None):
+        application.status = status
+        if hr_message:application.hr_messages = hr_message
+        return application.save() 
+
+         
     
