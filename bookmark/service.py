@@ -27,9 +27,9 @@ class BookmarkService:
         return self.repo.get_bookamark(user , id)
     
     def add_bookmark(self , user , content_type , object_id):
-        content_type = get_content_type(content_type , self.CONTENT_TYPES)
         if self.is_bookmarked(user , content_type , object_id):
             raise AlreadyExists("Already bookmarked")
+        content_type = get_content_type(content_type , self.CONTENT_TYPES)
         return self.repo.add_bookmark(user , content_type , object_id)
     
     def delete_bookmark(self , user , id):
