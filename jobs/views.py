@@ -9,7 +9,7 @@ from report.forms import ReportForm
 
 # ============Service==============
 from .service import JobService , JobCatService , ApplicationService
-from session.service import BookmarkService
+from bookmark.service import BookmarkService
 from report.service import ReportService
 
 # ===========Exceptions============
