@@ -292,19 +292,19 @@
             <!-- Votes -->
             <div class="vote-box">
 
-                <form method="post" action="{% url 'vote' app.id %}">
+                <form method="post" action="{% url 'vote' 'app' app.id %}">
                     {% csrf_token %}
                     <input type="hidden" name="vote_type" value="upvote">
                     <button class="vote-btn upvote" type="submit">
-                        ⬆ {% if user_vote and user_vote ==  "upvote" %} Remove {% endif %}
+                        ⬆ {% if user_vote and user_vote.vote_type ==  "upvote" %} Remove {% endif %}
                     </button>
                 </form>
 
-                <form method="post" action="{% url 'vote' app.id %}">
+                <form method="post" action="{% url 'vote' 'app' app.id %}">
                     {% csrf_token %}
                     <input type="hidden" name="vote_type" value="downvote">
                     <button class="vote-btn downvote" type="submit">
-                        ⬇ {% if user_vote and user_vote ==  "downvote" %} Remove {% endif %}
+                        ⬇ {% if user_vote and user_vote.vote_type ==  "downvote" %} Remove {% endif %}
                     </button>
                 </form>
 
