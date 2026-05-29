@@ -27,5 +27,6 @@ urlpatterns = [
     path('session/', include("session.urls")),
     path('jobs/', include("jobs.urls")),
     path('report', include("report.urls")),
+    path('vote', include("vote.urls")),
     path("summernote/" , include("django_summernote.urls"))
 ] + debug_toolbar_urls()
