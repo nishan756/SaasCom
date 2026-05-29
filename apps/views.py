@@ -6,7 +6,8 @@ from saas_com.core.service import is_safe_url
 
 # ====================SERVICES=============
 from .service import AppService , AppImageService , ReviewService
-from session.service import FollowService , UserService , BookmarkService
+from session.service import FollowService , UserService
+from bookmark.service import BookmarkService
 from report.service import ReportService
 from vote.service import VoteService
 
