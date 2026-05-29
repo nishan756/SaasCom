@@ -3,7 +3,7 @@ from django.contrib.auth import login , logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.http import require_GET , require_POST
-from saas_com.core.exceptions import ObjectNotFound ,  AlreadyExists , InvalidForm , FollowException , InvalidContentType
+from saas_com.core.exceptions import ObjectNotFound , InvalidForm , FollowException
 from saas_com.core.service import is_safe_url
 
 # =================FORMS=================
@@ -11,14 +11,13 @@ from .forms import LoginForm
 from report.forms import ReportForm
 
 # =================SERVICES=============
-from .service import UserService , FollowService , BookmarkService
+from .service import UserService , FollowService
 from report.service import ReportService
 from jobs.service import JobService
 from apps.service import ReviewService
 user_service = UserService()
 follow_service = FollowService()
 review_service = ReviewService()
-bookmark_service = BookmarkService()
 job_service = JobService()
 report_service = ReportService()
 
@@ -103,31 +102,3 @@ def users(request , user_type):
     context["user_type"] = user_type.capitalize()
     context["users"] = user_service.get_users(user_type = user_type)
     return render(request , "users.html" , context)
-
-@login_required(login_url = "login")
-@require_POST
-def add_bookmark(request , content_type , object_id):
-    HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER") , allowed_hosts = request.get_host())
-    try:
-        bookmark_service.add_bookmark(user = request.user , content_type = content_type , object_id = object_id)
-        messages.success(request , f"This {content_type} is added to your bookmark")
-
-    except InvalidContentType as e:
-        messages.error(request , str(e))
-    
-    except AlreadyExists as e:
-        messages.info(request , str(e))
-    return redirect(HTTP_REFERER)
-
-@login_required(login_url = "login")
-@require_POST
-def del_bookmark(request  , id):
-    HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER") , allowed_hosts = request.get_host())
-    try:
-        bookmark_service.delete_bookmark(user = request.user  , id = id)
-        messages.success(request , f"Bookmarked removed")
-
-    except ObjectNotFound as e:
-        messages.error(request , str(e))
-    
-    return redirect(HTTP_REFERER)
