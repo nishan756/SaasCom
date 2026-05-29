@@ -14,8 +14,9 @@ bookmark_service = BookmarkService()
 
 @login_required(login_url = "login")
 @require_POST
-def add_bookmark(request , content_type , object_id):
+def add_bookmark(request , object_id):
     HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER") , allowed_hosts = request.get_host())
+    content_type = request.POST.get("content_type")
     try:
         bookmark_service.add_bookmark(user = request.user , content_type = content_type , object_id = object_id)
         messages.success(request , f"This {content_type} is added to your bookmark")
