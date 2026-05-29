@@ -5,9 +5,10 @@ from django.contrib.auth.decorators import login_required
 from saas_com.core.service import is_safe_url
 
 # ====================SERVICES=============
-from .service import AppService , VoteService , AppImageService , ReviewService
+from .service import AppService , AppImageService , ReviewService
 from session.service import FollowService , UserService , BookmarkService
 from report.service import ReportService
+from vote.service import VoteService
 
 # ==================EXCEPTIONS=============
 from saas_com.core.exceptions import AlreadyExists , ObjectNotFound, PermissionDenied , TooManyObject , InvalidForm , InvalidPassword
@@ -51,12 +52,17 @@ def app_detail(request , id):
     context = {}
     try:
         context["app"] = app_service.get_app_detail(id = id)
+
     except ObjectNotFound as e:
         messages.info(request , str(e))
         return redirect("all-apps")
+    
+    except Exception as e:
+        messages.error(request , "Somethign went wrong")
+        return redirect("home")
     # Checking if the user is authenticated 
     if request.user.is_authenticated:
-        context["user_vote"] = vote_service.has_vote(context["app"], request.user)
+        context["user_vote"] = vote_service.get_vote(user = request.user , content_type = 'app' , object_id = id)
         context["is_following"] = follow_service.is_following(follower = request.user , following = context["app"].founder)
         context["user_report"] = report_service.has_user_report(content_type = "app" , object_id = id , reporter = request.user)
         context["bookmark"] = bookmark_service.is_bookmarked(user = request.user , content_type = 'app' , object_id = id)
@@ -126,16 +132,6 @@ def del_image(request , id):
         messages.info(request , "Something went wrong while deleting this image. Try again later")
     return redirect(HTTP_REFERER)
 
-@require_POST
-@login_required(login_url = "login")
-def vote(request , id):
-    vote_type = request.POST.get("vote_type")
-    try:
-        msg = vote_service.vote(app_id = id , user = request.user , vote_type = vote_type)
-        messages.success(request , msg)
-    except ObjectNotFound as e:
-        messages.error(request , message = e)
-    return redirect("app-detail" , id)
 
 @require_POST
 @login_required(login_url = "login")

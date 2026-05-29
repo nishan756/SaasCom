@@ -78,26 +78,6 @@ class AppImages(models.Model):
     class Meta:
         ordering = ["-added_at"]
 
-class AppVote(models.Model):
-    id = models.UUIDField(primary_key = True , default = uuid.uuid4 , editable = False)
-    user = models.ForeignKey(User , on_delete = models.CASCADE , related_name = "app_votes")
-    app = models.ForeignKey(App , on_delete = models.CASCADE , related_name = "app_votes")
-
-    class VoteChoice(models.TextChoices):
-        UPVOTE = "upvote" , "Up Vote"
-        DOWNVOTE = "downvote" , "Down Vote"
-    
-    vote_type = models.CharField(max_length = 12 , choices = VoteChoice.choices)
-    added_at = models.DateTimeField(auto_now_add = True)
-
-    class Meta:
-        unique_together = ["user" , "app"]
-        indexes = [
-            models.Index(fields = ["app"]),
-            models.Index(fields = ["user"]),
-            models.Index(fields = ["app" , "vote_type"]),
-        ]
-
 
 class Review(models.Model):
     id = models.UUIDField(primary_key = True , default = uuid.uuid4 , editable = False)
@@ -114,23 +94,4 @@ class Review(models.Model):
         unique_together = ["user" , "app"]
         indexes = [
             models.Index(fields = ["app" , "user"]),
-        ]
-
-class ReviewVote(models.Model):
-    id = models.UUIDField(primary_key = True , default = uuid.uuid4 , editable = False)
-    user = models.ForeignKey(User , on_delete = models.CASCADE , related_name = "review_votes")
-    review = models.ForeignKey(Review , on_delete = models.CASCADE , related_name = "review_votes")
-
-    class VoteChoice(models.TextChoices):
-        UPVOTE = "upvote" , "Up Vote"
-        DOWNVOTE = "downvote" , "Down Vote"
-    
-    vote_type = models.CharField(max_length = 12 , choices = VoteChoice.choices)
-    added_at = models.DateTimeField(auto_now_add = True)
-
-    class Meta:
-        unique_together = ["user" , "review"]
-        indexes = [
-            models.Index(fields = ["review"]),
-            models.Index(fields = ["review" , "vote_type"]),
         ]

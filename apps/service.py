@@ -1,5 +1,4 @@
-from .repository import AppRepo , VoteRepo , AppImageRepo , ReviewRepo
-from django.utils.timezone import now
+from .repository import AppRepo , AppImageRepo , ReviewRepo
 from saas_com.core.exceptions import AlreadyExists , PermissionDenied , TooManyObject , InvalidForm , InvalidPassword
 
 class AppService:
@@ -65,38 +64,7 @@ class AppImageService:
         img_obj = self.get_image(id = id)
         if img_obj.app.founder == founder:
             return self.repo.del_image(img_obj)
-        raise PermissionDenied("You can\'t delete this image")
-
-class VoteService:
-    repo = VoteRepo()
-
-    def get_vote(self , app , user):
-        return self.repo.get_vote(app , user)
-    
-    def has_vote(self , app , user):
-        user_vote = self.repo.has_vote(app , user)
-        if user_vote:
-            if user_vote.vote_type == "upvote":
-                return "upvote"
-            else:
-                return "downvote"
-        return None
-
-    def vote(self , app_id , user , vote_type):
-        app = AppService().get_app(id = app_id)
-        prev_vote = self.get_vote(app = app , user = user)
-        if prev_vote:
-            if prev_vote.vote_type != vote_type:
-                prev_vote.vote_type = vote_type
-                prev_vote.added_at = now()
-                prev_vote.save()
-                return f'Your vote updated to {vote_type}'
-            else:
-                prev_vote.delete()
-                return f'Vote removed'
-        else:
-            self.repo.vote(app , user , vote_type)
-            return f"Thanks for your {vote_type}"     
+        raise PermissionDenied("You can\'t delete this image")     
 
 
 class ReviewService:

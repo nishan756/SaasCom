@@ -1,4 +1,5 @@
-from .models import App , AppImages , AppVote , Review
+from .models import App , AppImages , Review
+from vote.models import Vote
 from saas_com.core.exceptions import ObjectNotFound
 from django.db.models import Prefetch
 from django.db.models import Count , Q
@@ -14,13 +15,13 @@ class AppRepo:
             "category",
             Prefetch(
                 lookup = "app_votes",
-                queryset = AppVote.objects.all()
+                queryset = Vote.objects.all()
             )
-        ).annotate(
-            #Total upvotes
-            total_upvote = Count("app_votes" , filter = Q(app_votes__vote_type = "upvote")),
-            #Total Downvotes
-            total_downvote = Count("app_votes" , filter = Q(app_votes__vote_type = "downvote"))
+        # ).annotate(
+        #     #Total upvotes
+        #     total_upvote = Count("app_votes" , filter = Q(app_votes__vote_type = "upvote")),
+        #     #Total Downvotes
+        #     total_downvote = Count("app_votes" , filter = Q(app_votes__vote_type = "downvote"))
         )
         return apps if not order_by else apps.order_by(order_by)
     
@@ -75,26 +76,6 @@ class AppImageRepo:
     def del_image(self , img_obj):
         img_obj.delete()
     
-    
-    
-
-class VoteRepo:
-    queryset = AppVote.objects.all()
-
-
-    def get_vote(self , app , user):
-        try:
-            return self.queryset.get(app = app , user = user)
-        except  AppVote.DoesNotExist:
-            return None
-    
-    def has_vote(self , app , user):
-        return AppVote.objects.filter(app = app , user = user).only("vote_type").first()
-
-    def vote(self , app , user , vote_type):
-        new_vote = AppVote(app = app , user = user , vote_type = vote_type)
-        new_vote.save()
-        return
 
 
 class ReviewRepo:

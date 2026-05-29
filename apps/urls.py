@@ -1,4 +1,4 @@
-from .views import create_app, del_app ,  all_apps , app_detail , vote , add_review , del_review , create_app , del_image
+from .views import create_app, del_app ,  all_apps , app_detail , add_review , del_review , create_app , del_image
 from django.urls import path
 
 urlpatterns = [
@@ -10,7 +10,6 @@ urlpatterns = [
     # Image related url
     path("del-image/<str:id>" , del_image , name = "del-image"),
     path("<str:id>/" , app_detail , name = "app-detail"),
-    path("<str:id>/vote/" , vote , name = "vote"),
     path("<str:id>/review/add" , add_review , name = "add-review"),
     path("<str:id>/review/delete" , del_review , name = "del-review"),
 ]
