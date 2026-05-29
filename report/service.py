@@ -31,9 +31,6 @@ class ReportService:
         if self.has_user_report(content_type , object_id = id , reporter = reporter):
             raise AlreadyExists("You already report on this {}".format(content_type))
         
-        if content_type not in self.CONTENT_TYPES:
-            raise InvalidContentType("Invalid content type.")
-        
         content_type = get_content_type(content_type , self.CONTENT_TYPES)
         if form.is_valid():
             reason = form.cleaned_data.get("reason" , None)
