@@ -4,6 +4,8 @@ from django_summernote.fields import SummernoteTextField
 from django.contrib.auth import get_user_model
 import uuid
 from cloudinary.models import CloudinaryField
+from django.contrib.contenttypes.fields import GenericRelation
+from vote.models import Vote
 
 User = get_user_model()
 
@@ -48,6 +50,7 @@ class App(models.Model):
         REJECTED = "rejected","Rejected"
     
     status = models.CharField(choices = StatusChoice.choices , max_length = 10 , default = StatusChoice.PENDING)
+    votes = GenericRelation(Vote , related_query_name = "apps")
     added_at = models.DateTimeField(auto_now_add = True)
 
     def __str__(self):

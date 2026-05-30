@@ -3,6 +3,8 @@ import uuid
 from cloudinary.models import CloudinaryField
 from django_summernote.fields import SummernoteTextField
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.fields import GenericRelation
+from vote.models import Vote
 
 User = get_user_model()
 
@@ -28,6 +30,8 @@ class Discussion(models.Model):
     tags = models.ManyToManyField(Tag , blank = True , related_name = "discussions")
     short_description = models.TextField(max_length = 200)
     detail = SummernoteTextField()
+
+    votes = GenericRelation(Vote , related_query_name = "discussions")
 
     posted_at = models.DateTimeField(auto_now_add = True)
 
