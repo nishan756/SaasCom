@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Post a discussion
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+
+                    <h3 class="mb-4">Create New Discussion</h3>
+
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- Title -->
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                                <small class="text-danger">{{ form.title.errors }}</small>
+                            {% endif %}
+                        </div>
+
+                        <!-- Banner -->
+                        <div class="mb-3">
+                            <label class="form-label">Banner Image</label>
+                            {{ form.banner }}
+                            {% if form.banner.errors %}
+                                <small class="text-danger">{{ form.banner.errors }}</small>
+                            {% endif %}
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="mb-3">
+                            <label class="form-label">Tags (use # separated)</label>
+                            {{ form.tags }}
+                            <small class="text-muted">Example: #django #python #backend</small>
+                        </div>
+
+                        <!-- Short Description -->
+                        <div class="mb-3">
+                            <label class="form-label">Short Discussion</label>
+                            {{ form.short_description }}
+                            {% if form.short_description.errors %}
+                                <small class="text-danger">{{ form.short_description.errors }}</small>
+                            {% endif %}
+                        </div>
+
+                        <!-- Detail -->
+                        <div class="mb-3">
+                            <label class="form-label">Detail</label>
+                            {{ form.detail }}
+                            {% if form.detail.errors %}
+                                <small class="text-danger">{{ form.detail.errors }}</small>
+                            {% endif %}
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                Publish Discussion
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}
