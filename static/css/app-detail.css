@@ -69,27 +69,6 @@
 }
 
 
-/* VOTE */
-.vote-box {
-    display: flex;
-    gap: 10px;
-}
-
-.vote-btn {
-    padding: 6px 14px;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-    background: #fff;
-    cursor: pointer;
-}
-
-.vote-btn.upvote {
-    color: #198754;
-}
-
-.vote-btn.downvote {
-    color: #dc3545;
-}
 
 
 /* =========================
