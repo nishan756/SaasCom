@@ -24,7 +24,7 @@ class Tag(models.Model):
 
 class Discussion(models.Model):
     id = models.UUIDField(primary_key = True , default = uuid.uuid4 , editable = False)
-    author = models.ForeignKey(User , on_delete = models.CASCADE , limit_choices_to = {"is_active":True} , related_name = "discussions")
+    author = models.ForeignKey(User , on_delete = models.CASCADE , related_name = "discussions")
     title = models.CharField(max_length = 120)
     banner = CloudinaryField(blank = True , null = True)
     tags = models.ManyToManyField(Tag , blank = True , related_name = "discussions")
