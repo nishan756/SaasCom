@@ -1,27 +1,21 @@
 from .models import App , AppImages , Review
 from vote.models import Vote
 from saas_com.core.exceptions import ObjectNotFound
-from django.db.models import Prefetch
 from django.db.models import Count , Q
 
 class AppRepo:
-    queryset = App.objects.all()
     
     def total_apps(self):
-        return self.queryset.filter(status = "approved").count()
+        return App.objects.filter(status = "approved").count()
     
     def all_apps(self , order_by = None):
-        apps = self.queryset.prefetch_related(
-            "category",
-            Prefetch(
-                lookup = "app_votes",
-                queryset = Vote.objects.all()
-            )
-        # ).annotate(
-        #     #Total upvotes
-        #     total_upvote = Count("app_votes" , filter = Q(app_votes__vote_type = "upvote")),
-        #     #Total Downvotes
-        #     total_downvote = Count("app_votes" , filter = Q(app_votes__vote_type = "downvote"))
+        apps = App.objects.prefetch_related(
+            "category","votes"
+        ).annotate(
+            #Total upvotes
+            total_upvote = Count("votes" , filter = Q(votes__vote_type = "upvote")),
+            #Total Downvotes
+            total_downvote = Count("votes" , filter = Q(votes__vote_type = "downvote"))
         )
         return apps if not order_by else apps.order_by(order_by)
     
@@ -53,11 +47,10 @@ class AppRepo:
         return app.delete()
 
 class AppImageRepo:
-    queryset = AppImages.objects.all()
 
     def get_images(self , id):
         app = AppRepo().get_app(id = id)
-        return self.queryset.filter(app = app)
+        return AppImages.objects.filter(app = app)
     
     def get_image(self , id):
         try:
@@ -79,7 +72,6 @@ class AppImageRepo:
 
 
 class ReviewRepo:
-    queryset = Review.objects.all()
 
     def get_review(self , id):
         try:
@@ -87,10 +79,10 @@ class ReviewRepo:
         except Review.DoesNotExist:
             raise ObjectNotFound("Review not found")
     def get_reviews(self , app):
-        return self.queryset.filter(app = app).select_related("user")
+        return Review.objects.filter(app = app).select_related("user")
 
     def has_user_review(self ,  app , user):
-        return self.queryset.filter(app = app , user = user).exists()
+        return Review.objects.filter(app = app , user = user).exists()
 
     def add_review(self , app , user , review):
         Review.objects.create(
