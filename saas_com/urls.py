@@ -29,5 +29,6 @@ urlpatterns = [
     path('report', include("report.urls")),
     path('vote', include("vote.urls")),
     path('bookmark', include("bookmark.urls")),
+    path('discussion', include("discussion.urls")),
     path("summernote/" , include("django_summernote.urls"))
 ] + debug_toolbar_urls()
