@@ -117,6 +117,9 @@ class Follow(models.Model):
         related_name = "followers",
     )
 
+    def __str__(self):
+        return f"{self.follower}->{self.following}"
+
     class Meta:
         unique_together = ["follower" , "following"]
         indexes = [
