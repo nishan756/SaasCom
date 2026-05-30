@@ -1,5 +1,6 @@
 from .repository import VoteRepo
 from apps.models import App
+from discussion.models import Discussion
 from .models import Vote
 from saas_com.core.service import get_content_type , ContentType
 from django.utils.timezone import now
@@ -8,6 +9,7 @@ class VoteService:
     repo = VoteRepo()
     CONTENT_TYPES = {
         "app":App,
+        "discussion":Discussion,
     }
 
     def get_vote(self , user , content_type , object_id):
