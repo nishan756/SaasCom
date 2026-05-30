@@ -27,9 +27,22 @@ class DiscussionRepo:
 
         return discussions
     
+    def get_discussion(self , author , id):
+        try:
+            return Discussion.objects.get(author = author , id = id)
+        except Discussion.DoesNotExist:
+            raise ObjectNotFound("Discussion not found")
+    
     def discussion_detail(self , id):
         try:
             return Discussion.objects.select_related("author").prefetch_related("tags").get(id = id)
         except Discussion.DoesNotExist:
             raise ObjectNotFound("Discussion not found")
+        
+    def post_discussion(self ,title , author , tags , short_description , detail , banner):
+        discussion = Discussion.objects.create(title = title , author = author , banner = banner , short_description = short_description , detail = detail)
+        discussion.tags.set(tags)
+        return discussion
     
+    def delete_discussion(self , discussion):
+        return discussion.delete()

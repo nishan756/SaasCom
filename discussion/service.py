@@ -1,6 +1,8 @@
 from .repository import DiscussionRepo
 from django.core.paginator import Paginator
 from django.core.exceptions import BadRequest
+from saas_com.core.exceptions import InvalidForm
+from .models import Tag
 
 class DiscussionService:
     repo = DiscussionRepo()
@@ -27,3 +29,20 @@ class DiscussionService:
     def discussion_detail(self , id):
         return self.repo.discussion_detail(id = id)
     
+    def get_discussion(self , author , id):
+        return self.repo.get_discussion(author , id = id)
+    
+    def post_discussion(self , author , form):
+        if form.is_valid():
+            author = author
+            tags = form.cleaned_data.get("tags")
+            title = form.cleaned_data.get("title")
+            short_description = form.cleaned_data.get("short_description")
+            detail = form.cleaned_data.get("detail")
+            banner = form.cleaned_data.get("banner" , None)
+            return self.repo.post_discussion(title , author , tags , short_description , detail , banner)
+        raise InvalidForm("Invalid form data")
+    
+    def delete_discussion(self , author , id):
+        discussion = self.get_discussion(author = author , id = id)
+        return self.repo.delete_discussion(discussion)
