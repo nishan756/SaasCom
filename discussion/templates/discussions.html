@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Discussions
+{% endblock title %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/discussions.css'%}">
+{% endblock css %}
+{% block content %}
+
+<div class="container py-4">
+
+    <!-- ================= FILTER BAR ================= -->
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+
+            <form method="GET" class="row g-2 align-items-center">
+
+                <!-- Title Search -->
+                <div class="col-md-4">
+                    <input type="text"
+                           name="title"
+                           class="form-control"
+                           placeholder="Search discussion title..."
+                           value="{% if request.GET.title %} {{request.GET.title}} {% endif %}">
+                </div>
+
+                <!-- Tag Search -->
+                <div class="col-md-4">
+                    <input type="text"
+                           name="tags"
+                           class="form-control"
+                           placeholder="#django #python"
+                           value="{% if request.GET.tags %} {{request.GET.tags}} {% endif %}">
+                </div>
+
+                <!-- Following Filter -->
+                <div class="col-md-2">
+                    <div class="form-check mt-2">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               name="following"
+                               value="true"
+                               id="followingCheck"
+                            {% if request.user.is_authenticated %}
+                                {% if request.GET.following %} 
+                                    checked 
+                                {% endif %} 
+                            {% else %}
+                                disabled
+                            {% endif %}>
+
+                        <label class="form-check-label" for="followingCheck">
+                            Following
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        Search
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+
+    <!-- ================= DISCUSSION LIST ================= -->
+    <div class="row">
+
+        {% for d in discussions %}
+        <div class="col-md-6 mb-3">
+
+            <div class="card shadow-sm h-100 discussion-card">
+
+                <div class="card-body">
+
+                    <!-- Title -->
+                    <h5 class="card-title">
+                        <a href="{% url 'discussion-detail' d.id %}" class="text-decoration-none">
+                            {{ d.title }}
+                        </a>
+                    </h5>
+
+                    <!-- Short Description -->
+                    <p class="card-text text-muted">
+                        {{ d.short_description|truncatechars:140 }}
+                    </p>
+
+                    <!-- Tags -->
+                    <div class="mb-2">
+                        {% for tag in d.tags.all %}
+                            <span class="badge bg-secondary">
+                                #{{ tag.title }}
+                            </span>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+                <!-- Footer -->
+                <div class="card-footer d-flex justify-content-between align-items-center">
+
+                    <small class="text-muted">
+                        By {{ d.author.username }}
+                    </small>
+
+                    <div>
+                        <span class="badge bg-success">
+                            Votes {{ d.total_vote }}
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                No discussions found
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+
+
+    <!-- ================= PAGINATION ================= -->
+    <nav class="mt-4">
+
+        <ul class="pagination justify-content-center">
+
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link"
+                   href="?page={{ discussions.previous_page_number }}&title={{ title_query }}&tags={{ tag_query }}{% if following %}&following={{ following }}{% endif %}">
+                    Previous
+                </a>
+            </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">
+                    {{ discussions.number }} / {{ discussions.paginator.num_pages }}
+                </span>
+            </li>
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link"
+                   href="?page={{ discussions.next_page_number }}&title={{ title_query }}&tags={{ tag_query }}{% if following %}&following={{ following }}{% endif %}">
+                    Next
+                </a>
+            </li>
+            {% endif %}
+
+        </ul>
+
+    </nav>
+
+</div>
+
+
+{% endblock %}
