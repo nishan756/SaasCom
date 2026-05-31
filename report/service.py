@@ -3,6 +3,7 @@ from .repository import ReportRepo
 from django.contrib.auth import get_user_model
 from jobs.models import Job
 from apps.models import App
+from discussion.models import Discussion
 from saas_com.core.exceptions import PermissionDenied , AlreadyExists , InvalidContentType , InvalidForm
 
 User = get_user_model()
@@ -12,7 +13,8 @@ class ReportService:
     CONTENT_TYPES = {
         "user":User,
         "app":App,
-        "job":Job
+        "job":Job,
+        "discussion":Discussion
     }
 
     def get_report(self , id):

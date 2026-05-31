@@ -13,7 +13,7 @@ class ReportRepo:
         return Report.objects.filter(content_type = content_type , object_id = object_id)
     
     def has_user_report(self ,content_type , object_id , reporter):
-        return Report.objects.filter(content_type = content_type , reporter = reporter , object_id = object_id).exists()
+        return Report.objects.filter(content_type = content_type , reporter = reporter , object_id = object_id).first()
     
     def add_report(self , reporter , report_type , content_type , id , reason = None):
         new_report = Report(
