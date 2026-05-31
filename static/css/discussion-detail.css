@@ -1,0 +1,46 @@
+.discussion-content {
+    font-size: 1.05rem;
+    line-height: 1.9;
+    word-break: break-word;
+}
+
+.discussion-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.discussion-content pre {
+    overflow-x: auto;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.discussion-content table {
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+
+    .discussion-content {
+        font-size: 1rem;
+        line-height: 1.8;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+}
+
+.discussion-action-btn{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
