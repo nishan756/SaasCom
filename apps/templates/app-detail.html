@@ -103,14 +103,15 @@
                             </li>
                         {% endif %}
                         <li>
-                                <form method="POST" 
-                                    action="{% if bookmark %}
-                                        {% url 'del-bookmark' bookmark.id %}
-                                    {% else %}
-                                        {% url 'add-bookmark' 'app' app.id %}
-                                    {% endif %}"
+                                <form method="POST" action="
+                                {% if bookmark %}
+                                    {% url 'del-bookmark' bookmark.id %}
+                                {% else %}
+                                    {% url 'add-bookmark' app.id %}
+                                {% endif %}"
                                 >
                                 {% csrf_token %}
+                                <input type="hidden" value="app" name="content_type">
                                 <button class="dropdown-item text" data-bs-toggle="modal" data-bs-target="#reportModal">
                                     {% if bookmark %}
                                         Remove Bookmark
