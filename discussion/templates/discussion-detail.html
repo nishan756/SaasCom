@@ -54,7 +54,7 @@
 
                                 {% if request.user == discussion.author %}
                                     <li>
-                                        <a href=""
+                                        <a href="{% url 'update-discussion' discussion.id %}"
                                         class="dropdown-item">
                                             Update
                                         </a>
@@ -235,16 +235,10 @@
                     Cancel
                 </button>
 
-                <form
-                    method="POST"
-                    action=""
-                >
+                <form method="POST" action="{% url 'delete-discussion' discussion.id %}">
                     {% csrf_token %}
 
-                    <button
-                        type="submit"
-                        class="btn btn-danger"
-                    >
+                    <button type="submit" class="btn btn-danger">
                         Delete
                     </button>
                 </form>
@@ -292,7 +286,7 @@
                             </div>
                         {% endfor %}
                     {% else %}
-                        <p>Report type:{{user_report.report_type}}</p>
+                        <p>Report type:{{user_report.report_type.capitalize}}</p>
                         {% if user_report.reason %}
                             <p>Detail:{{user_report.reason}}</p>
                         {% endif %}
