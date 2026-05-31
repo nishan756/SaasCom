@@ -6,6 +6,7 @@ import uuid
 from cloudinary.models import CloudinaryField
 from django.contrib.contenttypes.fields import GenericRelation
 from vote.models import Vote
+from django.core.validators import MinValueValidator , MaxValueValidator
 
 User = get_user_model()
 
@@ -20,7 +21,7 @@ class Category(models.Model):
         verbose_name_plural = "Categories"
     
     def clean(self):
-        if Category.objects.filter(name__iexact = self.name).exists():
+        if Category.objects.filter(name__iexact = self.name).exclude(pk = self.pk).exists():
             raise ValidationError("Category with this name is already exists")
 
 class Tag(models.Model):
@@ -29,7 +30,7 @@ class Tag(models.Model):
         return self.title
     
     def clean(self):
-        if Tag.objects.filter(title__iexact = self.title).exists():
+        if Tag.objects.filter(title__iexact = self.title).exclude(pk = self.pk).exists():
             raise ValidationError("Tag with this name is already exists")
     
 
@@ -86,6 +87,13 @@ class Review(models.Model):
     id = models.UUIDField(primary_key = True , default = uuid.uuid4 , editable = False)
     app = models.ForeignKey(App , on_delete = models.CASCADE , related_name = "reviews")
     user = models.ForeignKey(User , on_delete = models.CASCADE , related_name = "reviews")
+    rating = models.PositiveIntegerField(
+        validators = [
+            MinValueValidator(limit_value = 1),
+            MaxValueValidator(limit_value = 5)
+        ],
+        null = True
+    )
     review = models.TextField()
     added_at = models.DateTimeField(auto_now_add = True)
 
