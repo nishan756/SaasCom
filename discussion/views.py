@@ -8,16 +8,18 @@ from apps.views import is_safe_url
 # ==============SERVICES=============
 from .service import DiscussionService
 from vote.service import VoteService
+from report.service import ReportService
 
 # =============EXCEPTIONS============
 from saas_com.core.exceptions import ObjectNotFound , InvalidForm
 
 # ============FORMS==================
 from .forms import DiscussionForm
-
+from report.forms import ReportForm
 
 discussion_service = DiscussionService()
 vote_service = VoteService()
+report_service = ReportService()
 
 
 @require_GET
@@ -42,7 +44,10 @@ def discussion_detail(request , id):
         return redirect("all-discussions")
     context = {}
     context["discussion"] = discussion
-    context["has_vote"] = vote_service.get_vote(user = request.user , content_type = "discussion" , object_id = id) if request.user.is_authenticated else None
+    context["report_form"] = ReportForm()
+    if request.user.is_authenticated:
+        context["user_vote"] = vote_service.get_vote(user = request.user , content_type = "discussion" , object_id = id)
+        context["user_report"] = report_service.has_user_report(content_type = "discussion" , object_id = id , reporter = request.user)
 
     return render(request , "discussion-detail.html" , context)
 
