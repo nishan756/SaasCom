@@ -8,7 +8,7 @@ class DiscussionRepo:
     def all_discussions(self, user, **query_set):
         
         discussions = Discussion.objects.select_related("author").prefetch_related(
-        "tags" , "votes").annotate(total_vote=Count("votes"))
+        "tags" , "votes").annotate(total_vote=Count("votes")).order_by("-posted_at")
         if query_set.get("title"):
             discussions = discussions.filter(
                 title__icontains=query_set["title"]
@@ -46,3 +46,8 @@ class DiscussionRepo:
     
     def delete_discussion(self , discussion):
         return discussion.delete()
+    
+    def update_discussion(self , form , tags):
+        updated_discussion = form.save()
+        updated_discussion.tags.set(tags)
+        return updated_discussion

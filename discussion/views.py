@@ -86,4 +86,34 @@ def delete_discussion(request , id):
         messages.error(request , "Something went wrong")
 
     return redirect(HTTP_REFERER)
+
+
+@login_required(login_url = "login")
+def update_discussion(request , id):
+    try:
+        discussion = discussion_service.get_discussion(author = request.user , id = id)
+
+    except ObjectNotFound as e:
+        messages.error(request , str(e))
+        return redirect("all-discussions")
+    
+    context = {}
+    context["form"] = DiscussionForm(instance = discussion)
+
+    if request.method == "POST":
+        form = DiscussionForm(data = request.POST , files = request.FILES , instance = discussion)
+
+        try:
+            discussion_service.update_discussion(form = form)
+            messages.success(request , "Successfully updated your discussion")
+            return redirect("discussion-detail" , id = id)
         
+        except ObjectNotFound as e:
+            messages.error(request , str(e))
+        
+        except Exception as e:
+            messages.error(request , "Something went wrong")
+            print(e)
+
+        return redirect("all-discussions")
+    return render(request , "create-discussion.html" , context)

@@ -46,3 +46,9 @@ class DiscussionService:
     def delete_discussion(self , author , id):
         discussion = self.get_discussion(author = author , id = id)
         return self.repo.delete_discussion(discussion)
+    
+    def update_discussion(self , form):
+        if form.is_valid():
+            tags = form.cleaned_data.get("tags" , None)
+            return self.repo.update_discussion(form , tags)
+        raise InvalidForm("Invalid form data")
