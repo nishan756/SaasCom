@@ -36,12 +36,12 @@
                     <div class="d-flex justify-content-center gap-2">
                         {% if request.user != app.founder %}
                             {% if is_following %}
-                                <form method="POST" action="{% url 'unfollow' app.founder.id %}">
+                                <form method="POST" action="{% url 'unfollow' app.founder.username %}">
                                     {% csrf_token %}
                                     <button class="btn btn-outline-primary btn-sm">Following</button>
                                 </form>
                             {% else %}
-                                <form method="POST" action="{% url 'follow' app.founder.id %}">
+                                <form method="POST" action="{% url 'follow' app.founder.username %}">
                                     {% csrf_token %}
                                     <button class="btn btn-outline-primary btn-sm">Follow</button>
                                 </form>
@@ -391,19 +391,8 @@
                                 {% endif %}
 
                             </div>
-
-
                             
                             <p>{{ review.review }}</p>
-
-                            <strong>Did you find this helpful?</strong>
-                                <form method="POST">
-                                    {% csrf_token %}
-                                    <span>
-                                        <button type="submit" class='btn btn-primary' name="yes" value="yes">Yes</button>
-                                        <button type="submit" class='btn btn-outline-danger' name="no" value="no">No</button>
-                                    </span>
-                            </form>
                             
                         </div>
 
