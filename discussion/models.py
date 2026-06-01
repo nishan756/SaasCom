@@ -5,6 +5,7 @@ from django_summernote.fields import SummernoteTextField
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
 from vote.models import Vote
+from comment.models import Comment
 
 User = get_user_model()
 
@@ -32,6 +33,7 @@ class Discussion(models.Model):
     detail = SummernoteTextField()
 
     votes = GenericRelation(Vote , related_query_name = "discussions")
+    comments = GenericRelation(Comment , related_query_name = "comments")
 
     posted_at = models.DateTimeField(auto_now_add = True)
 
