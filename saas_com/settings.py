@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'report',
     'vote',
     'bookmark',
+    'comment',
 
 ]
 
@@ -138,6 +139,42 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
+
+SUMMERNOTE_CONFIG = {
+
+    # Or, you can set it to `False` to use SummernoteInplaceWidget by default - no iframe mode
+    # In this case, you have to load Bootstrap/jQuery sources and dependencies manually.
+    # Use this when you're already using Bootstrap/jQuery based themes.
+    'iframe': True,
+
+    # You can put custom Summernote settings
+    'summernote': {
+        # As an example, using Summernote Air-mode
+        'airMode': False,
+
+        # Change editor size
+        'width': '100%',
+        'height': '200px',
+
+        # Use proper language setting automatically (default)
+        'lang': LANGUAGE_CODE,
+
+        # Toolbar customization
+        'toolbar': [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['fullscreen', 'codeview', 'help']],
+        ],
+
+        
+    }
+    
+}
 
 import cloudinary
 cloudinary.config( 
