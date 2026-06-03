@@ -10,6 +10,6 @@ urlpatterns = [
     # Image related url
     path("del-image/<str:id>" , del_image , name = "del-image"),
     path("<str:id>/" , app_detail , name = "app-detail"),
-    path("<str:id>/review/add" , add_review , name = "add-review"),
-    path("<str:id>/review/delete" , del_review , name = "del-review"),
+    path("review/add/<uuid:id>" , add_review , name = "add-review"),
+    path("review/delete/<uuid:id>" , del_review , name = "del-review"),
 ]
