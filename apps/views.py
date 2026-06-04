@@ -137,9 +137,10 @@ def del_image(request , id):
 @require_POST
 @login_required(login_url = "login")
 def add_review(request , id):
+    rating = request.POST.get("rating" , None)
     try:
         review = request.POST.get("review")
-        review_service.add_review(app_id = id , user = request.user , review = review)
+        review_service.add_review(app_id = id , user = request.user , review = review , rating = rating)
         messages.success(request , "Thanks for your review!")
     except AlreadyExists as e:
         messages.info(request , str(e))

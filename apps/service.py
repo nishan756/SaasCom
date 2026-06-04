@@ -17,17 +17,18 @@ class AppService:
         return self.repo.get_app_detail(id = id)
     
         
-    def create_app(self , founder , form):
+    def create_app(self , founder , form , logo):
         if form.is_valid():
             name = form.cleaned_data.get("name")
             category = form.cleaned_data.get("category")
             tags = form.cleaned_data.get("tags")
-            logo = form.cleaned_data.get("logo")
+            # logo = form.cleaned_data.get("logo")
             short_description = form.cleaned_data.get("short_description")
             detail = form.cleaned_data.get("detail")
             app = self.repo.create_app(founder , name , category , tags , logo , short_description , detail)
             return app
         else:
+            print(form.errors)
             raise InvalidForm("Invalid form data")
 
     def del_app(self, id, user, form):
@@ -79,13 +80,13 @@ class ReviewService:
     def has_user_review(self , app , user):
         return self.repo.has_user_review(app = app , user =  user)
     
-    def add_review(self , app_id , user , review):
+    def add_review(self , app_id , user , review , rating = None):
         app = AppService().get_app(id = app_id)
         prev_review = self.repo.has_user_review(app = app , user = user)
         if prev_review:
             raise AlreadyExists("You already reviewed on this app")
         else:
-            self.repo.add_review(app , user , review)
+            self.repo.add_review(app , user , review , rating)        
     
     def del_review(self , id , user):
         review = ReviewService().get_review(id = id)

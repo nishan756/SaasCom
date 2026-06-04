@@ -27,7 +27,7 @@ class AppRepo:
 
     def get_app_detail(self , id):
         try:
-            return App.objects.select_related("founder").prefetch_related("category" , "tags" , "app_images" , "reviews" , "reviews__user").get(id = id)
+            return App.objects.select_related("founder").prefetch_related("category" , "app_images" , "reviews" , "reviews__user").get(id = id)
         except App.DoesNotExist:
             raise ObjectNotFound("App not found")
         
@@ -84,11 +84,12 @@ class ReviewRepo:
     def has_user_review(self ,  app , user):
         return Review.objects.filter(app = app , user = user).exists()
 
-    def add_review(self , app , user , review):
+    def add_review(self , app , user , review , rating = None):
         Review.objects.create(
             app = app , 
             user = user,
-            review = review
+            review = review,
+            rating = rating
         )
         return
 

@@ -1,7 +1,7 @@
-from .models import Review , App
+from .models import Review , App , Category
 from django import forms 
 from cloudinary.forms import CloudinaryJsFileField
-
+from django_summernote.widgets import SummernoteWidget
 
 class ReviewForm(forms.ModelForm):
     class Meta:
@@ -26,7 +26,6 @@ class AppForm(forms.ModelForm):
         fields = [
             "name",
             "category",
-            "tags",
             "logo",
             "short_description",
             "detail"
@@ -42,12 +41,6 @@ class AppForm(forms.ModelForm):
             ),
 
             "category": forms.SelectMultiple(
-                attrs = {
-                    "class": "form-control"
-                }
-            ),
-
-            "tags": forms.SelectMultiple(
                 attrs = {
                     "class": "form-control"
                 }

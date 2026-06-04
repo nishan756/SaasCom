@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category , App , AppImages , Review , Tag
+from .models import Category , App , AppImages , Review
 from django.utils.safestring import mark_safe
 from django.contrib import messages
 
@@ -55,7 +55,4 @@ class AppImagesAdmin(admin.ModelAdmin):
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ["app" , "user" , "added_at"]
 
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
-    list_display = ["title"]
 

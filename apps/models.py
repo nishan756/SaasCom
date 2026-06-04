@@ -23,15 +23,6 @@ class Category(models.Model):
     def clean(self):
         if Category.objects.filter(name__iexact = self.name).exclude(pk = self.pk).exists():
             raise ValidationError("Category with this name is already exists")
-
-class Tag(models.Model):
-    title = models.CharField(max_length = 15 , unique = True)
-    def __str__(self):
-        return self.title
-    
-    def clean(self):
-        if Tag.objects.filter(title__iexact = self.title).exclude(pk = self.pk).exists():
-            raise ValidationError("Tag with this name is already exists")
     
 
 class App(models.Model):
@@ -39,7 +30,6 @@ class App(models.Model):
     founder = models.ForeignKey(User , on_delete = models.SET_NULL , null = True , related_name = "apps")
     name = models.CharField(max_length = 70)
     category = models.ManyToManyField(Category , related_name = "apps" , blank = True)
-    tags = models.ManyToManyField(Tag , blank = True , related_name = "apps")
     logo = CloudinaryField("Logo" , folder = "saas_com/assets/images/app_logos")
     developed_at = models.DateField(blank = True , null = True)
     short_description = models.CharField(max_length = 200 , blank = True)
