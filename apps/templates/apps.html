@@ -16,13 +16,13 @@
     <!-- Filter Section -->
     <div class="top-filter-bar">
 
-        <form method="GET" class="filter-form">
+        <form method="GET" class="filter-form" action="{% url 'all-apps' %}">
 
             <div class="filter-item">
                 <input
                     type="text"
-                    name="q"
-                    value="{{ request.GET.q }}"
+                    name="name"
+                    value="{{ request.GET.name }}"
                     placeholder="Search apps..."
                 >
             </div>
@@ -32,14 +32,24 @@
                     <option value="">Category</option>
 
                     {% for cat in categories %}
-                        <option value="{{ cat.slug }}"
-                            {% if request.GET.category == cat.slug %}
+                        <option value="{{ cat.name }}"
+                            {% if request.GET.category == cat.name %}
                                 selected
                             {% endif %}
                         >
-                            {{ cat.title }}
+                            {{ cat.name }}
                         </option>
                     {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-item">
+                <select name="order_by">
+                    <option value="" {% if request.GET.order_by == "" %}selected{% endif %}>Order By</option>
+                    <option value="top_rated" {% if request.GET.order_by == "top_rated" %}selected{% endif %}>Top Rated</option>
+                    <option value="less_rated" {% if request.GET.order_by == "less_rated" %}selected{% endif %}>Less Rated</option>
+                    <option value="new" {% if request.GET.order_by == "new" %}selected{% endif %}>new</option>
+                    <option value="old" {% if request.GET.order_by == "old" %}selected{% endif %}>old</option>
                 </select>
             </div>
 
@@ -74,7 +84,7 @@
                             <h2>{{ app.name }}</h2>
 
                             <div class="founder-row">
-                                By {{ app.founder.get_full_name|default:app.founder.username }}
+                                By {{ app.founder.full_name|default:app.founder.username }}
                             </div>
 
                             <div class="category-row">

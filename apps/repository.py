@@ -8,7 +8,7 @@ class AppRepo:
     def total_apps(self):
         return App.objects.filter(status = "approved").count()
     
-    def all_apps(self , order_by = None):
+    def all_apps(self , order_by = None , **query_set):
         apps = App.objects.select_related("founder").prefetch_related(
             "category","votes"
         ).annotate(
@@ -19,7 +19,20 @@ class AppRepo:
             # avg rating
             avg_rating = Avg("reviews__rating" , distinct= True)
         )
-        return apps if not order_by else apps.order_by(order_by)
+        if query_set.get("name"):
+            apps = apps.filter(
+                name__icontains=query_set["name"]
+            )
+
+        if query_set.get("category"):
+            apps = apps.filter(
+                category__name = query_set["category"]
+            )
+
+        if order_by:
+            apps = apps.order_by(order_by)
+
+        return apps
     
     def get_app(self , id):
         try:

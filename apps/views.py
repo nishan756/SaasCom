@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.views.decorators.http import require_GET , require_POST
 from django.contrib.auth.decorators import login_required
 from saas_com.core.service import is_safe_url
+from .models import Category
 
 # ====================SERVICES=============
 from .service import AppService , AppImageService , ReviewService
@@ -43,9 +44,11 @@ def home(request):
 
 @require_GET
 def all_apps(request):
-    order_by = request.GET.get("order_by" , None)
+    query_set = request.GET.dict()
+    page = query_set.pop("page" , 1)
     context = {}
-    context["apps"] = app_service.all_apps(order_by = order_by)
+    context["apps"] = app_service.all_apps(page = page , **query_set)
+    context["categories"] = Category.objects.all()
     return render(request , "apps.html" , context)
 
 @require_GET

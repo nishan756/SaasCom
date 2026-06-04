@@ -1,5 +1,6 @@
 from .repository import AppRepo , AppImageRepo , ReviewRepo
 from saas_com.core.exceptions import AlreadyExists , PermissionDenied , TooManyObject , InvalidForm , InvalidPassword
+from django.core.paginator import Paginator
 
 class AppService:
     repo = AppRepo()
@@ -7,8 +8,36 @@ class AppService:
     def total_apps(self):
         return self.repo.total_apps()
 
-    def all_apps(self , order_by = None):
-        return self.repo.all_apps(order_by = order_by)
+    def all_apps(self, page, **query_set):
+
+        # Order by safely
+        order_by = query_set.pop("order_by", "new")
+
+        ordering_fields = {
+            "new": "-added_at",
+            "old": "added_at",
+            "less_rated": "avg_rating",
+            "top_rated": "-avg_rating"
+        }
+
+        order_by = ordering_fields.get(order_by)
+
+        # Filter only supported fields
+        supported_q_field = ["name", "category"]
+        query_set = {
+            key: value
+            for key, value in query_set.items()
+            if key in supported_q_field
+        }
+
+        # Query
+        apps = self.repo.all_apps(order_by=order_by, **query_set)
+
+        # Pagination
+        paginator = Paginator(apps, 20)
+        apps = paginator.get_page(int(page))
+
+        return apps
     
     def get_app(self , id):
         return self.repo.get_app(id = id)
