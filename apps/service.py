@@ -27,7 +27,14 @@ class AppService:
             app = self.repo.create_app(founder , name , category , logo , short_description , detail)
             return app
         else:
-            print(form.errors)
+            raise InvalidForm("Invalid form data")
+    
+    def update_app(self , form):
+        if form.is_valid():
+            category = form.cleaned_data.get("category")
+            updated_app = self.repo.update_app(form , category)
+            return updated_app
+        else:
             raise InvalidForm("Invalid form data")
 
     def del_app(self, id, user, form):

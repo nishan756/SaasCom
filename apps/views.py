@@ -92,10 +92,38 @@ def create_app(request):
             messages.info(request , str(e))
         
         except Exception as e:
-            print(e)
             messages.info(request , "Something went wrong. Please try again later")
     form = AppForm()
     return render(request , "create-app.html" , {"form":form})
+
+@login_required(login_url = "login")
+def update_app(request , id):
+    app = app_service.get_app(id = id)
+    context = {}
+    context["form"] = AppForm(instance = app)
+    if app.founder != request.user:
+        messages.warning(request , "Can't update this app")
+        return redirect("app-detail" , id)
+    
+    if request.method == "POST":
+        form = AppForm(instance = app , data = request.POST , files = request.FILES)
+        images = request.FILES.getlist("images" , None)
+        try:
+            updated_app = app_service.update_app(form = form)
+            if images:
+                app_image_service.add_images(updated_app , images)
+            return redirect("app-detail" , id)
+        
+        except InvalidForm as e:
+            messages.error(request , str(e))
+            return render(request , "create-app.html" , {"form":form})
+        
+        except TooManyObject as e:
+            messages.info(request , str(e))
+        
+        except Exception as e:
+            messages.info(request , "Something went wrong. Please try again later")
+    return render(request , "create-app.html" , context)
 
 @require_POST
 @login_required(login_url = "login")

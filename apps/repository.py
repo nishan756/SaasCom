@@ -44,6 +44,11 @@ class AppRepo:
         new_app.category.set(category)
         return new_app
     
+    def update_app(self , form , category):
+        updated_app = form.save()
+        updated_app.category.set(category)
+        return  updated_app
+    
     def del_app(self , app):
         return app.delete()
 
