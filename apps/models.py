@@ -7,6 +7,7 @@ from cloudinary.models import CloudinaryField
 from django.contrib.contenttypes.fields import GenericRelation
 from vote.models import Vote
 from django.core.validators import MinValueValidator , MaxValueValidator
+from saas_com.core.exceptions import TooManyObject
 
 User = get_user_model()
 
@@ -65,9 +66,10 @@ class AppImages(models.Model):
     def __str__(self):
         return f"{self.app.name} image"
     
-    def clean(self):
-        if AppImages.objects.filter(app = self.app).count() > 5:
-            raise ValidationError("Maximum 5 images allowed per app ")
+    def save(self , *args , **kwargs):
+        if AppImages.objects.filter(app = self.app).count() >= 5:
+            raise TooManyObject("Maximum 5 images allowed for an app")
+        super().save(*args , **kwargs)
 
     class Meta:
         ordering = ["-added_at"]
