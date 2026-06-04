@@ -71,6 +71,7 @@ def app_detail(request , id):
     context["app_del_form"] = AppDeletionConfirmationForm()
     context["report_form"] = ReportForm()
     context["form"] = ReviewForm()
+    context["rating_range"] = range(5)
     return render(request , "app-detail.html" , context)
 
 @login_required(login_url = "login")
@@ -91,10 +92,10 @@ def create_app(request):
             messages.info(request , str(e))
         
         except Exception as e:
-            messages.info("Something went wrong. Please try again later")
-    else:
-        form = AppForm()
-        return render(request , "create-app.html" , {"form":form})
+            print(e)
+            messages.info(request , "Something went wrong. Please try again later")
+    form = AppForm()
+    return render(request , "create-app.html" , {"form":form})
 
 @require_POST
 @login_required(login_url = "login")
