@@ -12,6 +12,9 @@ class CommentService:
 
     def get_author_comment(self , author , id):
         return self.repo.get_author_comment(author = author , id = id)
+
+    def get_comment_by_id(self , id):
+        return self.repo.get_comment_by_id(id)
     
     def get_comments(self , content_type , object_id):
         content_type = get_content_type(content_type , self.CONTENT_TYPES)
@@ -25,9 +28,9 @@ class CommentService:
             comment.object_id = object_id
             comment.author = author
             if parent_id:
-                comment.parent__id = parent_id
+                comment.parent = self.get_comment_by_id(parent_id)
             return self.repo.post_comment(comment)
-        raise InvalidForm("Invalid form datas")
+        raise InvalidForm("Invalid form data")
     
     def delete_comment(self , author , id):
         return self.repo.delete_comment(self.get_author_comment(author , id))
