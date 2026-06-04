@@ -44,3 +44,10 @@
     align-items:center;
     justify-content:center;
 }
+
+
+.nested-comments {
+    border-color: #dee2e6 !important;
+}
+.comment-content p:last-child { margin-bottom: 0; }
+.comment-item .dropdown-menu { min-width: 8rem; }

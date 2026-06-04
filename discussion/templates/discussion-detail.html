@@ -71,15 +71,17 @@
 
                                     <li><hr class="dropdown-divider"></li>
                                 {% endif %}
-
-                                <li>
-                                    <button
-                                        class="dropdown-item"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#reportDiscussionModal">
-                                        {% if user_report %}View {% endif %}Report
-                                    </button>
-                                </li>
+                                
+                                {% if request.user != discussion.author %}
+                                    <li>
+                                        <button
+                                            class="dropdown-item"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#reportDiscussionModal">
+                                            {% if user_report %}View {% endif %}Report
+                                        </button>
+                                    </li>
+                                {% endif %}
 
                             </ul>
 
@@ -168,23 +170,42 @@
                 </div>
             </div>
 
-            <!-- Comment Section -->
+            <!-- Comments Section -->
             <div class="card border-0 shadow-sm mt-4">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-4">
+                        Comments ({{ comments.count }})
+                    </h4>
 
-                <div class="card-body">
+                    {% if request.user.is_authenticated %}
+                        <form method="POST" action="{% url 'post-comment' 'discussion' discussion.id %}" class="mb-4">
+                            {% csrf_token %}
+                            {{ comment_form.content }}
+                            <button type="submit" class="btn btn-primary mt-2">
+                                Post Comment
+                            </button>
+                        </form>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <a href="{% url 'login' %}">Log in</a> to join the discussion.
+                        </div>
+                    {% endif %}
 
-                    <h5 class="mb-3">
-                        Comments
-                    </h5>
+                    <hr>
 
-                    <p class="text-muted mb-0">
-                        Comment system coming soon...
-                    </p>
-
+                    <div class="comments-list">
+                        {% for comment in comments %}
+                            {% include "comment.html" with comment=comment %}
+                        {% empty %}
+                            <p class="text-muted text-center py-3">
+                                No comments yet. Be the first to comment!
+                            </p>
+                        {% endfor %}
+                    </div>
                 </div>
-
             </div>
 
+            
         </div>
 
     </div>
@@ -250,13 +271,14 @@
     </div>
 </div>
 
+{% if request.user != discussion.author %}
 <!--Report Modal-->
 <div class="modal fade" id="reportDiscussionModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
 
         <div class="modal-content">
             
-            <form method="POST" action="{% if not user_report %}{% url 'add-report' discussion.id %}{% else %}{% url 'del-report' user_report.id %}{% endif %}">
+            <form method="POST" action="{% if not user_report %}{% url 'add-report' 'discussion' discussion.id %}{% else %}{% url 'del-report' user_report.id %}{% endif %}">
 
                 {% csrf_token %}
                 <input type="hidden" name="content_type" value="discussion">
@@ -319,5 +341,15 @@
 
     </div>
 </div>
+{% endif %}
+<script>
+function toggleReply(id){
+    const el = document.getElementById(`reply-${id}`);
+
+    if(!el) return;
+
+    el.classList.toggle("d-none");
+}
+</script>
 
 {% endblock %}

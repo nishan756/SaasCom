@@ -1,0 +1,92 @@
+{% load static %}
+
+<div class="comment-item d-flex gap-3 mb-3" id="comment-{{ comment.id }}">
+    {% if comment.author.image %}
+        <img src="{{ comment.author.image.url }}"
+             class="rounded-circle flex-shrink-0"
+             width="40" height="40" style="object-fit:cover;">
+    {% else %}
+        <img src="{% static 'img/unknown_avatar.jpg' %}"
+             class="rounded-circle flex-shrink-0"
+             width="40" height="40" style="object-fit:cover;">
+    {% endif %}
+
+    <div class="flex-grow-1">
+        <div class="bg-light rounded p-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <div>
+                    <span class="fw-semibold">
+                        {{ comment.author.full_name|default:comment.author.username }}
+                    </span>
+                    <small class="text-muted ms-2">
+                        {{ comment.posted_at|date:"d M Y • h:i A" }}
+                    </small>
+                </div>
+
+                {% if request.user == comment.author %}
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-link text-muted p-0"
+                            data-bs-toggle="dropdown">
+                        <i class="bi bi-three-dots"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <form method="POST"
+                                  action="{% url 'delete-comment' comment.id %}">
+                                {% csrf_token %}
+                                <button class="dropdown-item text-danger">
+                                    Delete
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="comment-content">
+                {{ comment.content|safe }}
+            </div>
+        </div>
+
+        <div class="mt-2 ms-1">
+            {% if request.user.is_authenticated %}
+            <button class="btn btn-sm btn-link text-decoration-none p-0"
+                    onclick="toggleReply('{{ comment.id }}')">
+                <i class="bi bi-reply"></i> Reply
+            </button>
+            {% endif %}
+        </div>
+
+        {# Reply form #}
+        {% if request.user.is_authenticated %}
+        <div id="reply-{{ comment.id }}" class="d-none mt-3">
+            <form method="POST"
+                  action="{% url 'post-comment' 'discussion' discussion.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                {{ comment_form.content }}
+                <div class="mt-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-sm btn-primary">
+                        Post Reply
+                    </button>
+                    <button type="button"
+                            class="btn btn-sm btn-secondary"
+                            onclick="toggleReply('{{ comment.id }}')">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+        {% endif %}
+
+        {# Nested children — recursive include #}
+        {% if comment.children.all %}
+        <div class="nested-comments mt-3 ps-3 border-start">
+            {% for child in comment.children.all %}
+                {% include "comment.html" with comment=child %}
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
