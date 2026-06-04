@@ -17,15 +17,14 @@ class AppService:
         return self.repo.get_app_detail(id = id)
     
         
-    def create_app(self , founder , form , logo):
+    def create_app(self , founder , form):
         if form.is_valid():
             name = form.cleaned_data.get("name")
             category = form.cleaned_data.get("category")
-            tags = form.cleaned_data.get("tags")
-            # logo = form.cleaned_data.get("logo")
+            logo = form.cleaned_data.get("logo")
             short_description = form.cleaned_data.get("short_description")
             detail = form.cleaned_data.get("detail")
-            app = self.repo.create_app(founder , name , category , tags , logo , short_description , detail)
+            app = self.repo.create_app(founder , name , category , logo , short_description , detail)
             return app
         else:
             print(form.errors)
