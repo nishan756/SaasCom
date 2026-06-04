@@ -18,7 +18,7 @@ class UserRepo:
 
     def view_profile(self , username):
         try:
-            return User.objects.prefetch_related("apps" , "jobs").get(username = username)
+            return User.objects.prefetch_related("apps" , "jobs" , "discussions").get(username = username)
         except User.DoesNotExist:
             raise ObjectNotFound("User not found")
     
