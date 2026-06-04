@@ -74,7 +74,7 @@
                         <!--Checking if the founder is the person who wants to delete or update this app-->
                         {% if app.founder == request.user %}
                             <li>
-                                <a class="dropdown-item" href="">
+                                <a class="dropdown-item" href="{% url 'update-app' app.id %}">
                                     Update
                                 </a>
                             </li>
@@ -102,7 +102,7 @@
                             </li>
                         {% endif %}
                         <li>
-                                <form method="POST" action="
+                            <form method="POST" action="
                                 {% if bookmark %}
                                     {% url 'del-bookmark' bookmark.id %}
                                 {% else %}
