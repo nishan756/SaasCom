@@ -193,3 +193,35 @@
     border-radius: 50%;
     object-fit: cover;
 }
+
+.rating-box {
+    margin-bottom: 10px;
+}
+
+.stars span {
+    font-size: 24px;
+    cursor: pointer;
+    color: #ddd;
+    transition: 0.2s;
+}
+
+.stars span.active {
+    color: #ffb400;
+}
+
+.stars span:hover {
+    transform: scale(1.2);
+}
+
+.stars-readonly span{
+    font-size:14px;
+    color:#ddd;   /* default blank star */
+}
+
+.stars-readonly span.filled{
+    color:#ffb400; /* yellow star */
+}
+
+.stars-readonly span.empty{
+    color:#ddd; /* blank star */
+}

@@ -95,11 +95,10 @@
                             </li>
                         {% elif user_report %}
                             <li>
-                                <a href="/" style="text-decoration:none">
-                                    <button class="dropdown-item text" data-bs-toggle="modal" data-bs-target="#reportModal">
+
+                                <button class="dropdown-item text" data-bs-toggle="modal" data-bs-target="#reportModal">
                                         View Report
-                                    </button>
-                                </a>
+                                </button>
                             </li>
                         {% endif %}
                         <li>
@@ -170,7 +169,7 @@
             <!--End of app deletion confirmation modal-->
 
 
-            {% if app.founder != request.user and not user_report %}
+            {% if app.founder != request.user %}
                 <!--Report modal-->
 
                 <div class="modal fade" id="reportModal" tabindex="-1">
@@ -178,23 +177,36 @@
                         <div class="modal-content">
 
                             <div class="modal-header">
-                                <h5 class="modal-title text-danger">Report App</h5>
+                                <h5 class="modal-title text-danger">{% if user_report %}Your {% endif %} Report</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
 
-                            <form method="POST" action="{% url 'add-report' 'app' app.id %}">
+                            <form method="POST" 
+                                action="{% if not user_report %}
+                                            {% url 'add-report' 'app' app.id %}
+                                        {% else %}
+                                            {% url 'del-report' user_report.id %}
+                                        {% endif %}
+                                    ">
                                 {% csrf_token %}
 
                                 <div class="modal-body">
 
-                                    <p>Report to this app</p>
+                                    {% if not user_report %}
+                                        <p>Report to this app</p>
+                                        {% for field in report_form %}
+                                            <div class="mb-3">
+                                                {{field.label}}
+                                                {{field}}
+                                            </div>
+                                        {% endfor %}
+                                    {% else %}
 
-                                    {% for field in report_form %}
                                         <div class="mb-3">
-                                            {{field.label}}
-                                            {{field}}
+                                            <p>Report type:{{user_report.report_type.capitalize}}</p>
+                                            <p>Reason:{{user_report.reason}}</p>
                                         </div>
-                                    {% endfor %}
+                                    {% endif %}
 
                                 </div>
 
@@ -204,7 +216,7 @@
                                     </button>
 
                                     <button type="submit" class="btn btn-danger">
-                                        Delete
+                                        {% if not user_report %}Report{% else %}Delete{% endif %}
                                     </button>
                                 </div>
 
@@ -226,17 +238,6 @@
                     {% endfor %}
                 </div>
             {% endif %}
-
-            {% if app.tags %}
-                <!-- Tags -->
-                <div class="app-tags">
-                    Tags : 
-                    {% for tag in app.tags.all %}
-                        <span class="badge">{{ tag.title }}</span>
-                    {% endfor %}
-                </div>
-            {% endif %}
-            
             
 
             <div class="image-scroll">
@@ -273,17 +274,6 @@
                 {% endfor %}
 
             </div>
-            {% comment %}
-            <!--App Images (Screen Shots)-->
-            <div class="image-scroll">
-            {% for image in app.app_images.all %}
-                <img 
-                    src="{{ image.image.url }}" 
-                    class="app-image preview-img"
-                    data-index="{{ forloop.counter0 }}">
-            {% endfor %}
-            </div>
-            {% endcomment %}
 
             <!-- Description -->
             <div class="app-description">
@@ -314,28 +304,50 @@
         </div>
 
 
-        <!-- RIGHT: COMMENTS -->
+        <!-- RIGHT: Reviews -->
         <div class="col-lg-3">
 
             <div class="card review-card">
                 <div class="card-body">
 
                     <!-- Comment Form -->
-                    <form method="POST" action = "{% url 'add-review' app.id%}">
+                    <form method="POST" action="{% url 'add-review' app.id %}">
                         {% csrf_token %}
-                        {{form.review}}
+
+                        <!-- ⭐ STAR RATING -->
+                        <div class="rating-box mb-2">
+
+                            <div class="stars" id="rating-stars">
+                                <span data-value="1">★</span>
+                                <span data-value="2">★</span>
+                                <span data-value="3">★</span>
+                                <span data-value="4">★</span>
+                                <span data-value="5">★</span>
+                            </div>
+
+                            <small class="text-muted">
+                                Rating: <span id="rating-value">0</span>/5
+                            </small>
+
+                            <input type="hidden" name="rating" id="rating-input" value="0">
+
+                        </div>
+
+                        <!-- Review Text -->
+                        {{ form.review }}
 
                         <button class="btn btn-dark w-100 mt-2">
-                            Post
+                            Post Review
                         </button>
+
                     </form>
 
                     <hr>
                     
-                    <!-- Comments -->
+                    <!-- Reviews -->
                     {% for review in app.reviews.all %}
 
-                        <div class="review">
+                        <div class="review-box mb-3 p-3 border rounded">
 
                             <div class="d-flex justify-content-between align-items-start">
 
@@ -345,23 +357,38 @@
                                     {% if review.user.image %}
                                         <img src="{{ review.user.image.url }}" class="user-profile">
                                     {% else %}
-                                        <img src="{% static 'img/unknown_avatar.jpg'%}"  class="user-profile">
+                                        <img src="{% static 'img/unknown_avatar.jpg' %}" class="user-profile">
                                     {% endif %}
 
-                                    <strong>{{ review.user.username }}</strong>
+                                    <div>
+                                        <strong>{{ review.user.username }}</strong>
+
+                                        <!-- ⭐ STAR RATING -->
+                                        <div class="stars-readonly">
+
+                                            {% for i in rating_range %}
+                                                {% if forloop.counter <= review.rating %}
+                                                    <span class="filled">★</span>
+                                                {% else %}
+                                                    <span>★</span>
+                                                {% endif %}
+                                            {% endfor %}
+
+                                        </div>
+
+                                    </div>
 
                                 </div>
 
-                                <!-- RIGHT -->
-                                {% if request.user == review.user %} 
+
+                                <!-- RIGHT: 3 DOT MENU -->
+                                {% if request.user == review.user %}
 
                                     <div class="dropdown">
 
                                         <button class="btn btn-sm border-0 shadow-none"
                                                 data-bs-toggle="dropdown">
-
                                             ⋮
-
                                         </button>
 
                                         <ul class="dropdown-menu dropdown-menu-end">
@@ -391,13 +418,19 @@
                                 {% endif %}
 
                             </div>
-                            
-                            <p>{{ review.review }}</p>
-                            
+
+
+                            <!-- REVIEW TEXT -->
+                            <p class="mt-2 mb-0">
+                                {{ review.review }}
+                            </p>
+
                         </div>
 
                     {% empty %}
+
                         <p class="text-muted">No comments yet</p>
+
                     {% endfor %}
 
                 </div>
