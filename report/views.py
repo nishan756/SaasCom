@@ -13,9 +13,8 @@ from .forms import ReportForm
 
 @require_POST
 @login_required(login_url = "login")
-def report(request , id):
+def report(request , content_type , id):
     HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER") , allowed_hosts=request.get_host())
-    content_type = request.POST.get("content_type")
     try:
         report_service.add_report(reporter=request.user, content_type=content_type, id=id, form=ReportForm(request.POST))
         messages.success(request, "Your report has been submitted successfully.")
