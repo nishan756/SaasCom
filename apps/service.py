@@ -88,6 +88,8 @@ class ReviewService:
     
     def add_review(self , app_id , user , review , rating = None):
         app = AppService().get_app(id = app_id)
+        if app.founder == user:
+            raise PermissionDenied("Founders can't review on theirs app")
         prev_review = self.repo.has_user_review(app = app , user = user)
         if prev_review:
             raise AlreadyExists("You already reviewed on this app")
