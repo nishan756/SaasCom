@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    {{request.user.full_name}} | Create New App
+    {{request.user.full_name}} | {% if form.instance %}Update{% else %}Create new {% endif %}App
 {% endblock title %}
 
 {% block css %}
@@ -19,7 +19,7 @@
             <div class="card shadow-sm border-0">
 
                 <div class="card-header bg-dark text-white">
-                    <h3 class="mb-0">Create New App</h3>
+                    <h3 class="mb-0">{% if form.instance %}Update{% else %}Create new {% endif %} App</h3>
                 </div>
 
                 <div class="card-body p-4">
@@ -139,12 +139,6 @@
                             </label>
 
                             <input type="file" name="images" multiple accept="image/*"></input>
-
-                            {% if form.images.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ form.images.errors }}
-                                </div>
-                            {% endif %}
 
                         </div>
 
