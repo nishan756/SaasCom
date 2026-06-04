@@ -52,3 +52,30 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
+const stars = document.querySelectorAll("#rating-stars span");
+const ratingValue = document.getElementById("rating-value");
+const ratingInput = document.getElementById("rating-input");
+
+let selectedRating = 0;
+
+stars.forEach(star => {
+    star.addEventListener("click", function () {
+        selectedRating = this.getAttribute("data-value");
+
+        ratingInput.value = selectedRating;
+        ratingValue.textContent = selectedRating;
+
+        updateStars(selectedRating);
+    });
+});
+
+function updateStars(value) {
+    stars.forEach(star => {
+        if (star.getAttribute("data-value") <= value) {
+            star.classList.add("active");
+        } else {
+            star.classList.remove("active");
+        }
+    });
+}
+
