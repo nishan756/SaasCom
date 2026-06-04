@@ -1,7 +1,7 @@
 from .models import App , AppImages , Review
 from vote.models import Vote
 from saas_com.core.exceptions import ObjectNotFound
-from django.db.models import Count , Q
+from django.db.models import Count , Q , Avg
 
 class AppRepo:
     
@@ -9,13 +9,15 @@ class AppRepo:
         return App.objects.filter(status = "approved").count()
     
     def all_apps(self , order_by = None):
-        apps = App.objects.prefetch_related(
+        apps = App.objects.select_related("founder").prefetch_related(
             "category","votes"
         ).annotate(
             #Total upvotes
-            total_upvote = Count("votes" , filter = Q(votes__vote_type = "upvote")),
+            total_upvote = Count("votes" , filter = Q(votes__vote_type = "upvote") , distinct = True),
             #Total Downvotes
-            total_downvote = Count("votes" , filter = Q(votes__vote_type = "downvote"))
+            total_downvote = Count("votes" , filter = Q(votes__vote_type = "downvote") , distinct = True),
+            # avg rating
+            avg_rating = Avg("reviews__rating" , distinct= True)
         )
         return apps if not order_by else apps.order_by(order_by)
     
@@ -31,7 +33,7 @@ class AppRepo:
         except App.DoesNotExist:
             raise ObjectNotFound("App not found")
         
-    def create_app(self , founder , name , category , tags , logo , short_description , detail):
+    def create_app(self , founder , name , category , logo , short_description , detail):
         new_app = App.objects.create(
             founder = founder,
             name = name,
@@ -40,7 +42,6 @@ class AppRepo:
             detail = detail
         )
         new_app.category.set(category)
-        new_app.tags.set(tags)
         return new_app
     
     def del_app(self , app):
