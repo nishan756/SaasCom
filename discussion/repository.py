@@ -2,6 +2,13 @@ from .models import Discussion
 from django.db.models import Count
 from session.models import Follow
 from saas_com.core.exceptions import ObjectNotFound
+from django.utils import timezone
+from datetime import timedelta
+from django.db.models import Count , F , Subquery , Prefetch , OuterRef
+from django.db.models.functions import Coalesce
+from vote.models import Vote
+from comment.models import Comment
+from django.contrib.contenttypes.models import ContentType
 
 class DiscussionRepo:
 
@@ -38,6 +45,36 @@ class DiscussionRepo:
             return Discussion.objects.select_related("author").prefetch_related("tags").get(id = id)
         except Discussion.DoesNotExist:
             raise ObjectNotFound("Discussion not found")
+    
+    def trending_discussions(self):
+        last_seven_days = timezone.now() - timedelta(days=7)
+
+        discussion_content_type = ContentType.objects.get_for_model(Discussion)
+
+        vote_subquery = Vote.objects.filter(
+            added_at__gte=last_seven_days,
+            object_id=OuterRef("id"),
+            content_type=discussion_content_type
+        ).values("object_id").annotate(
+            vote_count=Count("id")
+        ).values("vote_count")[:1]
+
+        comment_subquery = Comment.objects.filter(
+            posted_at__gte=last_seven_days,
+            object_id=OuterRef("id"),
+            content_type=discussion_content_type
+        ).values("object_id").annotate(
+            comment_count=Count("id")
+        ).values("comment_count")[:1]
+
+        discussions = Discussion.objects.annotate(
+            vote_score=Coalesce(Subquery(vote_subquery), 0),
+            comment_score=Coalesce(Subquery(comment_subquery), 0),
+        ).annotate(
+            trending_score=F("vote_score") + (F("comment_score") * 1.5)
+        ).order_by("-trending_score")
+
+        return discussions
         
     def post_discussion(self ,title , author , tags , short_description , detail , banner):
         discussion = Discussion.objects.create(title = title , author = author , banner = banner , short_description = short_description , detail = detail)

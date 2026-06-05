@@ -11,6 +11,7 @@ from session.service import FollowService , UserService
 from bookmark.service import BookmarkService
 from report.service import ReportService
 from vote.service import VoteService
+from discussion.service import DiscussionService
 
 # ==================EXCEPTIONS=============
 from saas_com.core.exceptions import AlreadyExists , ObjectNotFound, PermissionDenied , TooManyObject , InvalidForm , InvalidPassword
@@ -30,6 +31,7 @@ user_service = UserService()
 follow_service = FollowService()
 report_service = ReportService()
 bookmark_service = BookmarkService()
+discussion_service = DiscussionService()
 
 @require_GET
 def home(request):
@@ -37,7 +39,8 @@ def home(request):
         "total_apps": app_service.total_apps(),
         "total_users": user_service.total_user(),
         "trending_apps":app_service.trending_apps(),
-        "categories":Category.objects.all()
+        "categories":Category.objects.all(),
+        "trending_discussions":discussion_service.trending_discussions()
     }
     return render(request , "index.html" , context)
 

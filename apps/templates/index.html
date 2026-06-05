@@ -76,48 +76,21 @@
     <!-- Discussion -->
     <section class="section">
         <div class="container">
-            <h2 class="mb-4">Hot Discussions</h2>
+            <h2 class="mb-4">Trending Discussions</h2>
 
             <div style="max-height: 300px; overflow-y: auto;">
                 <ul class="list-group">
-                    <li class="list-group-item d-flex justify-content-between">
-                        Best SaaS for startups?
-                        <span class="badge bg-secondary">12</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        How to market SaaS?
-                        <span class="badge bg-secondary">8</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        Which SaaS stack is best?
-                        <span class="badge bg-secondary">5</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        Indie hackers growth tips
-                        <span class="badge bg-secondary">10</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        Best backend for SaaS apps?
-                        <span class="badge bg-secondary">7</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        Best backend for SaaS apps?
-                        <span class="badge bg-secondary">7</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        Best backend for SaaS apps?
-                        <span class="badge bg-secondary">7</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        Best backend for SaaS apps?
-                        <span class="badge bg-secondary">7</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        Best backend for SaaS apps?
-                        <span class="badge bg-secondary">7</span>
-                    </li>
+                    {% for discussion in trending_discussions %}
+                    <a href="{% url 'discussion-detail' discussion.id %}" style="text-decoration:none;">
+                        <li class="list-group-item d-flex justify-content-between">
+                            {{discussion.title}}
+                            <span class="badge bg-secondary">{{forloop.counter}}</span>
+                        </li>
+                    </a>
+                    {% endfor %}
                 </ul>
             </div>
+
         </div>
     </section>
 
