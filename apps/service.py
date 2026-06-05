@@ -45,6 +45,9 @@ class AppService:
     def get_app_detail(self , id):
         return self.repo.get_app_detail(id = id)
     
+    def trending_apps(self):
+        return self.repo.trending_apps()
+    
         
     def create_app(self , founder , form):
         if form.is_valid():

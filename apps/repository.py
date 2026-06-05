@@ -1,7 +1,11 @@
 from .models import App , AppImages , Review
 from vote.models import Vote
 from saas_com.core.exceptions import ObjectNotFound
-from django.db.models import Count , Q , Avg
+from django.db.models import Count , Q , Avg , F , Prefetch , Sum , FloatField , Subquery , OuterRef
+from django.db.models.functions import Coalesce
+from datetime import timedelta
+from django.utils import timezone
+from django.contrib.contenttypes.models import ContentType
 
 class AppRepo:
     
@@ -9,7 +13,7 @@ class AppRepo:
         return App.objects.filter(status = "approved").count()
     
     def all_apps(self , order_by = None , **query_set):
-        apps = App.objects.select_related("founder").prefetch_related(
+        apps = App.objects.filter(status = "approved").select_related("founder").prefetch_related(
             "category","votes"
         ).annotate(
             #Total upvotes
@@ -64,6 +68,35 @@ class AppRepo:
     
     def del_app(self , app):
         return app.delete()
+    
+    def trending_apps(self):
+        last_seven_days = timezone.now() - timedelta(days=7)
+
+        app_content_type = ContentType.objects.get_for_model(App)
+
+        vote_subquery = Vote.objects.filter(
+            content_type=app_content_type,
+            object_id=OuterRef('id'),
+            added_at__gte=last_seven_days
+        ).values('object_id').annotate(
+            cnt=Count('id')
+        ).values('cnt')[:1]
+
+        review_subquery = Review.objects.filter(
+            app=OuterRef('id'),
+            added_at__gte=last_seven_days
+        ).values('app').annotate(
+            total_rating=Sum('rating')
+        ).values('total_rating')[:1]
+
+        apps = App.objects.filter(status="approved").annotate(
+            vote_score=Coalesce(Subquery(vote_subquery), 0),
+            review_rating_sum=Coalesce(Subquery(review_subquery), 0.0, output_field=FloatField())
+        ).annotate(
+            trending_score=F("vote_score") + (F("review_rating_sum") * 1.5)
+        ).order_by("-trending_score")
+
+        return apps
 
 class AppImageRepo:
 
