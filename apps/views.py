@@ -33,13 +33,13 @@ bookmark_service = BookmarkService()
 
 @require_GET
 def home(request):
-    total_apps = app_service.total_apps()
-    total_users = user_service.total_user()
-    content = {
-        "total_apps": total_apps,
-        "total_users": total_users
+    context = {
+        "total_apps": app_service.total_apps(),
+        "total_users": user_service.total_user(),
+        "trending_apps":app_service.trending_apps(),
+        "categories":Category.objects.all()
     }
-    return render(request , "index.html" , content)
+    return render(request , "index.html" , context)
 
 
 @require_GET

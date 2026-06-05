@@ -35,17 +35,16 @@
     <!--Trending Apps-->
     <section class="section">
         <div class="container">
-            <h2 class="mb-4">🔥 Trending Today</h2>
+            <h2 class="mb-4">Trending Apps</h2>
 
             <div class="d-flex overflow-auto gap-3 pb-2">
 
-            {% for i in "12345678" %}
+            {% for app in trending_apps %}
             <div style="min-width: 300px;">
                 <div class="card p-3 h-100">
-                <h5>App Name</h5>
-                <p>Short description of SaaS product</p>
-                <span class="badge bg-primary">AI Tool</span>
-                <button class="btn btn-sm btn-outline-primary mt-2">⬆ 120</button>
+                    <h5>{{app.name}}</h5>
+                    <p>{{app.short_description|truncatechars:'45'}}</p>
+                    <a href="{% url 'app-detail' app.id %}" class='btn btn-primary'>View</a>
                 </div>
             </div>
             {% endfor %}
@@ -60,26 +59,14 @@
             <h2 class="mb-4">Categories</h2>
 
             <div class="d-flex overflow-auto gap-3 pb-2">
-
-            <div style="min-width: 200px;">
-                <div class="card p-3 text-center">AI Tools</div>
-            </div>
-
-            <div style="min-width: 200px;">
-                <div class="card p-3 text-center">Developer Tools</div>
-            </div>
-
-            <div style="min-width: 200px;">
-                <div class="card p-3 text-center">Marketing</div>
-            </div>
-
-            <div style="min-width: 200px;">
-                <div class="card p-3 text-center">Productivity</div>
-            </div>
-
-            <div style="min-width: 200px;">
-                <div class="card p-3 text-center">Finance</div>
-            </div>
+            
+            {% for cat in categories %}
+                <a href="/apps/all/?category={{cat.name}}" style="text-decoration:none;">
+                    <div style="min-width: 200px;">
+                        <div class="card p-3 text-center">{{cat.name}}</div>
+                    </div>
+                </a>
+            {% endfor %}
 
             </div>
 
