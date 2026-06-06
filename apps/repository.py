@@ -13,7 +13,7 @@ class AppRepo:
         return App.objects.filter(status = "approved").count()
     
     def all_apps(self , order_by = None , **query_set):
-        apps = App.objects.filter(status = "approved").select_related("founder").prefetch_related(
+        apps = App.objects.filter(status = "approved").select_related("user").prefetch_related(
             "category","votes"
         ).annotate(
             #Total upvotes
@@ -46,13 +46,13 @@ class AppRepo:
 
     def get_app_detail(self , id):
         try:
-            return App.objects.select_related("founder").prefetch_related("category" , "app_images" , "reviews" , "reviews__user").get(id = id)
+            return App.objects.select_related("user").prefetch_related("category" , "app_images" , "reviews" , "reviews__user").get(id = id)
         except App.DoesNotExist:
             raise ObjectNotFound("App not found")
         
-    def create_app(self , founder , name , category , logo , short_description , detail):
+    def create_app(self , user , name , category , logo , short_description , detail):
         new_app = App.objects.create(
-            founder = founder,
+            user = user,
             name = name,
             logo = logo,
             short_description = short_description,

@@ -49,14 +49,14 @@ class AppService:
         return self.repo.trending_apps()
     
         
-    def create_app(self , founder , form):
+    def create_app(self , user , form):
         if form.is_valid():
             name = form.cleaned_data.get("name")
             category = form.cleaned_data.get("category")
             logo = form.cleaned_data.get("logo")
             short_description = form.cleaned_data.get("short_description")
             detail = form.cleaned_data.get("detail")
-            app = self.repo.create_app(founder , name , category , logo , short_description , detail)
+            app = self.repo.create_app(user , name , category , logo , short_description , detail)
             return app
         else:
             raise InvalidForm((form.errors))
@@ -72,7 +72,7 @@ class AppService:
     def del_app(self, id, user, form):
         app = self.get_app(id=id)
 
-        if app.founder != user:
+        if app.user != user:
             raise PermissionDenied("You can't delete this app")
 
         if not form.is_valid():
@@ -99,9 +99,9 @@ class AppImageService:
             raise TooManyObject("Maximum 5 image is allowed")
         return self.repo.add_images(app , images)
     
-    def del_image(self , id , founder):
+    def del_image(self , id , user):
         img_obj = self.get_image(id = id)
-        if img_obj.app.founder == founder:
+        if img_obj.app.user == user:
             return self.repo.del_image(img_obj)
         raise PermissionDenied("You can\'t delete this image")     
 
@@ -120,8 +120,8 @@ class ReviewService:
     
     def add_review(self , app_id , user , review , rating = None):
         app = AppService().get_app(id = app_id)
-        if app.founder == user:
-            raise PermissionDenied("Founders can't review on theirs app")
+        if app.user == user:
+            raise PermissionDenied("You can't review on your app")
         prev_review = self.repo.has_user_review(app = app , user = user)
         if prev_review:
             raise AlreadyExists("You already reviewed on this app")

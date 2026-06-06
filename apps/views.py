@@ -70,7 +70,7 @@ def app_detail(request , id):
     # Checking if the user is authenticated 
     if request.user.is_authenticated:
         context["user_vote"] = vote_service.get_vote(user = request.user , content_type = 'app' , object_id = id)
-        context["is_following"] = follow_service.is_following(follower = request.user , following = context["app"].founder)
+        context["is_following"] = follow_service.is_following(follower = request.user , following = context["app"].user)
         context["user_report"] = report_service.has_user_report(content_type = "app" , object_id = id , reporter = request.user)
         context["bookmark"] = bookmark_service.is_bookmarked(user = request.user , content_type = 'app' , object_id = id)
     
@@ -85,7 +85,7 @@ def create_app(request):
     if request.method == "POST":
         form = AppForm(request.POST , request.FILES)
         try:
-            new_app = app_service.create_app(founder = request.user , form = form)
+            new_app = app_service.create_app(user = request.user , form = form)
             images = request.FILES.getlist("images")
             if images:
                 app_image_service.add_images(app = new_app , images = images)
@@ -107,7 +107,7 @@ def update_app(request , id):
     app = app_service.get_app(id = id)
     context = {}
     context["form"] = AppForm(instance = app)
-    if app.founder != request.user:
+    if app.user != request.user:
         messages.warning(request , "Can't update this app")
         return redirect("app-detail" , id)
     
@@ -155,10 +155,10 @@ def del_app(request , id):
 @require_POST
 @login_required(login_url = "login")
 def del_image(request , id):
-    founder = request.user
+    user = request.user
     HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER" , "/") , request.get_host())
     try:
-        app_image_service.del_image(id , founder)
+        app_image_service.del_image(id , user)
         messages.success(request , "Successfully deleted image")
     except ObjectNotFound as e:
         messages.error(request , str(e))

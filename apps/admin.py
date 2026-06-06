@@ -17,7 +17,7 @@ class AppImagesInline(admin.TabularInline):
 
 @admin.register(App)
 class AppAdmin(admin.ModelAdmin):
-    list_display = ["founder" , "name" , "view_logo" , "developed_at" , "status" , "added_at"]
+    list_display = ["user" , "name" , "view_logo" , "developed_at" , "status" , "added_at"]
     list_per_page = 50
     list_filter = ["status"]
     search_fields = ["name"]

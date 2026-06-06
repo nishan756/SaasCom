@@ -28,7 +28,7 @@ class Category(models.Model):
 
 class App(models.Model):
     id = models.UUIDField(primary_key = True , default = uuid.uuid4 , editable = False)
-    founder = models.ForeignKey(User , on_delete = models.SET_NULL , null = True , related_name = "apps")
+    user = models.ForeignKey(User , on_delete = models.SET_NULL , null = True , related_name = "apps")
     name = models.CharField(max_length = 70)
     category = models.ManyToManyField(Category , related_name = "apps" , blank = True)
     logo = CloudinaryField("Logo" , folder = "saas_com/assets/images/app_logos")
@@ -53,7 +53,7 @@ class App(models.Model):
         indexes = [
             models.Index(fields = ["added_at"]),
             models.Index(fields = ["status"]),
-            models.Index(fields = ["founder"]),
+            models.Index(fields = ["user"]),
         ]
 
 

@@ -28,9 +28,7 @@
                 <li class="nav-item"><a class="nav-link m-2" href="{% url 'all-discussions' %}">Discussion</a></li>
                 <li class="nav-item"><a class="nav-link m-2" href="{% url 'users' 'company' %}">Companies</a></li>
                 <li class="nav-item"><a class="nav-link m-2" href="{% url 'users' 'developer' %}">Developers</a></li>
-                {% if request.user.is_developer %}
-                    <li class="nav-item"><a class="nav-link m-2" href="{% url 'all-jobs' %}">Jobs</a></li>
-                {% endif %}
+                <li class="nav-item"><a class="nav-link m-2" href="{% url 'all-jobs' %}">Jobs</a></li>
                 <!-- ====================================== -->
                 <!-- USER DROPDOWN (PROFILE IMAGE ICON) -->
                 <!-- ====================================== -->
