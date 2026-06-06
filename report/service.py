@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from jobs.models import Job
 from apps.models import App
 from discussion.models import Discussion
-from saas_com.core.exceptions import PermissionDenied , AlreadyExists , InvalidContentType , InvalidForm
+from saas_com.core.exceptions import PermissionDenied , AlreadyExists , InvalidContentType , InvalidForm ,  ObjectNotFound
 
 User = get_user_model()
 
@@ -30,6 +30,14 @@ class ReportService:
 
     def add_report(self , reporter , content_type , id , form):
 
+        content_object = self.CONTENT_TYPES[content_type].objects.filter(id = id).first()
+
+        if content_object and content_object.user == reporter:
+            raise PermissionDenied("You can't report on your {}".format(content_type))
+        
+        elif not content_type:
+            raise ObjectNotFound(f"{content_type} not found")
+        
         if self.has_user_report(content_type , object_id = id , reporter = reporter):
             raise AlreadyExists("You already report on this {}".format(content_type))
         

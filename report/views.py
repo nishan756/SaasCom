@@ -18,15 +18,18 @@ def report(request , content_type , id):
     try:
         report_service.add_report(reporter=request.user, content_type=content_type, id=id, form=ReportForm(request.POST))
         messages.success(request, "Your report has been submitted successfully.")
-
-    except InvalidContentType as e:
-        messages.error(request, str(e))
     
     except InvalidForm as e:
         messages.error(request, str(e))
     
     except AlreadyExists as e:
         messages.info(request , str(e))
+    
+    except PermissionDenied as e:
+        messages.warning(request , str(e))
+    
+    except ObjectNotFound as e:
+        messages.error(request , str(e))
     
     except Exception as e:
         messages.error(request, "An error occurred while submitting your report. Please try again later.")
