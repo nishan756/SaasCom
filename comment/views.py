@@ -26,7 +26,7 @@ def post_comment(request , content_type , id):
         form = CommentForm(data = request.POST)
 
         try:
-            comment_service.post_comment(author = request.user , content_type = content_type , object_id = id , form = form , parent_id = PARENT_ID)
+            comment_service.post_comment(user = request.user , content_type = content_type , object_id = id , form = form , parent_id = PARENT_ID)
             messages.success(request , "Successfully posted your comment")
 
         except ObjectNotFound as e:
@@ -46,7 +46,7 @@ def post_comment(request , content_type , id):
 def delete_comment(request , id):
     HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER" , "/") , request.get_host())
     try:
-        comment_service.delete_comment(author = request.user , id = id)
+        comment_service.delete_comment(user = request.user , id = id)
         messages.success(request , "Successfully deleted your comment")
 
     except ObjectNotFound as e:

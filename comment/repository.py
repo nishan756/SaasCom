@@ -4,9 +4,9 @@ from saas_com.core.exceptions import ObjectNotFound
 
 class CommentRepo:
 
-    def get_author_comment(self , author , id):
+    def get_user_comment(self , user , id):
         try:
-            return Comment.objects.get(author = author , id= id)
+            return Comment.objects.get(user = user , id= id)
         except Comment.DoesNotExist:
             raise ObjectNotFound("Comment not found")
     
@@ -17,7 +17,7 @@ class CommentRepo:
             raise ObjectNotFound("Comment not found")
     
     def get_comments(self , content_type , object_id):
-        return Comment.objects.filter(content_type = content_type , object_id = object_id).select_related("author" , "parent")
+        return Comment.objects.filter(content_type = content_type , object_id = object_id).select_related("user" , "parent")
     
     def post_comment(self , comment):
         return comment.save()

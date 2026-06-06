@@ -5,6 +5,6 @@ from .models import Comment
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ["author" , "content_object" , "posted_at"]
+    list_display = ["user" , "content_object" , "posted_at"]
     list_filter = ["content_type"]
     
