@@ -80,7 +80,7 @@ def post_discussion(request):
 def delete_discussion(request , id):
     HTTP_REFERER = is_safe_url(url = request.META.get('HTTP_REFERER' , "/") , allowed_hosts = request.get_host())
     try:
-        discussion_service.delete_discussion(author = request.user , id = id)
+        discussion_service.delete_discussion(user = request.user , id = id)
         messages.success(request , "Successfully deleted your discussion")
         return redirect("all-discussions")
     
@@ -96,7 +96,7 @@ def delete_discussion(request , id):
 @login_required(login_url = "login")
 def update_discussion(request , id):
     try:
-        discussion = discussion_service.get_discussion(author = request.user , id = id)
+        discussion = discussion_service.get_discussion(user = request.user , id = id)
 
     except ObjectNotFound as e:
         messages.error(request , str(e))

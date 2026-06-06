@@ -14,7 +14,7 @@ class DiscussionRepo:
 
     def all_discussions(self, user, **query_set):
         
-        discussions = Discussion.objects.select_related("author").prefetch_related(
+        discussions = Discussion.objects.select_related("user").prefetch_related(
         "tags" , "votes").annotate(total_vote=Count("votes")).order_by("-posted_at")
         if query_set.get("title"):
             discussions = discussions.filter(
@@ -30,19 +30,19 @@ class DiscussionRepo:
 
             following = list(Follow.objects.filter(follower = user).values_list("following__username" , flat = True))
 
-            discussions = discussions.filter(author__username__in = following)
+            discussions = discussions.filter(user__username__in = following)
 
         return discussions
     
-    def get_discussion(self , author , id):
+    def get_discussion(self , user , id):
         try:
-            return Discussion.objects.get(author = author , id = id)
+            return Discussion.objects.get(user = user , id = id)
         except Discussion.DoesNotExist:
             raise ObjectNotFound("Discussion not found")
     
     def discussion_detail(self , id):
         try:
-            return Discussion.objects.select_related("author").prefetch_related("tags").get(id = id)
+            return Discussion.objects.select_related("user").prefetch_related("tags").get(id = id)
         except Discussion.DoesNotExist:
             raise ObjectNotFound("Discussion not found")
     
@@ -76,8 +76,8 @@ class DiscussionRepo:
 
         return discussions
         
-    def post_discussion(self ,title , author , tags , short_description , detail , banner):
-        discussion = Discussion.objects.create(title = title , author = author , banner = banner , short_description = short_description , detail = detail)
+    def post_discussion(self ,title , user , tags , short_description , detail , banner):
+        discussion = Discussion.objects.create(title = title , user = user , banner = banner , short_description = short_description , detail = detail)
         discussion.tags.set(tags)
         return discussion
     

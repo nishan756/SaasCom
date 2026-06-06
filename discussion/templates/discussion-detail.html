@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-    {{discussion.title}} | {{discussion.author.full_name}}
+    {{discussion.title}} | {{discussion.user.full_name}}
 {% endblock title %}
 
 {% block css %}
@@ -52,7 +52,7 @@
 
                             <ul class="dropdown-menu dropdown-menu-end">
 
-                                {% if request.user == discussion.author %}
+                                {% if request.user == discussion.user %}
                                     <li>
                                         <a href="{% url 'update-discussion' discussion.id %}"
                                         class="dropdown-item">
@@ -72,7 +72,7 @@
                                     <li><hr class="dropdown-divider"></li>
                                 {% endif %}
                                 
-                                {% if request.user != discussion.author %}
+                                {% if request.user != discussion.user %}
                                     <li>
                                         <button
                                             class="dropdown-item"
@@ -89,12 +89,12 @@
 
                     </div>
 
-                    <!-- Author Info -->
+                    <!-- User Info -->
                     <div class="d-flex align-items-center mb-4">
 
-                        {% if discussion.author.image %}
+                        {% if discussion.user.image %}
                             <img
-                                src="{{ discussion.author.image.url }}"
+                                src="{{ discussion.user.image.url }}"
                                 class="rounded-circle me-3"
                                 width="50"
                                 height="50"
@@ -109,7 +109,7 @@
 
                         <div>
                             <div class="fw-semibold">
-                                {{ discussion.author.full_name|default:discussion.author.username }}
+                                {{ discussion.user.full_name|default:discussion.user.username }}
                             </div>
 
                             <small class="text-muted">
@@ -271,7 +271,7 @@
     </div>
 </div>
 
-{% if request.user != discussion.author %}
+{% if request.user != discussion.user %}
 <!--Report Modal-->
 <div class="modal fade" id="reportDiscussionModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">

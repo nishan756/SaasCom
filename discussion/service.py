@@ -29,25 +29,25 @@ class DiscussionService:
     def discussion_detail(self , id):
         return self.repo.discussion_detail(id = id)
     
-    def get_discussion(self , author , id):
-        return self.repo.get_discussion(author , id = id)
+    def get_discussion(self , user , id):
+        return self.repo.get_discussion(user , id = id)
 
     def trending_discussions(self):
         return self.repo.trending_discussions()
     
-    def post_discussion(self , author , form):
+    def post_discussion(self , user , form):
         if form.is_valid():
-            author = author
+            user = user
             tags = form.cleaned_data.get("tags")
             title = form.cleaned_data.get("title")
             short_description = form.cleaned_data.get("short_description")
             detail = form.cleaned_data.get("detail")
             banner = form.cleaned_data.get("banner" , None)
-            return self.repo.post_discussion(title , author , tags , short_description , detail , banner)
+            return self.repo.post_discussion(title , user , tags , short_description , detail , banner)
         raise InvalidForm((form.errors))
     
-    def delete_discussion(self , author , id):
-        discussion = self.get_discussion(author = author , id = id)
+    def delete_discussion(self , user , id):
+        discussion = self.get_discussion(user = user , id = id)
         return self.repo.delete_discussion(discussion)
     
     def update_discussion(self , form):

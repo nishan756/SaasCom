@@ -1,8 +1,8 @@
 {% load static %}
 
 <div class="comment-item d-flex gap-3 mb-3" id="comment-{{ comment.id }}">
-    {% if comment.author.image %}
-        <img src="{{ comment.author.image.url }}"
+    {% if comment.user.image %}
+        <img src="{{ comment.user.image.url }}"
              class="rounded-circle flex-shrink-0"
              width="40" height="40" style="object-fit:cover;">
     {% else %}
@@ -16,14 +16,14 @@
             <div class="d-flex justify-content-between align-items-center mb-1">
                 <div>
                     <span class="fw-semibold">
-                        {{ comment.author.full_name|default:comment.author.username }}
+                        {{ comment.user.full_name|default:comment.user.username }}
                     </span>
                     <small class="text-muted ms-2">
                         {{ comment.posted_at|date:"d M Y • h:i A" }}
                     </small>
                 </div>
 
-                {% if request.user == comment.author %}
+                {% if request.user == comment.user %}
                 <div class="dropdown">
                     <button class="btn btn-sm btn-link text-muted p-0"
                             data-bs-toggle="dropdown">

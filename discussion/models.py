@@ -25,7 +25,7 @@ class Tag(models.Model):
 
 class Discussion(models.Model):
     id = models.UUIDField(primary_key = True , default = uuid.uuid4 , editable = False)
-    author = models.ForeignKey(User , on_delete = models.CASCADE , related_name = "discussions")
+    user = models.ForeignKey(User , on_delete = models.CASCADE , related_name = "discussions")
     title = models.CharField(max_length = 120)
     banner = CloudinaryField(blank = True , null = True)
     tags = models.ManyToManyField(Tag , blank = True , related_name = "discussions")
@@ -40,7 +40,7 @@ class Discussion(models.Model):
     class Meta:
         ordering = ["-posted_at"]
         indexes = [
-            models.Index(fields = ["author"]),
+            models.Index(fields = ["user"]),
             models.Index(fields = ["posted_at"]),
         ]
 

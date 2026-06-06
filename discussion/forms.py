@@ -5,7 +5,7 @@ from django import forms
 class DiscussionForm(forms.ModelForm):
     class Meta:
         model = Discussion
-        exclude = ["author"]
+        exclude = ["user"]
     
     def __init__(self, *args , **kwargs):
         super().__init__(*args , **kwargs)
