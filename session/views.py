@@ -7,7 +7,7 @@ from saas_com.core.exceptions import ObjectNotFound , InvalidForm , FollowExcept
 from saas_com.core.service import is_safe_url
 
 # =================FORMS=================
-from .forms import LoginForm
+from .forms import LoginForm , SignUpForm
 from report.forms import ReportForm
 
 # =================SERVICES=============
@@ -48,6 +48,29 @@ def user_logout(request):
     logout(request)
     messages.success(request , "You have been logged out successfully.")
     return redirect("home")
+
+def user_signup(request):
+    if request.user.is_authenticated:
+        return redirect("home")
+    
+    if request.method == "POST":
+        form = SignUpForm(data = request.POST )
+        try:
+            user_service.signup(form)
+            messages.success(request , "Successfully created your account")
+            return redirect("login")
+
+        except InvalidForm as e:
+            messages.warning(request , str(e))
+
+        except Exception as e:
+            messages.error(request , "Something went wrong")
+
+    context = {
+        'form' : SignUpForm()
+    }
+
+    return render(request , 'signup.html' , context)
 
 
 @login_required(login_url = "login")

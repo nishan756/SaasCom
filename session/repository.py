@@ -22,6 +22,9 @@ class UserRepo:
         except User.DoesNotExist:
             raise ObjectNotFound("User not found")
     
+    def signup(self , user):
+        return user.save()
+    
     def authenticated(self , request , username , password):
         user = authenticate(request , username = username , password = password)
         if user is not None:

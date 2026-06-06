@@ -15,6 +15,12 @@ class UserService:
     
     def get_users(self , user_type):
         return self.repo.get_users(user_type = user_type)
+    
+    def signup(self , form):
+        if form.is_valid():
+            user = form.save()
+            return self.repo.signup(user)
+        raise InvalidForm((form.errors))
 
     def authenticated(self , form , request):
         if form.is_valid():
