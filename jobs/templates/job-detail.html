@@ -75,14 +75,16 @@
                     </button>
                 </form>
 
-                <!-- Report Button -->
-                <button class="action-btn report-btn"
-                        data-bs-toggle="modal"
-                        data-bs-target="#reportModal">
+                {% if not request.user == job.user and not user_report %}
+                    <!-- Report Button -->
+                    <button class="action-btn report-btn"
+                            data-bs-toggle="modal"
+                            data-bs-target="#reportModal">
 
-                    <i class="fa-solid fa-flag"></i>
+                        <i class="fa-solid fa-flag"></i>
 
-                </button>
+                    </button>
+                {% endif %}
 
             </div>
 
@@ -376,6 +378,7 @@
 
 </div>
 
+{% if not request.user == job.user and not user_report %}
 <!-- REPORT MODAL -->
 
 <div class="modal fade"
@@ -442,5 +445,5 @@
     </div>
 
 </div>
-
+{% endif %}
 {% endblock %}

@@ -53,6 +53,7 @@ def job_detail(request , id):
     context["bookmark"] = bookmark_service.is_bookmarked(user= request.user ,content_type = "job", object_id = id) if request.user.is_authenticated else None
     context["application"] = application_service.has_application(job_id = id , user = request.user) if request.user.is_authenticated else None
     context["total_applicants"] = application_service.total_applicants(job)
+    context["user_report"] = report_service.has_user_report('job' , id , request.user) if request.user.is_authenticated else None
     context["reports"] = report_service.get_reports(content_type = "job" , object_id = id)
     
     return render(request , "job-detail.html" , context)
