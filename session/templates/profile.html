@@ -62,9 +62,11 @@
         <li class="nav-item">
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#discussions">Discussions</button>
         </li>
-        <li class="nav-item">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#jobs">Job Posts</button>
-        </li>
+        {% if profile.is_company %}
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#jobs">Job Posts</button>
+            </li>
+        {% endif %}
     </ul>
 
     <div class="tab-content mt-3">

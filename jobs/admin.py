@@ -14,8 +14,8 @@ class CurrencyAdmin(admin.ModelAdmin):
 
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
-    list_display = ["company" , "category" , "posted_at" , "deadline" , "is_active"]
-    list_filter = ['company' , "is_active" , "category"]
+    list_display = ["user" , "category" , "posted_at" , "deadline" , "is_active"]
+    list_filter = ['user' , "is_active" , "category"]
     actions = ["mark_as_inactive" , "mark_as_active"]
     list_per_page = 100
 
@@ -38,8 +38,8 @@ class JobAdmin(admin.ModelAdmin):
 
 @admin.register(Application)
 class ApplicationAdmin(admin.ModelAdmin):
-    list_display = ["job" , "candidate" , "applied_at" , "status"]
-    list_filter = ['job__company' , "job__category"]
+    list_display = ["job" , "user" , "applied_at" , "status"]
+    list_filter = ['job__user__username' , "job__category"]
     list_per_page = 100
 
 

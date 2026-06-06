@@ -51,7 +51,7 @@ def job_detail(request , id):
     context["report_form"] = ReportForm()
     context["application_form"] = ApplicationForm()
     context["bookmark"] = bookmark_service.is_bookmarked(user= request.user ,content_type = "job", object_id = id) if request.user.is_authenticated else None
-    context["application"] = application_service.has_application(job_id = id , candidate = request.user) if request.user.is_authenticated else None
+    context["application"] = application_service.has_application(job_id = id , user = request.user) if request.user.is_authenticated else None
     context["total_applicants"] = application_service.total_applicants(job)
     context["reports"] = report_service.get_reports(content_type = "job" , object_id = id)
     
@@ -71,7 +71,7 @@ def post_job(request):
         if not form.is_valid():
             return messages.error(request , "Invalid Form data")
         try:
-            job = job_service.post_job(company = request.user , form = form)
+            job = job_service.post_job(user = request.user , form = form)
             messages.success(request , "Successfully posted your job")
             return redirect("job-detail" , id = job.id)
         
@@ -91,7 +91,7 @@ def apply(request , id):
         form = ApplicationForm(data = request.POST , files = request.FILES)
     
     try:
-        application_service.apply(candidate = request.user , form = form , job_id = id)
+        application_service.apply(user = request.user , form = form , job_id = id)
         messages.success(request , "Application successful")
     except ObjectNotFound as e:
         messages.error(request , str(e))
@@ -107,7 +107,7 @@ def applications(request , id):
     query_set = request.GET.dict()
     page_num = request.GET.get("page" , 1)
     try:
-        applications = application_service.applications(id = id , company = request.user , page_num = page_num , **query_set)
+        applications = application_service.applications(id = id , user = request.user , page_num = page_num , **query_set)
     except ObjectNotFound as e:
         messages.error(request , str(e))
         return redirect("profile" , request.user.username)
@@ -125,7 +125,7 @@ def applications(request , id):
 def application_detail(request , id):
     context = {}
     try:
-        application = application_service.get_application(id , company = request.user)
+        application = application_service.get_application(id , user = request.user)
     except ObjectNotFound as e:
         messages.error(request , str(e))
     context['application'] = application
@@ -140,7 +140,7 @@ def update_application_status(request , id , status):
     job_id = request.POST.get("job_id")
     hr_message = request.POST.get("hr_message" , None)
     try:
-        application_service.update_application_status(id = id , company = request.user , status = status , hr_message = hr_message)
+        application_service.update_application_status(id = id , user = request.user , status = status , hr_message = hr_message)
         messages.success(request , "Successfully updated application status")
         return redirect("application-detail" , id)
     

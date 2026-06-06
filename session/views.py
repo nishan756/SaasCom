@@ -116,7 +116,7 @@ def view_profile(request , username):
         context["is_following"] = follow_service.is_following(follower = request.user , following = context["profile"])
         context["user_report"] = report_service.has_user_report('user' , context["profile"].id , request.user)
     if context["profile"].is_company:
-        context["jobs"] = job_service.get_company_jobs(context["profile"])
+        context["jobs"] = job_service.get_user_jobs(context["profile"])
     
     return render(request , "profile.html" , context)
 

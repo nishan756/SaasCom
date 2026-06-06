@@ -78,7 +78,7 @@ class JobManager(models.Manager):
 
 class Job(models.Model):
     id = models.UUIDField(primary_key = True , default = uuid.uuid4 , editable = False)
-    company = models.ForeignKey(User , on_delete = models.CASCADE , limit_choices_to = {"user_type":"company"} , related_name = "jobs")
+    user = models.ForeignKey(User , on_delete = models.CASCADE , limit_choices_to = {"user_type":"company"} , related_name = "jobs")
     title = models.CharField(max_length = 100)
     category = models.ForeignKey(JobCategory , on_delete = models.SET_NULL , null = True , blank = True , related_name = "jobs")
     short_description = models.TextField(blank = True , null = True)
@@ -119,7 +119,7 @@ class Job(models.Model):
     
     class Meta:
         indexes = [
-            models.Index(fields = ["company"]),
+            models.Index(fields = ["user"]),
             models.Index(fields = ["job_type"]),
             models.Index(fields = ["posted_at"]),
             models.Index(fields = ["category"]),
@@ -132,7 +132,7 @@ class Job(models.Model):
 class Application(models.Model):
     id = models.UUIDField(primary_key = True , default = uuid.uuid4 , editable = False)
     job = models.ForeignKey(Job , on_delete = models.CASCADE , limit_choices_to = {"is_active":True} , related_name = "applications")
-    candidate = models.ForeignKey(User , on_delete = models.CASCADE , limit_choices_to = {"user_type":"developer"} , related_name = "applications")
+    user = models.ForeignKey(User , on_delete = models.CASCADE , limit_choices_to = {"user_type":"developer"} , related_name = "applications")
     cover_letter = CloudinaryField(folder = "saas_com/assets/jobs/cover_letter")
     resume = CloudinaryField(folder = "saas_com/assets/jobs/resume")
     class StatusChoices(models.TextChoices):
@@ -145,13 +145,13 @@ class Application(models.Model):
     applied_at = models.DateTimeField(auto_now_add = True)
 
     def __str__(self):
-        return f"{self.candidate.full_name()} applied to {self.job.title}"
+        return f"{self.user.full_name()} applied to {self.job.title}"
 
     class Meta:
         ordering = ["job" , "applied_at"]
-        unique_together = ["job" , "candidate"]
+        unique_together = ["job" , "user"]
         indexes = [
             models.Index(fields = ["job"]),
-            models.Index(fields = ["job" , "candidate"]),
+            models.Index(fields = ["job" , "user"]),
         ]
 

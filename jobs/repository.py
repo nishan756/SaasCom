@@ -5,7 +5,7 @@ from saas_com.core.exceptions import ObjectNotFound
 class JobRepo:
 
     def all_jobs(self , **query_set):
-        jobs = Job.objects.select_related("company" , "category")
+        jobs = Job.objects.select_related("user" , "category")
         if query_set.get("category"):
             jobs = jobs.category(category = query_set["category"])
         if query_set.get("job_type"):
@@ -16,18 +16,18 @@ class JobRepo:
             jobs = jobs.filter(title__icontains = query_set["title"])
         return jobs
     
-    def get_company_jobs(self , company):
-        return Job.objects.filter(company = company)
+    def get_user_jobs(self , user):
+        return Job.objects.filter(user = user)
     
     def get_job(self , id):
         try:
-            return Job.objects.select_related("company").get(id = id)
+            return Job.objects.select_related("user").get(id = id)
         except Job.DoesNotExist:
             raise ObjectNotFound("Job post not found")
     
     def job_detail(self , id):
         try:
-            return Job.objects.select_related("company" , "category").get(id = id)
+            return Job.objects.select_related("user" , "category").get(id = id)
         except Job.DoesNotExist:
             raise ObjectNotFound("Job post not found")
 
@@ -44,12 +44,12 @@ class JobCatRepo:
 
 class ApplicationRepo:
 
-    def has_application(self , job_id , candidate):
-        return Application.objects.filter(Q(job__id = job_id) , Q(candidate = candidate)).exists()
+    def has_application(self , job_id , user):
+        return Application.objects.filter(Q(job__id = job_id) , Q(user = user)).exists()
     
-    def get_application(self , id , company):
+    def get_application(self , id , user):
         try:
-            return Application.objects.select_related("candidate").get(id = id , job__company = company)
+            return Application.objects.select_related("user").get(id = id , job__user = user)
         except Application.DoesNotExist:
             raise ObjectNotFound("Application not found")
 
@@ -60,9 +60,9 @@ class ApplicationRepo:
         return Application.objects.filter(job = job).count()
     
     def applications(self , job , **query_set):
-        applications = Application.objects.select_related("candidate").filter(job = job)
+        applications = Application.objects.select_related("user").filter(job = job)
         if query_set.get("username"):
-            applications = applications.filter(candidate__username = query_set["username"])
+            applications = applications.filter(user__username = query_set["username"])
         if query_set.get("status"):
             applications = applications.filter(status = query_set["status"])
         return applications

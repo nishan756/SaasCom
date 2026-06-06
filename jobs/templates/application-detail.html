@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    Application of {{application.candidate.full_name}}
+    Application of {{application.user.full_name}}
 {% endblock %}
 
 {% block css %}
@@ -24,7 +24,7 @@
                 <div>
 
                     <p class="page-subtitle">
-                        Application of {{application.candidate.full_name}} <span>&rarr;</span> <a href="{% url 'applications' application.job.id %}">View other applications</a>
+                        Application of {{application.user.full_name}} <span>&rarr;</span> <a href="{% url 'applications' application.job.id %}">View other applications</a>
                     </p>
 
                 </div>
@@ -67,9 +67,9 @@
 
             <div class="candidate-box">
 
-                {% if application.candidate.image %}
+                {% if application.user.image %}
                     <img
-                        src="{{ application.candidate.image.url }}"
+                        src="{{ application.user.image.url }}"
                         class="candidate-image"
                         alt="candidate"
                     >
@@ -83,11 +83,11 @@
                 <div>
 
                     <div class="candidate-name">
-                        {{ application.candidate.full_name }}
+                        {{ application.user.full_name }}
                     </div>
 
                     <div class="candidate-username">
-                        <a href="{% url 'profile' application.candidate.username %}">{{ application.candidate.username }}</a>
+                        <a href="{% url 'profile' application.user.username %}">{{ application.user.username }}</a>
                     </div>
 
                 </div>

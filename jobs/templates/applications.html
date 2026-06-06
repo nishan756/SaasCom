@@ -122,9 +122,9 @@
 
                                         <div class="applicant-info">
 
-                                            {% if application.candidate.image %}
+                                            {% if application.user.image %}
                                                 <img
-                                                    src="{{ application.candidate.image.url }}"
+                                                    src="{{ application.user.image.url }}"
                                                     class="applicant-image"
                                                     alt="profile"
                                                 >
@@ -138,11 +138,11 @@
                                             <div>
 
                                                 <div class="applicant-name">
-                                                    {{ application.candidate.full_name }}
+                                                    {{ application.user.full_name }}
                                                 </div>
 
                                                 <div class="applicant-username">
-                                                    @{{ application.candidate.username }}
+                                                    @{{ application.user.username }}
                                                 </div>
 
                                             </div>

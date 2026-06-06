@@ -93,6 +93,19 @@
 
                             <div class="col-md-6 mb-4">
                                 <label class="form-label fw-semibold">
+                                    Currency
+                                </label>
+                                {{ form.currency }}
+
+                                {% if form.currency.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.currency.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label fw-semibold">
                                     Experience
                                 </label>
                                 {{ form.experience }}

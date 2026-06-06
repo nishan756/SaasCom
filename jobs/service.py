@@ -13,8 +13,8 @@ class JobService:
         jobs = paginator.get_page(page_num)
         return jobs
     
-    def get_company_jobs(self , company):
-        return self.repo.get_company_jobs(company)
+    def get_user_jobs(self , user):
+        return self.repo.get_user_jobs(user)
     
     def job_detail(self , id):
         return self.repo.job_detail(id = id)
@@ -22,9 +22,9 @@ class JobService:
     def get_job(self , id):
         return self.repo.get_job(id = id)
     
-    def post_job(self , company , form):
+    def post_job(self , user , form):
        job = form.save(commit = False)
-       job.company = company
+       job.user = user
        self.repo.post_job(job)
         
 
@@ -37,25 +37,25 @@ class JobCatService:
 class ApplicationService:
     repo = ApplicationRepo()
 
-    def has_application(self , job_id , candidate):
-        return self.repo.has_application(job_id , candidate)
+    def has_application(self , job_id , user):
+        return self.repo.has_application(job_id , user)
     
-    def get_application(self , id , company):
-        return self.repo.get_application(id , company)
+    def get_application(self , id , user):
+        return self.repo.get_application(id , user)
 
-    def apply(self , candidate , form , job_id):
+    def apply(self , user , form , job_id):
         job = JobService().job_detail(id = job_id)
         application = form.save(commit = False)
         application.job = job
-        application.candidate = candidate
+        application.user = user
         return self.repo.apply(application)
     
     def total_applicants(self , job):
         return self.repo.total_applicants(job)
     
-    def applications(self , id , company , page_num , **query_set):
+    def applications(self , id , user , page_num , **query_set):
         job = JobRepo().get_job(id)
-        if job.company != company:
+        if job.user != user:
             raise PermissionDenied("You can\'t see applicants for this job")
         # Quering
         supported_q_fields = ["username" ,  "status"]
@@ -67,8 +67,8 @@ class ApplicationService:
         jobs = paginator.get_page(page_num)
         return jobs
     
-    def update_application_status(self , id , company , status , hr_message = None):
-        application = self.get_application(id , company)
+    def update_application_status(self , id , user , status , hr_message = None):
+        application = self.get_application(id , user)
         if application.status != status:
             return self.repo.update_application_status(application , status , hr_message)
         

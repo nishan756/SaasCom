@@ -22,8 +22,8 @@
             <div class="job-top">
 
                 <div class="company-logo">
-                    {% if job.company.image %}
-                        <img src="{{ job.company.image.url }}" alt="">
+                    {% if job.user.image %}
+                        <img src="{{ job.user.image.url }}" alt="">
                     {% else %}
                         <img src="{% static 'img/unknown_avatar.jpg' %}" alt="">
                     {% endif %}
@@ -38,7 +38,7 @@
 
                         <span>
                             <i class="fa-solid fa-building"></i>
-                            {{ job.company.full_name }}
+                            {{ job.user.full_name }}
                         </span>
 
                         <span>
@@ -48,7 +48,7 @@
 
                         <span>
                             <i class="fa-solid fa-briefcase"></i>
-                            {{ job.job_type }}
+                            {{ job.job_type.capitalize }}
                         </span>
 
                     </div>
@@ -138,7 +138,7 @@
 
                 <strong>
                     {% if job.max_salary and job.min_salary %}
-                        {{ job.max_salary }} - {{job.min_salary}}
+                        {{ job.min_salary }} - {{job.max_salary}}
                     {% elif job.max_salary %}
                         {{ job.max_salary }}
                     {% elif job.min_salary %}
@@ -168,9 +168,10 @@
                 <span>Experience</span>
 
                 <strong>
-                    {% if job.experience %}{{ job.experience_level }}
+                    {% if job.experience %}
+                        {{ job.experience_level }}
                     {% else %}
-                    N/A
+                        N/A
                     {% endif %}
                 </strong>
             </div>
@@ -203,7 +204,7 @@
 
         <div class="sidebar-card">
 
-            <a href="{% url 'profile' job.company.username %}" class="company-btn">
+            <a href="{% url 'profile' job.user.username %}" class="company-btn">
 
                 View Company
 
