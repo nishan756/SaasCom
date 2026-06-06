@@ -6,10 +6,10 @@ from django.test import TestCase
 class TestApp(TestCase):
     
     def setUp(self):
-        self.founder = User.objects.create(username = "nishan111" , password = "nishan111")
+        self.user = User.objects.create(username = "nishan111" , password = "nishan111")
         self.tag = Tag.objects.create(title = "django")
         self.category = Category.objects.create(name = "AI")
-        self.app = App.objects.create(name = "my_app" , founder = self.founder , short_description = "bla bla bla" , detail = "bla bla bla")
+        self.app = App.objects.create(name = "my_app" , user = self.user , short_description = "bla bla bla" , detail = "bla bla bla")
     
     def test_str_method(self):
         self.assertEqual(str(self.app) , "my_app")
@@ -23,7 +23,7 @@ class TestApp(TestCase):
         self.assertEqual(self.app.status , "published")
     
     def test_invalid_status(self):
-        app = App.objects.create(founder = self.founder , name = "app" , status = "invalid")
+        app = App.objects.create(user = self.user , name = "app" , status = "invalid")
         with self.assertRaises(ValidationError):
             app.full_clean()
     
@@ -35,16 +35,16 @@ class TestApp(TestCase):
         self.assertIn(self.tag , self.app.tags.all())
     
     def test_ordering(self):
-        app2 = App.objects.create(founder = self.founder , name = "app2")
+        app2 = App.objects.create(user = self.user , name = "app2")
         apps = list(App.objects.all())
 
         self.assertEqual(apps[0] , app2)
     
     def test_fk_user_null(self):
-        self.founder.delete()
+        self.user.delete()
         self.app.refresh_from_db()
 
-        self.assertIsNone(self.app.founder)
+        self.assertIsNone(self.app.user)
     
     def test_full_clean(self):
         self.app.full_clean()
