@@ -4,6 +4,7 @@ from discussion.models import Discussion
 from .models import Vote
 from saas_com.core.service import get_content_type , ContentType
 from django.utils.timezone import now
+from saas_com.core.exceptions import PermissionDenied
 
 class VoteService:
     repo = VoteRepo()
@@ -17,6 +18,11 @@ class VoteService:
         return self.repo.get_vote(user = user , content_type = content_type , object_id = object_id)
 
     def vote(self , user , content_type , object_id , vote_type):
+        
+        if self.CONTENT_TYPES[content_type].objects.filter(id = object_id , user = user).exists():
+
+            raise PermissionDenied(f"You can't vote on your {content_type}")
+        
         vote = self.get_vote(user , content_type , object_id)
 
         if vote and vote.vote_type != vote_type:

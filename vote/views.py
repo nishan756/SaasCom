@@ -6,7 +6,7 @@ from apps.views import is_safe_url
 
 from .service import VoteService
 
-from saas_com.core.exceptions import ObjectNotFound
+from saas_com.core.exceptions import ObjectNotFound , PermissionDenied
 
 
 vote_service = VoteService()
@@ -23,6 +23,10 @@ def vote(request , content_type , id):
     except ObjectNotFound as e:
         messages.error(request , "App not found")
         return redirect("all-apps")
+
+    except PermissionDenied as e:
+        messages.info(request , str(e))
+        return redirect(HTTP_REFERER)
     
     except Exception as e:
         messages.error(request , "Somethig went wrong")
