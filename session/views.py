@@ -141,7 +141,7 @@ def edit_profile(request):
         try:
             user_service.edit_profile(user_form)
             messages.success(request , "Successfully updated your profile")
-            return redirect("profile" , request.user.username)
+            return redirect("profile" , user_form.instance.username)
         
         except InvalidForm as e:
             messages.info(request , str(e))
