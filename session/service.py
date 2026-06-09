@@ -1,6 +1,9 @@
 from .repository import UserRepo , FollowRepo
 from saas_com.core.exceptions import FollowException, InvalidForm , InvalidContentType
 from django.contrib.auth import update_session_auth_hash
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.conf import settings
 
 
 class UserService:
@@ -71,5 +74,29 @@ class FollowService:
         else:
             raise FollowException("You are not following this user.")
 
-    
+
+class EmailService:
+
+    @staticmethod
+    def send_email(subject, recipient, template_name, context = None):
+        context = context if context else {}
+
+        html_content = render_to_string(
+            template_name=template_name,
+            context=context
+        )
+
+        email = EmailMultiAlternatives(
+            subject=subject,
+            body="",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[recipient]
+        )
+
+        email.attach_alternative(
+            html_content,
+            "text/html"
+        )
+
+        email.send()
 
