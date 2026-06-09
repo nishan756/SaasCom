@@ -147,31 +147,17 @@
                                         Change Password
                                     </h4>
 
-                                    <form>
+                                    <form method="POST" action="{% url 'change-password' %}">
 
-                                        <div class="mb-3">
-                                            <label class="form-label">
-                                                Current Password
-                                            </label>
-                                            <input type="password"
-                                                   class="form-control">
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label">
-                                                New Password
-                                            </label>
-                                            <input type="password"
-                                                   class="form-control">
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label">
-                                                Confirm Password
-                                            </label>
-                                            <input type="password"
-                                                   class="form-control">
-                                        </div>
+                                        {% csrf_token %}
+                                        {% for field in password_change_form %}
+                                            <div class="mb-3">
+                                                <label class="form-label">
+                                                    {{field.label_tag}}
+                                                </label>
+                                                {{field}}
+                                            </div>
+                                        {% endfor %}
 
                                         <button class="btn btn-success">
                                             Update Password

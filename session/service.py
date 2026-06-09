@@ -1,5 +1,7 @@
 from .repository import UserRepo , FollowRepo
 from saas_com.core.exceptions import FollowException, InvalidForm , InvalidContentType
+from django.contrib.auth import update_session_auth_hash
+
 
 class UserService:
     repo = UserRepo()
@@ -27,6 +29,12 @@ class UserService:
             return self.repo.edit_profile(user_form)
         raise InvalidForm(user_form.errors)
 
+    def change_password(self , request , form):
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request , user)
+        raise InvalidForm(form.errors)
+    
     def authenticated(self , form , request):
         if form.is_valid():
             username = form.cleaned_data.get("username")

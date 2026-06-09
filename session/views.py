@@ -7,7 +7,7 @@ from saas_com.core.exceptions import ObjectNotFound , InvalidForm , FollowExcept
 from saas_com.core.service import is_safe_url
 
 # =================FORMS=================
-from .forms import LoginForm , SignUpForm , EditProfileForm
+from .forms import LoginForm , SignUpForm , EditProfileForm , CustomPasswordChangeForm
 from report.forms import ReportForm
 
 # =================SERVICES=============
@@ -150,4 +150,24 @@ def edit_profile(request):
             messages.error(request , "Something went wrong")
     context = {}
     context["user_form"] = EditProfileForm(instance = user)
+    context["password_change_form"] = CustomPasswordChangeForm(user = request.user)
     return render(request , "edit-profile.html" , context)
+
+
+@login_required(login_url = "login")
+@require_POST
+def change_password(request):
+    HTTP_REFERER = is_safe_url(url = request.META.get("HTTP_REFERER") , allowed_hosts = request.get_host())
+    form = CustomPasswordChangeForm(request.user , request.POST)
+    try:
+        user_service.change_password(request , form)
+        messages.success(request , "Successfuly changed your password")
+        return redirect('password_change_done')
+
+    except InvalidForm as e:
+        messages.info(request , str(e))
+        
+    except Exception as e:
+           messages.error(request , "Something went wrong")
+    
+    return redirect(HTTP_REFERER)
