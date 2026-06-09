@@ -58,3 +58,19 @@ class SignUpForm(UserCreationForm):
                 field.widget.attrs.update({'class': 'form-select'})
             else:
                 field.widget.attrs.update({'class': 'form-control' , "placeholder":field_name.capitalize()})
+
+class EditProfileForm(forms.ModelForm):
+    class Meta(SignUpForm.Meta):
+        model = User
+        fields = ["username" ,"first_name" , "last_name" , "bio" , "image" , "gender" , "email"]
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+    
+        for field_name, field in self.fields.items():
+            if field_name == 'image':
+                field.widget.attrs.update({'class': 'form-control'})
+            elif isinstance(field.widget, (forms.Select, forms.RadioSelect)):
+                field.widget.attrs.update({'class': 'form-select'})
+            else:
+                field.widget.attrs.update({'class': 'form-control' , "placeholder":field_name.capitalize()})

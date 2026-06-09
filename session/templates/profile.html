@@ -50,6 +50,12 @@
                         {% if user_report %}View {% endif %}Report
                     </button>
                 </div>
+            {% else %}
+                {% if request.user == profile%}
+                    <a href="{% url 'edit-profile'%}" class="btn btn-outline-danger btn-sm">
+                        Edit Profile
+                    </a>
+                {% endif %}
             {% endif %}
         </div>
     </div>

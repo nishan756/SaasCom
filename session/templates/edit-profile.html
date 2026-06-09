@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/edit-profile.css'%}">
+{% endblock css %}
+
+{% block title %}
+    Change profile | {{request.user.full_name}}
+{% endblock title %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+
+            <div class="card settings-card">
+
+                <div class="card-body p-4">
+
+                    <div class="row g-4">
+
+                        <!-- Sidebar -->
+                        <div class="col-md-4 col-lg-3">
+
+                            <div class="text-center mb-4">
+                                {% if user_form.instance.image.url %}
+                                <img src="{{user_form.instance.image.url}}"
+                                     class="profile-avatar mb-3"
+                                     alt="Profile">
+                                {% endif %}
+
+                                <h5 class="mb-1">{{user_form.imstance.full_name}}</h5>
+                                <small class="text-muted">
+                                    {{user_form.instance.email}}
+                                </small>
+                            </div>
+
+                            <div class="nav flex-column nav-pills"
+                                 id="settings-tab"
+                                 role="tablist">
+
+                                <button class="nav-link active"
+                                        data-bs-toggle="pill"
+                                        data-bs-target="#profile">
+                                    Profile Info
+                                </button>
+
+                                <button class="nav-link"
+                                        data-bs-toggle="pill"
+                                        data-bs-target="#password">
+                                    Change Password
+                                </button>
+
+                                <button class="nav-link"
+                                        data-bs-toggle="pill"
+                                        data-bs-target="#reset-password">
+                                    Reset Password
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Content -->
+                        <div class="col-md-8 col-lg-9">
+
+                            <div class="tab-content">
+
+                                <!-- Profile Info -->
+                                <div class="tab-pane fade show active"
+                                     id="profile">
+
+                                    <h4 class="section-title">
+                                        Edit Profile Information
+                                    </h4>
+
+                                    <form method="POST" action="{% url 'edit-profile' %}">
+                                        {% csrf_token %}
+                                        <div class="row">
+
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">
+                                                    First Name
+                                                </label>
+                                                {{user_form.first_name}}
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">
+                                                    Last Name
+                                                </label>
+                                                {{user_form.last_name}}
+                                            </div>
+
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">
+                                                Username
+                                            </label>
+                                            {{user_form.username}}
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">
+                                                Email
+                                            </label>
+                                            {{user_form.email}}
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">
+                                                Bio
+                                            </label>
+                                            {{user_form.bio}}
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">
+                                                Gender
+                                            </label>
+                                            {{user_form.gender}}
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">
+                                                Profile Image
+                                            </label>
+                                            {{user_form.image}}
+                                        </div>
+
+                                        <button class="btn btn-primary">
+                                            Save Changes
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                                <!-- Change Password -->
+                                <div class="tab-pane fade"
+                                     id="password">
+
+                                    <h4 class="section-title">
+                                        Change Password
+                                    </h4>
+
+                                    <form>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">
+                                                Current Password
+                                            </label>
+                                            <input type="password"
+                                                   class="form-control">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">
+                                                New Password
+                                            </label>
+                                            <input type="password"
+                                                   class="form-control">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">
+                                                Confirm Password
+                                            </label>
+                                            <input type="password"
+                                                   class="form-control">
+                                        </div>
+
+                                        <button class="btn btn-success">
+                                            Update Password
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                                <!-- Reset Password -->
+                                <div class="tab-pane fade"
+                                     id="reset-password">
+
+                                    <h4 class="section-title">
+                                        Reset Password
+                                    </h4>
+
+                                    <div class="alert alert-warning">
+                                        Clicking the button below will send
+                                        a password reset link to your email.
+                                    </div>
+
+                                    <form>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">
+                                                Email Address
+                                            </label>
+
+                                            <input type="email"
+                                                   class="form-control">
+                                        </div>
+
+                                        <button class="btn btn-danger">
+                                            Send Reset Link
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock content %}

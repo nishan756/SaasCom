@@ -22,6 +22,11 @@ class UserService:
             return self.repo.signup(user)
         raise InvalidForm((form.errors))
 
+    def edit_profile(self , user_form):
+        if user_form.is_valid():
+            return self.repo.edit_profile(user_form)
+        raise InvalidForm(user_form.errors)
+
     def authenticated(self , form , request):
         if form.is_valid():
             username = form.cleaned_data.get("username")

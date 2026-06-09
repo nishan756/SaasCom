@@ -24,6 +24,9 @@ class UserRepo:
     
     def signup(self , user):
         return user.save()
+
+    def edit_profile(self , user_form):
+        return user_form.save()
     
     def authenticated(self , request , username , password):
         user = authenticate(request , username = username , password = password)

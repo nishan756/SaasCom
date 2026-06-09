@@ -7,7 +7,7 @@ from saas_com.core.exceptions import ObjectNotFound , InvalidForm , FollowExcept
 from saas_com.core.service import is_safe_url
 
 # =================FORMS=================
-from .forms import LoginForm , SignUpForm
+from .forms import LoginForm , SignUpForm , EditProfileForm
 from report.forms import ReportForm
 
 # =================SERVICES=============
@@ -126,3 +126,28 @@ def users(request , user_type):
     context["user_type"] = user_type.capitalize()
     context["users"] = user_service.get_users(user_type = user_type)
     return render(request , "users.html" , context)
+
+@login_required(login_url = "login")
+def edit_profile(request):
+    try:
+        user = user_service.get_user(username = request.user.username)
+    except ObjectNotFound as e:
+        messages.error(request , str(e))
+    except Exception as e:
+        messages.info(request , "Something went wrong")
+    
+    if request.method == "POST":
+        user_form = EditProfileForm(instance = user , data = request.POST , files = request.FILES)
+        try:
+            user_service.edit_profile(user_form)
+            messages.success(request , "Successfully updated your profile")
+            return redirect("profile" , request.user.username)
+        
+        except InvalidForm as e:
+            messages.info(request , str(e))
+            
+        except Exception as e:
+            messages.error(request , "Something went wrong")
+    context = {}
+    context["user_form"] = EditProfileForm(instance = user)
+    return render(request , "edit-profile.html" , context)

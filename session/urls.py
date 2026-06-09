@@ -1,4 +1,4 @@
-from .views import user_signup , user_login , user_logout , follow , unfollow , view_profile , users
+from .views import user_signup , user_login , user_logout , follow , unfollow , view_profile , users , edit_profile
 from django.urls import path
 
 
@@ -10,4 +10,5 @@ urlpatterns = [
     path("unfollow/<str:username>/" , unfollow , name = "unfollow"),
     path("users/<str:user_type>/" , users , name = "users"),
     path("profile/<str:username>/" , view_profile , name = "profile"),
+    path("edit-profile/" , edit_profile , name = "edit-profile"),
 ]
