@@ -49,7 +49,7 @@ def discussion_detail(request , id):
     context["discussion"] = discussion
     context["report_form"] = ReportForm()
     context["comment_form"] = CommentForm()
-    context["comments"] = comment_service.get_comments('discussion' , id)
+    context["comments"] = comment_service.build_comment_tree(comment_service.get_comments('discussion' , id))
     if request.user.is_authenticated:
         context["user_vote"] = vote_service.get_vote(user = request.user , content_type = "discussion" , object_id = id)
         context["user_report"] = report_service.has_user_report(content_type = "discussion" , object_id = id , reporter = request.user)
@@ -118,7 +118,6 @@ def update_discussion(request , id):
         
         except Exception as e:
             messages.error(request , "Something went wrong")
-            print(e)
 
         return redirect("all-discussions")
     return render(request , "create-discussion.html" , context)
