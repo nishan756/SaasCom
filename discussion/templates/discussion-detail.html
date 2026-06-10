@@ -174,7 +174,7 @@
             <div class="card border-0 shadow-sm mt-4">
                 <div class="card-body p-4">
                     <h4 class="fw-bold mb-4">
-                        Comments ({{ comments.count }})
+                        Comments ({{ comments.length }})
                     </h4>
 
                     {% if request.user.is_authenticated %}
@@ -193,8 +193,8 @@
 
                     <hr>
 
-                    <div class="comments-list">
-                        {% for comment in comments %}
+                    <div class="comments-list" style="max-height: 400px; overflow-y: auto;">
+                        {% for comment in comments.root_comments %}
                             {% include "comment.html" with comment=comment %}
                         {% empty %}
                             <p class="text-muted text-center py-3">

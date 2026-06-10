@@ -65,7 +65,7 @@
                   action="{% url 'post-comment' 'discussion' discussion.id %}">
                 {% csrf_token %}
                 <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                {{ comment_form.content }}
+                <textarea type="text" name="content" class='form-control'></textarea>
                 <div class="mt-2 d-flex gap-2">
                     <button type="submit" class="btn btn-sm btn-primary">
                         Post Reply
@@ -81,12 +81,10 @@
         {% endif %}
 
         {# Nested children — recursive include #}
-        {% if comment.children.all %}
         <div class="nested-comments mt-3 ps-3 border-start">
             {% for child in comment.children.all %}
                 {% include "comment.html" with comment=child %}
             {% endfor %}
         </div>
-        {% endif %}
     </div>
 </div>
