@@ -100,13 +100,14 @@ def create_app(request):
         except Exception as e:
             messages.info(request , "Something went wrong. Please try again later")
     form = AppForm()
-    return render(request , "create-app.html" , {"form":form})
+    return render(request , "create-app.html" , {"form":form , "instance":False})
 
 @login_required(login_url = "login")
 def update_app(request , id):
     app = app_service.get_app(id = id)
     context = {}
     context["form"] = AppForm(instance = app)
+    context["instance"] = True
     if app.user != request.user:
         messages.warning(request , "Can't update this app")
         return redirect("app-detail" , id)
