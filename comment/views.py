@@ -17,26 +17,42 @@ comment_service = CommentService()
 
 
 
-@login_required(login_url = "login")
+@login_required(login_url="login")
 @require_POST
-def post_comment(request , content_type , id):
-    HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER" , "/") , request.get_host())
-    PARENT_ID = request.POST.get("parent_id")
-    if request.method == "POST":
-        form = CommentForm(data = request.POST)
+def post_comment(request, content_type, id):
 
-        try:
-            comment_service.post_comment(user = request.user , content_type = content_type , object_id = id , form = form , parent_id = PARENT_ID)
-            messages.success(request , "Successfully posted your comment")
+    HTTP_REFERER = request.META.get("HTTP_REFERER", "/")
+    parent_id = request.POST.get("parent_id")
+    content = request.POST.get("content")
 
-        except ObjectNotFound as e:
-            messages.error(request , str(e))
-        
-        except InvalidForm as e:
-            messages.error(request , str(e))
+    try:
+        if parent_id:
+            comment_service.reply_comment(
+                user=request.user,
+                parent_id=parent_id,
+                content=content
+            )
+            messages.success(request, "Reply posted successfully")
 
-        except Exception as e:
-            messages.error(request , "Something went wrong")
+        else:
+            form = CommentForm(data=request.POST)
+
+            comment_service.post_comment(
+                user=request.user,
+                content_type=content_type,
+                object_id=id,
+                form=form
+            )
+            messages.success(request, "Comment posted successfully")
+
+    except ObjectNotFound as e:
+        messages.error(request, str(e))
+
+    except InvalidForm as e:
+        messages.error(request, str(e))
+
+    except Exception:
+        messages.error(request, "Something went wrong")
 
     return redirect(HTTP_REFERER)
 
