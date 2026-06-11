@@ -22,12 +22,12 @@ class CommentRepo:
     def post_comment(self , comment):
         return comment.save()
 
-    def reply_comment(self , user , parent , content , content_type):
+    def reply_comment(self , user , parent , content):
         Comment.objects.create(
             user = user,
             parent = parent,
             content = content,
-            content_type = content_type,
+            content_type = parent.content_type,
             object_id = parent.object_id
         )
 
