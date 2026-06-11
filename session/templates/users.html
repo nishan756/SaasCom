@@ -123,7 +123,7 @@
         {% empty %}
 
         <div class="col-12 text-center py-5">
-            <h5>No companies found</h5>
+            <h5>No {% if user_type == 'Company' %}companies {% else %}Developer{% endif %} found</h5>
         </div>
 
         {% endfor %}
