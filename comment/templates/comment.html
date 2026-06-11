@@ -62,7 +62,7 @@
         {% if request.user.is_authenticated %}
         <div id="reply-{{ comment.id }}" class="d-none mt-3">
             <form method="POST"
-                  action="{% url 'post-comment' 'discussion' discussion.id %}">
+                  action="{% url 'post-comment' app_name discussion.id %}">
                 {% csrf_token %}
                 <input type="hidden" name="parent_id" value="{{ comment.id }}">
                 <textarea type="text" name="content" class='form-control'></textarea>
@@ -83,7 +83,7 @@
         {# Nested children — recursive include #}
         <div class="nested-comments mt-3 ps-3 border-start">
             {% for child in comment.children.all %}
-                {% include "comment.html" with comment=child %}
+                {% include "comment.html" with comment=child app_name=app_name %}
             {% endfor %}
         </div>
     </div>

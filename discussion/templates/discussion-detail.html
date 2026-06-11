@@ -195,7 +195,7 @@
 
                     <div class="comments-list" style="max-height: 400px; overflow-y: auto;">
                         {% for comment in comments.root_comments %}
-                            {% include "comment.html" with comment=comment %}
+                            {% include "comment.html" with comment=comment app_name=app_name %}
                         {% empty %}
                             <p class="text-muted text-center py-3">
                                 No comments yet. Be the first to comment!

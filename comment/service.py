@@ -53,9 +53,10 @@ class CommentService:
             return self.repo.post_comment(comment)
         raise InvalidForm(form.errors)
     
-    def reply_comment(self , user , parent_id , content):
+    def reply_comment(self , user , parent_id , content , content_type):
+        content_type = get_content_type(content_type , self.CONTENT_TYPES)
         parent = self.get_comment_by_id(parent_id)
-        return self.repo.reply_comment(user , parent , content)
+        return self.repo.reply_comment(user , parent , content , content_type)
     
     def delete_comment(self , user , id):
         return self.repo.delete_comment(self.get_user_comment(user , id))
