@@ -24,12 +24,11 @@ class CommentService:
     def build_comment_tree(self , comments:QuerySet):
         root_comments = []
         comment_map = {}
-        length = 0
+        length = comments.count()
 
         for comment in comments:
             comment.childrens = []
             comment_map[comment.id] = comment
-            length += 1
         
         for comment in comments:
 

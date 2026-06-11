@@ -17,7 +17,7 @@ class CommentRepo:
             raise ObjectNotFound("Comment not found")
     
     def get_comments(self , content_type , object_id):
-        return Comment.objects.filter(content_type = content_type , object_id = object_id).select_related("user" , "parent")
+        return Comment.objects.filter(content_type = content_type , object_id = object_id).select_related("user" , "parent").prefetch_related("children")
     
     def post_comment(self , comment):
         return comment.save()
