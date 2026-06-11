@@ -1,6 +1,7 @@
 from .models import User , Follow
 from saas_com.core.exceptions import ObjectNotFound
 from django.contrib.auth import authenticate
+from django.db.models import Q
 
 class UserRepo:
 
@@ -14,7 +15,7 @@ class UserRepo:
             raise ObjectNotFound("User not found")
     
     def get_users(self , user_type):
-        return User.objects.prefetch_related("apps" , "followers" , "following").filter(user_type = user_type)
+        return User.objects.prefetch_related("apps" , "followers" , "following").filter(user_type = user_type).exclude(Q(is_superuser = True)|Q(is_staff = True))
 
     def view_profile(self , username):
         try:
