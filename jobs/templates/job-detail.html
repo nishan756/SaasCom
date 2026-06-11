@@ -214,60 +214,63 @@
 
         </div>
 
-        <!-- APPLICATION SECTION -->
-        <div class="sidebar-card">
+        {% if not request.user == job.user %}
+            <!-- APPLICATION SECTION -->
+            <div class="sidebar-card">
 
-            <div class="accordion"
-                id="applicationAccordion">
+                <div class="accordion"
+                    id="applicationAccordion">
 
-                <div class="accordion-item">
+                    <div class="accordion-item">
 
-                    <h2 class="accordion-header">
+                        <h2 class="accordion-header">
 
-                        <button class="accordion-button collapsed"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#applicationCollapse">
+                            <button class="accordion-button collapsed"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#applicationCollapse">
 
-                            Apply For This Job
+                                Apply For This Job
 
-                        </button>
+                            </button>
 
-                    </h2>
+                        </h2>
 
-                    <div id="applicationCollapse"
-                        class="accordion-collapse collapse"
-                        data-bs-parent="#applicationAccordion">
+                        <div id="applicationCollapse"
+                            class="accordion-collapse collapse"
+                            data-bs-parent="#applicationAccordion">
 
-                        <div class="accordion-body">
+                            <div class="accordion-body">
 
-                            {% if not application %}
-                                <form method="POST" enctype="multipart/form-data" class="application-form" action="{% url 'apply-job' job.id %}">
+                                {% if not application %}
+                                    <form method="POST" enctype="multipart/form-data" class="application-form" action="{% url 'apply-job' job.id %}">
 
-                                    {% csrf_token %}
+                                        {% csrf_token %}
 
-                                    {% for field in application_form %}
-                                        <div class="mb-3">
+                                        {% for field in application_form %}
+                                            <div class="mb-3">
 
-                                            <label class="form-label">
-                                                {{field.label_tag}}
-                                            </label>
+                                                <label class="form-label">
+                                                    {{field.label_tag}}
+                                                </label>
 
-                                            {{field}}
+                                                {{field}}
 
-                                        </div>
-                                    {% endfor %}
+                                            </div>
+                                        {% endfor %}
 
-                                    <button class="apply-btn w-100">
+                                        <button class="apply-btn w-100">
 
-                                        Submit Application
+                                            Submit Application
 
-                                    </button>
+                                        </button>
 
-                                </form>
-                            {% else %}
-                                <h2 class='text-center'>You already applied for this post</h2>
-                            {% endif %}
+                                    </form>
+                                {% else %}
+                                    <h2 class='text-center'>You already applied for this post</h2>
+                                {% endif %}
+                            </div>
+
                         </div>
 
                     </div>
@@ -275,9 +278,8 @@
                 </div>
 
             </div>
-
-        </div>
-        <!--End of application section-->
+            <!--End of application section-->
+        {% endif %}
 
         <!--Report Section-->
 

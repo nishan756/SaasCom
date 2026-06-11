@@ -1,5 +1,5 @@
 from .repository import JobRepo , JobCatRepo ,  ApplicationRepo
-from saas_com.core.exceptions import PermissionDenied
+from saas_com.core.exceptions import PermissionDenied , AlreadyExists
 from django.core.paginator import Paginator
 
 class JobService:
@@ -44,7 +44,15 @@ class ApplicationService:
         return self.repo.get_application(id , user)
 
     def apply(self , user , form , job_id):
+
         job = JobService().job_detail(id = job_id)
+
+        if job.user == user:
+            raise PermissionDenied("Recruiter can't apply their job")
+
+        elif self.has_application(job_id = job_id , user = user):
+            raise AlreadyExists("You already applied in this job")
+        
         application = form.save(commit = False)
         application.job = job
         application.user = user
