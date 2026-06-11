@@ -13,4 +13,3 @@ settings.py
 
 # VS Code
 .vscode/
-build.sh
