@@ -1,0 +1,54 @@
+.notification-item{
+    border-bottom:1px solid #f1f3f5;
+    transition:all .18s ease;
+    background:#fff;
+}
+
+.notification-item:last-child{
+    border-bottom:none;
+}
+
+.notification-item:hover{
+    background:#f8f9fa;
+}
+
+.notification-avatar{
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    object-fit:cover;
+    border:1px solid #e9ecef;
+}
+
+.notification-text{
+    color:#212529;
+    font-size:.96rem;
+    line-height:1.5;
+    word-break:break-word;
+}
+
+.notification-dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#0d6efd;
+    flex-shrink:0;
+    margin-top:8px;
+}
+
+.empty-icon{
+    color:#adb5bd;
+}
+
+@media (max-width:576px){
+
+    .notification-avatar{
+        width:44px;
+        height:44px;
+    }
+
+    .notification-text{
+        font-size:.92rem;
+    }
+
+}
