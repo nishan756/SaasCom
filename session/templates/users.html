@@ -21,13 +21,13 @@
         </div>
 
         <!-- Search -->
-        <form method="GET" class="d-flex" style="max-width: 350px; width:100%;">
+        <form method="GET" class="d-flex" style="max-width: 350px; width:100%;" action="{% url 'users' user_type%}">
             <input 
                 type="text"
-                name="search"
+                name="name"
                 class="form-control me-2"
                 placeholder="Search {% if user_type == 'Company'%}Company{% else %}Developer{% endif %}..."
-                value="{{ request.GET.search }}"
+                value="{{ request.GET.name }}"
             >
             <button class="btn btn-dark">
                 Search
@@ -73,7 +73,7 @@
                                     href="{% url 'profile' user.username %}"
                                     class="text-decoration-none text-dark"
                                 >
-                                    {{ user.full_name }}
+                                    {{ user.first_name }} {{user.last_name}}
                                 </a>
                             </h6>
 
@@ -100,14 +100,14 @@
 
                         <div class="fw-bold small">
                             <h6 class="mb-0 fw-bold">
-                                {{ user.apps.count }}
+                                {{ user.total_apps }}
                             </h6>
                             <small class="text-muted">Apps</small>
                         </div>
 
                         <div class="fw-bold small">
                             <h6 class="mb-0 fw-bold">
-                                {{ user.followers.count }}
+                                {{ user.total_follower }}
                             </h6>
                             <small class="text-muted">Followers</small>
                         </div>
