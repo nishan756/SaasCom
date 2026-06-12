@@ -2,6 +2,7 @@ from django.shortcuts import render , redirect
 from django.views.decorators.http import require_GET , require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from saas_com.core.service import is_safe_url
 
 # =============Forms===============
 from .forms import JobForm , ApplicationForm
@@ -62,7 +63,7 @@ def job_detail(request , id):
 def post_job(request):
     if not request.user.is_company:
         messages.info(request , "You must have a company account to post job circular")
-        return redirect("home") 
+        return redirect("all-jobs") 
     
     form = JobForm()
     context = {}
@@ -88,8 +89,7 @@ def post_job(request):
 @login_required(login_url = "login")
 @require_POST
 def apply(request , id):
-    if request.method == "POST":
-        form = ApplicationForm(data = request.POST , files = request.FILES)
+    form = ApplicationForm(data = request.POST , files = request.FILES)
     
     try:
         application_service.apply(user = request.user , form = form , job_id = id)
