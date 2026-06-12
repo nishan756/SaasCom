@@ -140,7 +140,11 @@
 
                 </li>
             </ul>
-            <a class="btn btn-primary ms-3" href="{% url 'create-app' %}">Create App</a>
+            {% if 'app' in request.path %}
+                <a class="btn btn-primary ms-3" href="{% url 'create-app' %}">Create App</a>
+            {% elif 'discussion' in request.path  %}
+                <a class="btn btn-primary ms-3" href="{% url 'post-discussion' %}">Post Discussion</a>
+            {% endif %}
             </div>
         </div>
         </nav>
