@@ -20,33 +20,42 @@ class ReportService:
     def get_report(self , id):
         return self.repo.get_report(id = id)
     
-    def get_reports(self , content_type , object_id):
-        content_type = get_content_type(content_type , self.CONTENT_TYPES)
-        return self.repo.get_reports(content_type , object_id)
+    def get_reports(self , content_type_str , object_id):
+        content_type_obj = get_content_type(content_type_str , self.CONTENT_TYPES)
+        return self.repo.get_reports(content_type_obj , object_id)
     
-    def has_user_report(self ,content_type ,  object_id , reporter):
-        content_type = get_content_type(content_type , self.CONTENT_TYPES)
-        return self.repo.has_user_report(content_type = content_type , object_id = object_id , reporter =  reporter)
+    def has_user_report(self ,content_type_str ,  object_id , reporter):
+        content_type_obj = get_content_type(content_type_str , self.CONTENT_TYPES)
+        return self.repo.has_user_report(content_type = content_type_obj , object_id = object_id , reporter =  reporter)
 
-    def add_report(self , reporter , content_type , id , form):
+    def add_report(self , reporter , content_type_str , id , form):
+        
+        # Validation phase
+        content_type_obj = get_content_type(content_type_str , self.CONTENT_TYPES)
 
-        content_object = self.CONTENT_TYPES[content_type].objects.filter(id = id).first()
+        if not form.is_valid():
+            raise InvalidForm(form.errors)
 
-        if content_object and content_object.user == reporter:
-            raise PermissionDenied("You can't report on your {}".format(content_type))
+        content_object = content_type_obj.model_class().objects.filter(id = id).first()
+
+        if not content_object:
+            raise ObjectNotFound(f"{content_type_str} not found")
         
-        elif not content_type:
-            raise ObjectNotFound(f"{content_type} not found")
+        if isinstance(content_object , User):
+            if content_object == reporter:
+                raise PermissionDenied("You can't report on your profile")
+
+        if hasattr(content_object , "user"):
+            if content_object.user == reporter:
+                raise PermissionDenied(f"You can't report on your {content_type_str}")
         
-        if self.has_user_report(content_type , object_id = id , reporter = reporter):
-            raise AlreadyExists("You already report on this {}".format(content_type))
+        if self.has_user_report(content_type_str , object_id = id , reporter = reporter):
+            raise AlreadyExists(f"You have already reported this {content_type_str}")
         
-        content_type = get_content_type(content_type , self.CONTENT_TYPES)
-        if form.is_valid():
-            reason = form.cleaned_data.get("reason" , None)
-            report_type = form.cleaned_data.get("report_type")
-            return self.repo.add_report(reporter = reporter, content_type = content_type, id = id, reason = reason , report_type = report_type)
-        raise InvalidForm("Invalid form data.")
+        # Adding new report
+        reason = form.cleaned_data.get("reason" , None)
+        report_type = form.cleaned_data.get("report_type")
+        return self.repo.add_report(reporter = reporter, content_type = content_type_obj , id = id, reason = reason , report_type = report_type)
     
     def del_report(self , id , user):
         report = self.get_report(id = id)

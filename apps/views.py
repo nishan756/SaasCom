@@ -69,9 +69,9 @@ def app_detail(request , id):
         return redirect("home")
     # Checking if the user is authenticated 
     if request.user.is_authenticated:
-        context["user_vote"] = vote_service.get_vote(user = request.user , content_type = 'app' , object_id = id)
+        context["user_vote"] = vote_service.get_vote(user = request.user , content_type_str = 'app' , object_id = id)
         context["is_following"] = follow_service.is_following(follower = request.user , following = context["app"].user)
-        context["user_report"] = report_service.has_user_report(content_type = "app" , object_id = id , reporter = request.user)
+        context["user_report"] = report_service.has_user_report(content_type_str = "app" , object_id = id , reporter = request.user)
         context["bookmark"] = bookmark_service.is_bookmarked(user = request.user , content_type = 'app' , object_id = id)
     
     context["app_del_form"] = AppDeletionConfirmationForm()

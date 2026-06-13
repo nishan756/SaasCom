@@ -17,9 +17,9 @@ class CommentService:
     def get_comment_by_id(self , id):
         return self.repo.get_comment_by_id(id)
     
-    def get_comments(self , content_type , object_id):
-        content_type = get_content_type(content_type , self.CONTENT_TYPES)
-        return self.repo.get_comments(content_type , object_id)
+    def get_comments(self , content_type_str , object_id):
+        content_type_obj = get_content_type(content_type_str , self.CONTENT_TYPES)
+        return self.repo.get_comments(content_type_obj , object_id)
     
     def build_comment_tree(self , comments:QuerySet):
         root_comments = []
@@ -40,17 +40,16 @@ class CommentService:
 
         return {"root_comments":root_comments , "length":length}
     
-    def post_comment(self , user , content_type , object_id , form , parent_id = None):
-        content_type = get_content_type(content_type , self.CONTENT_TYPES)
-        if form.is_valid():
-            comment = form.save(commit = False)
-            comment.content_type = content_type
-            comment.object_id = object_id
-            comment.user = user
-            if parent_id:
-                comment.parent = self.get_comment_by_id(parent_id)
-            return self.repo.post_comment(comment)
-        raise InvalidForm(form.errors)
+    def post_comment(self , user , content_type_str , object_id , form , parent_id = None):
+        content_type_obj = get_content_type(content_type_str , self.CONTENT_TYPES)
+        if not form.is_valid():
+            raise InvalidForm(form.errors)
+        
+        comment = form.save(commit = False)
+        comment.content_type = content_type_obj
+        comment.object_id = object_id
+        comment.user = user
+        return self.repo.post_comment(comment)
     
     def reply_comment(self , user , parent_id , content):
         parent = self.get_comment_by_id(parent_id)

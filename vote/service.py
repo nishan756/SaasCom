@@ -2,7 +2,7 @@ from .repository import VoteRepo
 from apps.models import App
 from discussion.models import Discussion
 from .models import Vote
-from saas_com.core.service import get_content_type , ContentType
+from saas_com.core.service import get_content_type
 from django.utils.timezone import now
 from saas_com.core.exceptions import PermissionDenied
 
@@ -13,17 +13,17 @@ class VoteService:
         "discussion":Discussion,
     }
 
-    def get_vote(self , user , content_type , object_id):
-        content_type = get_content_type(content_type , self.CONTENT_TYPES)
-        return self.repo.get_vote(user = user , content_type = content_type , object_id = object_id)
+    def get_vote(self , user , content_type_str , object_id):
+        content_type_obj = get_content_type(content_type_str , self.CONTENT_TYPES)
+        return self.repo.get_vote(user = user , content_type = content_type_obj , object_id = object_id)
 
-    def vote(self , user , content_type , object_id , vote_type):
+    def vote(self , user , content_type_str , object_id , vote_type):
         
-        if self.CONTENT_TYPES[content_type].objects.filter(id = object_id , user = user).exists():
+        if self.CONTENT_TYPES[content_type_str].objects.filter(id = object_id , user = user).exists():
 
-            raise PermissionDenied(f"You can't vote on your {content_type}")
+            raise PermissionDenied(f"You can't vote on your {content_type_str}")
         
-        vote = self.get_vote(user , content_type , object_id)
+        vote = self.get_vote(user , content_type_str , object_id)
 
         if vote and vote.vote_type != vote_type:
             vote.vote_type = vote_type
@@ -36,8 +36,8 @@ class VoteService:
             return f"Your vote has been deleted"
         
         elif not vote:
-            content_type = get_content_type(content_type , self.CONTENT_TYPES)
-            vote = Vote(user = user , content_type = content_type , object_id = object_id , vote_type = vote_type)
+            content_type_obj = get_content_type(content_type_str , self.CONTENT_TYPES)
+            vote = Vote(user = user , content_type = content_type_obj , object_id = object_id , vote_type = vote_type)
         
         self.repo.vote(vote)
         return f"Thanks for your {vote_type}"

@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from session.views import is_safe_url
 from .service import ReportService
-from saas_com.core.exceptions import InvalidContentType , InvalidForm , AlreadyExists , PermissionDenied , ObjectNotFound
+from saas_com.core.exceptions import InvalidForm , AlreadyExists , PermissionDenied , ObjectNotFound
 
 # ===================SERVICES==============
 report_service = ReportService()
@@ -13,10 +13,10 @@ from .forms import ReportForm
 
 @require_POST
 @login_required(login_url = "login")
-def report(request , content_type , id):
+def report(request , content_type_str , id):
     HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER") , allowed_hosts=request.get_host())
     try:
-        report_service.add_report(reporter=request.user, content_type=content_type, id=id, form=ReportForm(request.POST))
+        report_service.add_report(reporter=request.user, content_type_str = content_type_str, id=id, form=ReportForm(request.POST))
         messages.success(request, "Your report has been submitted successfully.")
     
     except InvalidForm as e:

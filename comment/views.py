@@ -19,7 +19,7 @@ comment_service = CommentService()
 
 @login_required(login_url="login")
 @require_POST
-def post_comment(request, content_type, id):
+def post_comment(request, content_type_str , id):
 
     HTTP_REFERER = request.META.get("HTTP_REFERER", "/")
     parent_id = request.POST.get("parent_id")
@@ -39,7 +39,7 @@ def post_comment(request, content_type, id):
 
             comment_service.post_comment(
                 user=request.user,
-                content_type=content_type,
+                content_type_str = content_type_str,
                 object_id=id,
                 form=form
             )

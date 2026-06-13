@@ -52,8 +52,8 @@ def discussion_detail(request , id):
     context["comments"] = comment_service.build_comment_tree(comment_service.get_comments('discussion' , id))
     context["app_name"] = "discussion"
     if request.user.is_authenticated:
-        context["user_vote"] = vote_service.get_vote(user = request.user , content_type = "discussion" , object_id = id)
-        context["user_report"] = report_service.has_user_report(content_type = "discussion" , object_id = id , reporter = request.user)
+        context["user_vote"] = vote_service.get_vote(user = request.user , content_type_str = "discussion" , object_id = id)
+        context["user_report"] = report_service.has_user_report(content_type_str = "discussion" , object_id = id , reporter = request.user)
 
     return render(request , "discussion-detail.html" , context)
 
