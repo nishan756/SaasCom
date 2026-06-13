@@ -82,7 +82,7 @@
 
         {# Nested children — recursive include #}
         <div class="nested-comments mt-3 ps-3 border-start">
-            {% for child in comment.children.all %}
+            {% for child in comment.childrens %}
                 {% include "comment.html" with comment=child app_name=app_name %}
             {% endfor %}
         </div>
