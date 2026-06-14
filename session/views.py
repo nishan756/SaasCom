@@ -54,7 +54,7 @@ def user_signup(request):
         return redirect("home")
     
     if request.method == "POST":
-        form = SignUpForm(data = request.POST )
+        form = SignUpForm(data = request.POST , files = request.FILES)
         try:
             user_service.signup(form)
             messages.success(request , "Successfully created your account")
