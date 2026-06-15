@@ -1,7 +1,8 @@
 from .models import User , Follow
 from saas_com.core.exceptions import ObjectNotFound
 from django.contrib.auth import authenticate
-from django.db.models import Q , Count
+from django.db.models import Q , Count , Prefetch
+from apps.models import App
 
 class UserRepo:
 
@@ -20,7 +21,7 @@ class UserRepo:
 
     def view_profile(self , username):
         try:
-            return User.objects.prefetch_related("apps" , "jobs" , "discussions").get(username = username)
+            return User.objects.prefetch_related(Prefetch("apps" , App.objects.filter(status = "approved")) , "jobs" , "discussions").get(username = username)
         except User.DoesNotExist:
             raise ObjectNotFound("User not found")
     
