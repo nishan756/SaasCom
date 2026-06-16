@@ -70,6 +70,14 @@
 
                             <li><hr class="dropdown-divider"></li>
 
+                            {% if request.user.is_developer %}
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'my-applications' %}">
+                                        My Applications
+                                    </a>
+                                </li>
+                            {% endif %}
+
                             <!-- ====================================== -->
                             <!-- ACTIVITY DROPDOWN (NESTED) -->
                             <!-- ====================================== -->
