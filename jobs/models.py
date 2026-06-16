@@ -141,7 +141,7 @@ class Application(models.Model):
         REJECTED = "rejected" , "Rejected"
         SHORTLISTED = "shortlisted" , "Shortlisted"
     status = models.CharField(max_length = 15 , choices = StatusChoices.choices , default = StatusChoices.PENDING)
-    hr_messages = models.TextField(blank = True , null = True) 
+    hr_message = models.TextField(blank = True , null = True) 
     applied_at = models.DateTimeField(auto_now_add = True)
 
     def __str__(self):
