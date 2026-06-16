@@ -42,6 +42,15 @@ class ApplicationService:
     
     def get_application(self , id , user):
         return self.repo.get_application(id , user)
+    
+    def get_user_applications(self , user , page_num , **query_param):
+        valied_query_fields = ["job_title" , "status" , "company" , "applied_at"]
+        query_param = {field:value for field , value in query_param.items() if field in valied_query_fields}
+        applications =  self.repo.get_user_applications(user , **query_param)
+        # Paginating
+        paginator = Paginator(applications , 15)
+        applications = paginator.get_page(page_num)
+        return applications
 
     def apply(self , user , form , job_id):
 
@@ -77,7 +86,13 @@ class ApplicationService:
     
     def update_application_status(self , id , user , status , hr_message = None):
         application = self.get_application(id , user)
+        
+        if application.hr_message:
+            application.hr_message = None
+
         if application.status != status:
+            if application.hr_message:
+                application.hr_message = None
             return self.repo.update_application_status(application , status , hr_message)
         
             

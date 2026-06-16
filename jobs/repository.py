@@ -52,6 +52,20 @@ class ApplicationRepo:
             return Application.objects.select_related("user").get(id = id , job__user = user)
         except Application.DoesNotExist:
             raise ObjectNotFound("Application not found")
+    
+    def get_user_applications(self , user , **query_param):
+        applications = Application.objects.only("status" , "applied_at" , "job__title" , "job__user").select_related("job" , "job__user").filter(user = user)
+
+        if query_param.get("job_title"):
+            applications = applications.filter(job__title__icontains = query_param["job_title"])
+        
+        if query_param.get("status"):
+            applications = applications.filter(status = query_param["status"])
+        
+        if query_param.get("applied_at"):
+            applications = applications.filter(applied_at__date = query_param["applied_at"])
+
+        return applications
 
     def apply(self , application):
         return application.save()
@@ -69,7 +83,7 @@ class ApplicationRepo:
     
     def update_application_status(self , application , status , hr_message = None):
         application.status = status
-        if hr_message:application.hr_messages = hr_message
+        if hr_message:application.hr_message = hr_message
         return application.save() 
 
          

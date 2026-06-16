@@ -73,9 +73,9 @@ def post_job(request):
         if not form.is_valid():
             return messages.error(request , "Invalid Form data")
         try:
-            job = job_service.post_job(user = request.user , form = form)
+            job_service.post_job(user = request.user , form = form)
             messages.success(request , "Successfully posted your job")
-            return redirect("job-detail" , id = job.id)
+            return redirect("job-detail" , id = form.instance.id)
         
         except InvalidForm as e:
             messages.error(request , str(e))
@@ -153,3 +153,15 @@ def update_application_status(request , id , status):
         messages.error(request , "Something went wrong")
     
     return redirect("applications" , job_id)
+
+@login_required(login_url = "login")
+@require_GET
+def my_applications(request):
+    query_param = request.GET.dict()
+    page_num = request.GET.get("page" , 1)
+    if not request.user.is_developer:
+        messages.info(request , "This feature isn't available for you")
+        return redirect("home")
+    context = {}
+    context["applications"] = application_service.get_user_applications(request.user , page_num , **query_param)
+    return render(request , "my-applications.html" , context)
