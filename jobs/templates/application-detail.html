@@ -156,7 +156,7 @@
 
             <!-- HR MESSAGE -->
 
-            {% if application.hr_messages %}
+            {% if application.hr_message %}
 
                 <div class="hr-message-box">
 
@@ -165,7 +165,7 @@
                     </h6>
 
                     <p class="mb-0">
-                        {{ application.hr_messages }}
+                        {{ application.hr_message }}
                     </p>
 
                 </div>
@@ -174,7 +174,7 @@
 
             <!-- ACTION BUTTONS -->
 
-            {% if application.status == "pending" %}
+            {% if application.status != "approved" %}
 
                 <div class="action-buttons">
 
@@ -194,30 +194,34 @@
 
                     </form>
 
-                    <!-- SHORTLIST -->
+                    {% if application.status != 'shortlisted'%}
+                        <!-- SHORTLIST -->
+                        
+                        <form method="POST" 
+                        action="{% url 'update-application-status' 'shortlisted' application.id %}"
+                        onsubmit="return confirm('Are you sure you want to shortlist this application?')"
+                        >
 
-                    <form method="POST" 
-                    action="{% url 'update-application-status' 'shortlisted' application.id %}"
-                    onsubmit="return confirm('Are you sure you want to shortlist this application?')"
-                    >
+                            {% csrf_token %}
+                            <input type="hidden" value="{{application.job.id}}" name="job_id">
+                            <button class="btn btn-primary">
+                                Shortlist
+                            </button>
 
-                        {% csrf_token %}
-                        <input type="hidden" value="{{application.job.id}}" name="job_id">
-                        <button class="btn btn-primary">
-                            Shortlist
+                        </form>
+                    {% endif %}
+                    
+                    {% if application.status != 'rejected' %}
+                        <!-- REJECT -->
+
+                        <button
+                            class="btn btn-danger"
+                            data-bs-toggle="modal"
+                            data-bs-target="#rejectModal"
+                        >
+                            Reject
                         </button>
-
-                    </form>
-
-                    <!-- REJECT -->
-
-                    <button
-                        class="btn btn-danger"
-                        data-bs-toggle="modal"
-                        data-bs-target="#rejectModal"
-                    >
-                        Reject
-                    </button>
+                    {% endif %}
 
                 </div>
 
@@ -229,7 +233,8 @@
 
 </div>
 
-<!-- REJECT MODAL -->
+{% if application.status != 'rejected' %}
+<!-- REJECT MODAL --> 
 
 <div class="modal fade"
      id="rejectModal"
@@ -297,5 +302,5 @@
     </div>
 
 </div>
-
+{% endif %}
 {% endblock %}
