@@ -55,12 +55,12 @@
                                 Rejected
                             </option>
 
-                            <option value="accepted"
-                            {% if request.GET.status == "accepted" %}
+                            <option value="approved"
+                            {% if request.GET.status == "approved" %}
                                 selected
                             {% endif %}
                             >
-                                Rejected
+                                Approved
                             </option>
 
                             <option value="shortlisted"
