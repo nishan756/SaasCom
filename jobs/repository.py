@@ -5,7 +5,7 @@ from saas_com.core.exceptions import ObjectNotFound
 class JobRepo:
 
     def all_jobs(self , **query_set):
-        jobs = Job.objects.select_related("user" , "category" , "currency")
+        jobs = Job.objects.select_related("user" , "category" , "currency").prefetch_related("skills")
         if query_set.get("category"):
             jobs = jobs.category(category = query_set["category"])
         if query_set.get("job_type"):
