@@ -144,11 +144,10 @@
                 </p>
 
 
-                <div class="job-tags">
-                    <span>Python</span>
-                    <span>Django</span>
-                    <span>REST API</span>
-                    <span>Remote</span>
+                <div class="job-skills">
+                    {% for skill in job.skills.all %}
+                        <span>{{skill.name}}</span>
+                    {% endfor %}
                 </div>
 
 
