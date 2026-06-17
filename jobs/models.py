@@ -44,6 +44,24 @@ class Currency(models.Model):
     class Meta:
         verbose_name_plural = "Currencies"
 
+class Skill(models.Model):
+    name = models.CharField(max_length = 50)
+
+    def __str__(self):
+        return self.name
+    
+    def clean(self):
+        qs = Skill.objects.filter(
+            name__iexact = self.name
+        )
+
+        if self.pk:
+            qs = qs.exclude(pk = self.pk)
+        
+        if qs.exists():
+            raise ValidationError("Skill with this name already exists")
+
+
 class JobQueryset(models.QuerySet):
 
     def job_type(self , job_type):
@@ -81,6 +99,7 @@ class Job(models.Model):
     user = models.ForeignKey(User , on_delete = models.CASCADE , limit_choices_to = {"user_type":"company"} , related_name = "jobs")
     title = models.CharField(max_length = 100)
     category = models.ForeignKey(JobCategory , on_delete = models.SET_NULL , null = True , blank = True , related_name = "jobs")
+    skills = models.ManyToManyField(Skill)
     short_description = models.TextField(blank = True , null = True)
     description = SummernoteTextField()
 
