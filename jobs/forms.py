@@ -15,6 +15,10 @@ class JobForm(forms.ModelForm):
                 "class": "form-select"
             }),
 
+            "skills": forms.SelectMultiple(attrs={
+                "class": 'form-control',
+            }),
+
             "job_type": forms.Select(attrs={
                 "class": "form-select"
             }),
