@@ -110,10 +110,11 @@
 
         <!-- DISCUSSIONS -->
         <div class="tab-pane fade" id="discussions">
-            {% for post in profile.discussions.all %}
+            {% for discussion in profile.discussions.all %}
                 <div class="card p-3 mb-2">
-                    <h6>{{ post.title }}</h6>
-                    <p class="mb-0">{{ post.content|truncatechars:120 }}</p>
+                    <span>{{discussion.posted_at|date}}</span>
+                    <a href="{% url 'discussion-detail' discussion.id %}" style="text-decoration:none;"><h6>{{ discussion.title }}</h6></a>
+                    <p class="mb-0">{{ discussion.short_description|truncatechars:120 }}</p>
                 </div>
             {% empty %}
                 <p class="text-muted">No discussions yet</p>
