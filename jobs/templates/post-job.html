@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Post a Job{% endblock %}
+{% block title %}{% if not instance %}%Post a{% else %}Update{% endif %} Job{% endblock %}
 
 
 
@@ -14,10 +14,12 @@
                 <div class="card-body p-4 p-lg-5">
 
                     <div class="mb-4">
-                        <h2 class="fw-bold mb-1">Post a New Job</h2>
-                        <p class="text-muted mb-0">
-                            Create a job post to hire developers for your company.
-                        </p>
+                        <h2 class="fw-bold mb-1">{% if not instance %}Post a New{% else %}Update{% endif %} Job</h2>
+                        {% if not form.instance %}
+                            <p class="text-muted mb-0">
+                                Create a job post to hire developers for your company.
+                            </p>
+                        {% endif %}
                     </div>
 
                     <form method="POST">
@@ -35,6 +37,21 @@
                                 </div>
                             {% endif %}
                         </div>
+
+                        
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label fw-semibold">
+                                    Skills
+                                </label>
+                                {{ form.skills }}
+
+                                {% if form.skills.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.skills.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
 
                         <div class="row">
                             <div class="col-md-6 mb-4">
@@ -162,7 +179,7 @@
                             </a>
 
                             <button type="submit" class="btn btn-dark px-4">
-                                Publish Job
+                                {% if not instance %}Publish{% else %}Update{% endif %} Job
                             </button>
                         </div>
                     </form>
