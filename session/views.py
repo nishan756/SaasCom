@@ -107,16 +107,26 @@ def unfollow(request , username):
 @require_GET
 def view_profile(request , username):
     context = {}
-    context["profile"] = user_service.view_profile(username)
-    context["total_follower"] = follow_service.total_follower(user = context["profile"])
-    context["total_following"] = follow_service.total_following(user = context["profile"])
-    context["report_form"] = ReportForm()
+    try:
+        context["profile"] = user_service.view_profile(username)
 
-    if request.user.is_authenticated:
-        context["is_following"] = follow_service.is_following(follower = request.user , following = context["profile"])
-        context["user_report"] = report_service.has_user_report('user' , context["profile"].id , request.user)
-    if context["profile"].is_company:
-        context["jobs"] = job_service.get_user_jobs(context["profile"])
+        context["total_follower"] = follow_service.total_follower(user = context["profile"])
+        context["total_following"] = follow_service.total_following(user = context["profile"])
+        context["report_form"] = ReportForm()
+
+        if request.user.is_authenticated:
+            context["is_following"] = follow_service.is_following(follower = request.user , following = context["profile"])
+            context["user_report"] = report_service.has_user_report('user' , context["profile"].id , request.user)
+        if context["profile"].is_company:
+            context["jobs"] = job_service.get_user_jobs(context["profile"])
+    
+    except ObjectNotFound as e:
+        messages.error(request , str(e))
+        return redirect("home")
+    
+    except Exception as e:
+        messages.error(request , "Something went wrong")
+        return redirect("home")
     
     return render(request , "profile.html" , context)
 
