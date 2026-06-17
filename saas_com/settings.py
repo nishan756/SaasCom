@@ -110,7 +110,7 @@ except:
     DATABASES = {
     'default': dj_database_url.config(
         # Replace this value with your local database's connection string.
-        default='postgresql://saas_com_db_user:J5sNVACobiCedmP9BqZGufTEdVfoZZCN@dpg-d8lcfk3bc2fs73drsct0-a/saas_com_db',
+        default=os.getenv('DATABASE_URL'),
         conn_max_age=600
     )
 }
