@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Job , JobCategory , Currency , Application
+from .models import Job , JobCategory , Currency , Application , Skill
 from django.contrib import messages
 
 
@@ -43,3 +43,6 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_per_page = 100
 
 
+@admin.register(Skill)
+class SkillAdmin(admin.ModelAdmin):
+    list_display = ["name"]
