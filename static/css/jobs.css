@@ -153,14 +153,14 @@
 }
 
 /* TAGS */
-.job-tags{
+.job-skills{
     display:flex;
     flex-wrap:wrap;
     gap:8px;
     margin-bottom:14px;
 }
 
-.job-tags span{
+.job-skills span{
     font-size:12px;
     padding:5px 10px;
     background:#eef2ff;
