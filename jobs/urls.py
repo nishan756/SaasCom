@@ -1,10 +1,11 @@
-from .views import post_job , all_jobs , job_detail , apply , applications , application_detail , update_application_status , my_applications
+from .views import post_job , all_jobs , job_detail , apply , applications , application_detail , update_application_status , my_applications , update_job
 
 from django.urls import path
 
 urlpatterns = [
     path("" , all_jobs , name = "all-jobs"),
     path("post-job/" , post_job , name = "post-job"),
+    path("update-job/<uuid:id>/" , update_job , name = "update-job"),
     path("job-detail/<str:id>/" , job_detail , name = "job-detail"),
 
     # Application

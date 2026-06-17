@@ -68,6 +68,7 @@ def post_job(request):
     form = JobForm()
     context = {}
     context["form"] = form
+    context["instance"] = False
     if request.method == "POST" and request.user.is_company:
         form = JobForm(data = request.POST)
         if not form.is_valid():
@@ -83,6 +84,40 @@ def post_job(request):
         except PermissionError as e:
             messages.info(request , str(e))
             return redirect("home")
+    return render(request , "post-job.html" , context)
+
+@login_required(login_url = "login")
+def update_job(request , id):
+    HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER") , request.get_host())
+    
+    # Fetching the job object
+    job = job_service.get_job(id)
+
+    # Checking if the user is recruiter
+    if request.user != job.user:
+        messages.info(request , "You can't update this job post")
+        return redirect("all-jobs")
+    
+    if request.method == "POST":
+        try:
+        
+            form = JobForm(data = request.POST , files = request.FILES , instance = job)
+            job_service.update_job(form)
+            messages.success(request , "Successfully updated your job post")
+            return redirect("job-detail" , id)
+
+        except ObjectNotFound as e:
+            messages.error(request , str(e))
+            return redirect("all-jobs")
+        
+        except Exception as e:
+            messages.info(request , "Something went wrong. Try again later")
+        
+        return redirect(HTTP_REFERER)
+
+    context = {}
+    context["form"] = JobForm(instance = job)
+    context["instance"] = True
     return render(request , "post-job.html" , context)
 
 

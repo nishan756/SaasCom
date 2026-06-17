@@ -24,8 +24,14 @@ class JobService:
     
     def post_job(self , user , form):
        job = form.save(commit = False)
+       skills = form.cleaned_data.get("skills")
        job.user = user
-       self.repo.post_job(job)
+       self.repo.post_job(job , skills)
+    
+    def update_job(self , form):
+       job = form.save(commit = False)
+       skills = form.cleaned_data.get("skills")
+       return self.repo.update_job(job , skills)
         
 
 class JobCatService:
