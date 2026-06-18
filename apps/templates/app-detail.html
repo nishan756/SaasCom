@@ -22,9 +22,9 @@
                     <div class="dev-avatar-wrapper">
 
                         {% if app.user.image %}
-                            <img src="{{ app.user.image.url }}" class="dev-avatar">
+                            <img src="{{ app.user.image.url }}" class="dev-avatar" alt="{{request.user.username}}">
                         {% else %}
-                            <img src="{% static 'img/unknown_avatar.jpg' %}" style="height:80px;width:80px;border-radius:50%;">
+                            <img src="{% static 'img/unknown_avatar.jpg' %}" style="height:80px;width:80px;border-radius:50%;" alt="unknwonAvatar">
                         {% endif %}
 
                     </div>
@@ -250,7 +250,9 @@
                         <img 
                             src="{{ image.image.url }}" 
                             class="app-image preview-img"
-                            data-index="{{ forloop.counter0 }}">
+                            data-index="{{ forloop.counter0 }}"
+                            alt="{{app.name}}"
+                        >
 
                         <!-- DELETE BUTTON -->
                         {% if request.user == app.user %}
@@ -355,9 +357,9 @@
                                 <div class="d-flex align-items-center gap-2">
 
                                     {% if review.user.image %}
-                                        <img src="{{ review.user.image.url }}" class="user-profile">
+                                        <img src="{{ review.user.image.url }}" class="user-profile" alt="{{review.user.username}}">
                                     {% else %}
-                                        <img src="{% static 'img/unknown_avatar.jpg' %}" class="user-profile">
+                                        <img src="{% static 'img/unknown_avatar.jpg' %}" class="user-profile" alt="unknownAvatar">
                                     {% endif %}
 
                                     <div>

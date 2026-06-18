@@ -4,11 +4,11 @@
     {% if comment.user.image %}
         <img src="{{ comment.user.image.url }}"
              class="rounded-circle flex-shrink-0"
-             width="40" height="40" style="object-fit:cover;">
+             width="40" height="40" style="object-fit:cover;" alt="{{comment.user.username}}">
     {% else %}
         <img src="{% static 'img/unknown_avatar.jpg' %}"
              class="rounded-circle flex-shrink-0"
-             width="40" height="40" style="object-fit:cover;">
+             width="40" height="40" style="object-fit:cover;" alt="unknownAvatar">
     {% endif %}
 
     <div class="flex-grow-1">

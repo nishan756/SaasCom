@@ -99,11 +99,13 @@
                                 width="50"
                                 height="50"
                                 style="object-fit: cover;"
+                                alt="{{discussion.user.username}}"
                             >
                         {% else %}
                             <img
                                 src="{% static 'img/unknown_avatar.jpg'%}"
                                 class="rounded-circle me-3"
+                                alt="unknownAvatar"
                             >
                         {% endif %}
 

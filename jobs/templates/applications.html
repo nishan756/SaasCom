@@ -126,13 +126,13 @@
                                                 <img
                                                     src="{{ application.user.image.url }}"
                                                     class="applicant-image"
-                                                    alt="profile"
+                                                    alt="profile-{{application.user.username}}"
                                                 >
                                             {% else %}
                                                 <img
                                                     src="{% static 'img/unknown_avatar.jpg' %}"
                                                     class="applicant-image"
-                                                    alt="profile"
+                                                    alt="profile-unknownAvatar"
                                                 >
                                             {% endif %}
                                             <div>

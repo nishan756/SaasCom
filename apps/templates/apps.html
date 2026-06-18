@@ -118,15 +118,15 @@
                     <div class="app-meta">
 
                         <span class="upvote">
-                            <img src="{% static 'icons/up.png'%}" class="icon"> {{ app.total_upvote }}
+                            <img src="{% static 'icons/up.png'%}" class="icon" alt="upvoteImage"> {{ app.total_upvote }}
                         </span>
 
                         <span class="downvote">
-                            <img src="{% static 'icons/down.png'%}" class="icon"> {{ app.total_downvote }}
+                            <img src="{% static 'icons/down.png'%}" class="icon" alt="downvoteImage"> {{ app.total_downvote }}
                         </span>
 
                         <span class="downvote">
-                            <img src="{% static 'icons/star.png' %}" class="icon"> {{ app.avg_rating|default:0|floatformat:1 }}
+                            <img src="{% static 'icons/star.png' %}" class="icon" alt="starImage"> {{ app.avg_rating|default:0|floatformat:1 }}
                         </span>
 
                         {% if app.developed_at %}
