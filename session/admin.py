@@ -1,13 +1,14 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import UserAdmin
 from .models import Follow
 
 User = get_user_model()
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ["first_name" , "last_name" , "full_name" , "username" , "email"]
+class UserAdmin(UserAdmin):
+    list_display = ["full_name" , "username" , "email"]
     list_per_page = 100
     search_fields = ["first_name" , "last_name" , "username"]
     readonly_fields = ["last_login" , "joined_at"]
@@ -56,6 +57,12 @@ class UserAdmin(admin.ModelAdmin):
             {
                 "fields":["last_login" , "joined_at"]
             },
+        ),
+        (
+            "Password",
+            {
+                "fields":["password"]
+            }
         )
     ]
 
