@@ -80,10 +80,7 @@ def post_job(request):
         
         except InvalidForm as e:
             messages.error(request , str(e))
-        
-        except PermissionError as e:
-            messages.info(request , str(e))
-            return redirect("home")
+
     return render(request , "post-job.html" , context)
 
 @login_required(login_url = "login")
