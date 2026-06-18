@@ -27,7 +27,7 @@
         <div class="row">
         <div class="col-md-4"><h3>{{ total_apps }}</h3><p>Apps</p></div>
         <div class="col-md-4"><h3>{{ total_users }}</h3><p>Users</p></div>
-        <div class="col-md-4"><h3>1K+</h3><p>Reviews</p></div>
+        {% comment %} <div class="col-md-4"><h3>1K+</h3><p>Reviews</p></div> {% endcomment %}
         </div>
     </div>
     </section>
@@ -37,19 +37,23 @@
         <div class="container">
             <h2 class="mb-4">Trending Apps</h2>
 
-            <div class="d-flex overflow-auto gap-3 pb-2">
+            {% if trending_apps %}
+                <div class="d-flex overflow-auto gap-3 pb-2">
 
-            {% for app in trending_apps %}
-            <div style="min-width: 300px;">
-                <div class="card p-3 h-100">
-                    <h5>{{app.name}}</h5>
-                    <p>{{app.short_description|truncatechars:'45'}}</p>
-                    <a href="{% url 'app-detail' app.id %}" class='btn btn-primary'>View</a>
+                {% for app in trending_apps %}
+                <div style="min-width: 300px;">
+                    <div class="card p-3 h-100">
+                        <h5>{{app.name}}</h5>
+                        <p>{{app.short_description|truncatechars:'45'}}</p>
+                        <a href="{% url 'app-detail' app.id %}" class='btn btn-primary'>View</a>
+                    </div>
                 </div>
-            </div>
-            {% endfor %}
+                {% endfor %}
 
-            </div>
+                </div>
+            {% else %}
+                <h2 class='text-center'>No trending apps found</h2>
+            {% endif %}
         </div>
     </section>
 
@@ -58,17 +62,21 @@
         <div class="container">
             <h2 class="mb-4">Categories</h2>
 
-            <div class="d-flex overflow-auto gap-3 pb-2">
-            
-            {% for cat in categories %}
-                <a href="/apps/all/?category={{cat.name}}" style="text-decoration:none;">
-                    <div style="min-width: 200px;">
-                        <div class="card p-3 text-center">{{cat.name}}</div>
-                    </div>
-                </a>
-            {% endfor %}
+            {% if categories %}
+                <div class="d-flex overflow-auto gap-3 pb-2">
+                
+                {% for cat in categories %}
+                    <a href="/apps/all/?category={{cat.name}}" style="text-decoration:none;">
+                        <div style="min-width: 200px;">
+                            <div class="card p-3 text-center">{{cat.name}}</div>
+                        </div>
+                    </a>
+                {% endfor %}
 
-            </div>
+                </div>
+            {% else %}
+                <h2 class='text-center'>No category found</h2>
+            {% endif %}
 
         </div>
     </section>
@@ -78,18 +86,22 @@
         <div class="container">
             <h2 class="mb-4">Trending Discussions</h2>
 
-            <div style="max-height: 300px; overflow-y: auto;">
-                <ul class="list-group">
-                    {% for discussion in trending_discussions %}
-                    <a href="{% url 'discussion-detail' discussion.id %}" style="text-decoration:none;">
-                        <li class="list-group-item d-flex justify-content-between">
-                            {{discussion.title}}
-                            <span class="badge bg-secondary">{{forloop.counter}}</span>
-                        </li>
-                    </a>
-                    {% endfor %}
-                </ul>
-            </div>
+            {% if trending_discussions %}
+                <div style="max-height: 300px; overflow-y: auto;">
+                    <ul class="list-group">
+                        {% for discussion in trending_discussions %}
+                        <a href="{% url 'discussion-detail' discussion.id %}" style="text-decoration:none;">
+                            <li class="list-group-item d-flex justify-content-between">
+                                {{discussion.title}}
+                                <span class="badge bg-secondary">{{forloop.counter}}</span>
+                            </li>
+                        </a>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% else %}
+                <h2 class='text-center'>No trending discussions found</h2>
+            {% endif %}
 
         </div>
     </section>
