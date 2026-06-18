@@ -31,9 +31,10 @@ class JobRepo:
         except Job.DoesNotExist:
             raise ObjectNotFound("Job post not found")
 
-    def post_job(self , job , skills):
-        job.skills.set(skills)
-        return job.save()
+    def post_job(self , skills , **job_credentials):
+        new_job = Job.objects.create(**job_credentials)
+        new_job.skills.set(skills)
+        return new_job
 
     def update_job(self , job , skills):
         job.skills.set(skills)

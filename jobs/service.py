@@ -1,5 +1,5 @@
 from .repository import JobRepo , JobCatRepo ,  ApplicationRepo
-from saas_com.core.exceptions import PermissionDenied , AlreadyExists
+from saas_com.core.exceptions import PermissionDenied , AlreadyExists , InvalidForm
 from django.core.paginator import Paginator
 
 class JobService:
@@ -23,10 +23,14 @@ class JobService:
         return self.repo.get_job(id = id)
     
     def post_job(self , user , form):
-       job = form.save(commit = False)
-       skills = form.cleaned_data.get("skills")
-       job.user = user
-       self.repo.post_job(job , skills)
+        if not form.is_valid():
+           raise InvalidForm(form.errors)
+
+        job_credentials = form.cleaned_data.copy()
+        skills = job_credentials.pop("skills")
+        job_credentials["user_id"] = user.id
+
+        return self.repo.post_job(skills , **job_credentials)
     
     def update_job(self , form):
        job = form.save(commit = False)
