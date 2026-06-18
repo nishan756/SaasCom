@@ -1,6 +1,7 @@
 from .models import Job , JobCategory , Application
 from django.db.models import Count , Q
 from saas_com.core.exceptions import ObjectNotFound
+from django.db import transaction
 
 class JobRepo:
 
@@ -32,9 +33,11 @@ class JobRepo:
             raise ObjectNotFound("Job post not found")
 
     def post_job(self , skills , **job_credentials):
-        new_job = Job.objects.create(**job_credentials)
-        new_job.skills.set(skills)
-        return new_job
+        with transaction.atomic():
+            new_job = Job.objects.create(**job_credentials)
+            if skills:
+                new_job.skills.set(skills)
+            return new_job
 
     def update_job(self , job , skills):
         job.skills.set(skills)

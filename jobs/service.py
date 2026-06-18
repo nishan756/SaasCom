@@ -23,12 +23,9 @@ class JobService:
         return self.repo.get_job(id = id)
     
     def post_job(self , user , form):
-        if not form.is_valid():
-           raise InvalidForm(form.errors)
-
         job_credentials = form.cleaned_data.copy()
-        skills = job_credentials.pop("skills")
-        job_credentials["user_id"] = user.id
+        skills = job_credentials.pop("skills" , [])
+        job_credentials["user"] = user
 
         return self.repo.post_job(skills , **job_credentials)
     

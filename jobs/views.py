@@ -59,29 +59,33 @@ def job_detail(request , id):
     
     return render(request , "job-detail.html" , context)
 
-@login_required(login_url = "login" , redirect_field_name = "post-job")
+@login_required(login_url="login", redirect_field_name="post-job")
 def post_job(request):
     if not request.user.is_company:
-        messages.info(request , "You must have a company account to post job circular")
+        messages.info(request, "You must have a company account to post job circular")
         return redirect("all-jobs") 
     
-    form = JobForm()
-    context = {}
-    context["form"] = form
-    context["instance"] = False
-    if request.method == "POST" and request.user.is_company:
-        form = JobForm(data = request.POST)
-        if not form.is_valid():
-            return messages.error(request , "Invalid Form data")
-        try:
-            job = job_service.post_job(user = request.user , form = form)
-            messages.success(request , "Successfully posted your job")
-            return redirect("job-detail" , id = job.id)
+    if request.method == "POST":
+        form = JobForm(data=request.POST)
         
-        except InvalidForm as e:
-            messages.error(request , str(e))
+        if form.is_valid():
+            try:
+                job = job_service.post_job(user=request.user, form=form)
+                messages.success(request, "Successfully posted your job")
+                return redirect("job-detail", id=job.id)
+            except Exception as e:
+                messages.error(request, f"Something went wrong: {str(e)}")
+        else:
+            messages.error(request, form.errors)
+            
+    else:
+        form = JobForm()
 
-    return render(request , "post-job.html" , context)
+    context = {
+        "form": form,
+        "instance": False
+    }
+    return render(request, "post-job.html", context)
 
 @login_required(login_url = "login")
 def update_job(request , id):
