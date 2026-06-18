@@ -50,15 +50,12 @@ class AppRepo:
         except App.DoesNotExist:
             raise ObjectNotFound("App not found")
         
-    def create_app(self , user , name , category , logo , short_description , detail):
+    def create_app(self , category ,  **app_credentials):
         new_app = App.objects.create(
-            user = user,
-            name = name,
-            logo = logo,
-            short_description = short_description,
-            detail = detail
+            **app_credentials
         )
-        new_app.category.set(category)
+        if category:
+            new_app.category.set(category)
         return new_app
     
     def update_app(self , form , category):

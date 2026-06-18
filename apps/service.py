@@ -50,16 +50,10 @@ class AppService:
     
         
     def create_app(self , user , form):
-        if form.is_valid():
-            name = form.cleaned_data.get("name")
-            category = form.cleaned_data.get("category")
-            logo = form.cleaned_data.get("logo")
-            short_description = form.cleaned_data.get("short_description")
-            detail = form.cleaned_data.get("detail")
-            app = self.repo.create_app(user , name , category , logo , short_description , detail)
-            return app
-        else:
-            raise InvalidForm((form.errors))
+        app_credentials = form.cleaned_data.copy()
+        app_credentials["user"] = user
+        category = app_credentials.pop("category" , [])
+        return self.repo.create_app(category , **app_credentials)
     
     def update_app(self , form):
         if form.is_valid():

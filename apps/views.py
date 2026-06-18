@@ -4,6 +4,7 @@ from django.views.decorators.http import require_GET , require_POST
 from django.contrib.auth.decorators import login_required
 from saas_com.core.service import is_safe_url
 from .models import Category
+from django.db import transaction
 
 # ====================SERVICES=============
 from .service import AppService , AppImageService , ReviewService
@@ -20,7 +21,9 @@ from saas_com.core.exceptions import AlreadyExists , ObjectNotFound, PermissionD
 from .forms import ReviewForm , AppForm , AppDeletionConfirmationForm
 from report.forms import ReportForm
 
-
+# =========LOGGING==========
+import logging
+logger = logging.getLogger("apps")
 
 # =========SERVICES=========
 app_service = AppService()
@@ -85,21 +88,28 @@ def create_app(request):
     if request.method == "POST":
         form = AppForm(request.POST , request.FILES)
         try:
-            new_app = app_service.create_app(user = request.user , form = form)
-            images = request.FILES.getlist("images")
-            if images:
-                app_image_service.add_images(app = new_app , images = images)
-            return redirect("app-detail" , id = new_app.id)
-        except InvalidForm as e:
-            messages.error(request , str(e))
-            return render(request , "create-app.html" , {"form":form})
+            if form.is_valid():
+                with transaction.atomic():
+                    new_app = app_service.create_app(user = request.user , form = form)
+                    images = request.FILES.getlist("images")
+                    if images:
+                        app_image_service.add_images(app = new_app , images = images)
+                    logger.info(f"{request.user} created {new_app.name}")
+                return redirect("app-detail" , id = new_app.id)
+            else:
+                logger.error(msg = f"Invalid form of : {request.user}->Errors:{form.errors}")
+                messages.error(request , form.errors)
         
         except TooManyObject as e:
+            logger.info(msg = f"{request.user} tried to add more than 5 image")
             messages.info(request , str(e))
         
         except Exception as e:
+            logger.exception(msg = f"{request.user} got an exception")
             messages.info(request , "Something went wrong. Please try again later")
-    form = AppForm()
+    else:
+        form = AppForm()
+
     return render(request , "create-app.html" , {"form":form , "instance":False})
 
 @login_required(login_url = "login")
