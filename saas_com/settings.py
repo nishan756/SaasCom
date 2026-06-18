@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 import os
 import sys
 import dj_database_url 
+import logging
 
 load_dotenv()
 
@@ -232,3 +233,139 @@ if not TESTING:
     MIDDLEWARE = [
         *MIDDLEWARE,
     ]
+
+LOGS_DIR = os.path.join(BASE_DIR , "logs")
+os.makedirs(LOGS_DIR , exist_ok = True)
+LOGGING = {
+
+    'version': 1,
+
+    'disable_existing_loggers': False,
+
+    'formatters': {
+
+        'verbose': {
+            'format': "{levelname} | {asctime} | {name} | {module} | {funcName} | {message}",
+            'style': "{",
+        },
+
+        'simple': {
+            'format': "{levelname} | {message}",
+            'style': "{",
+        },
+    },
+
+    'handlers': {
+
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+
+        'apps_file': {
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / "logs/apps.log",
+            'formatter': 'verbose',
+        },
+
+        'discussion_file': {
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / "logs/discussion.log",
+            'formatter': 'verbose',
+        },
+
+        'jobs_file': {
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / "logs/jobs.log",
+            'formatter': 'verbose',
+        },
+
+        'bookmark_file': {
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / "logs/bookmark.log",
+            'formatter': 'verbose',
+        },
+
+        'comment_file': {
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / "logs/comment.log",
+            'formatter': 'verbose',
+        },
+
+        'report_file': {
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / "logs/report.log",
+            'formatter': 'verbose',
+        },
+
+        'error_file': {
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / "logs/error.log",
+            'formatter': 'verbose',
+            'level': 'ERROR',
+        },
+
+        'security_file': {
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / "logs/security.log",
+            'formatter': 'verbose',
+            'level': 'WARNING',
+        },
+    },
+
+    'loggers': {
+
+        'django': {
+            'handlers': ['console', 'error_file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+
+        'apps': {
+            'handlers': ['console', 'apps_file', 'error_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+
+        'discussion': {
+            'handlers': ['console', 'discussion_file', 'error_file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+
+        'jobs': {
+            'handlers': ['console', 'jobs_file', 'error_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+
+        'bookmark': {
+            'handlers': ['console', 'bookmark_file', 'error_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+
+        'comment': {
+            'handlers': ['console', 'comment_file', 'error_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+
+        'report': {
+            'handlers': ['console', 'report_file', 'error_file'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+
+        'security': {
+            'handlers': ['console', 'security_file', 'error_file'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    },
+
+    'root': {
+        'handlers': ['console', 'error_file'],
+        'level': 'INFO',
+    },
+}
