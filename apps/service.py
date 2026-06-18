@@ -56,12 +56,8 @@ class AppService:
         return self.repo.create_app(category , **app_credentials)
     
     def update_app(self , form):
-        if form.is_valid():
-            category = form.cleaned_data.get("category")
-            updated_app = self.repo.update_app(form , category)
-            return updated_app
-        else:
-            raise InvalidForm(form.errors)
+        category = form.cleaned_data.get("category")
+        return self.repo.update_app(form , category)
 
     def del_app(self, id, user, form):
         app = self.get_app(id=id)

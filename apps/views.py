@@ -112,35 +112,54 @@ def create_app(request):
 
     return render(request , "create-app.html" , {"form":form , "instance":False})
 
-@login_required(login_url = "login")
-def update_app(request , id):
-    app = app_service.get_app(id = id)
-    context = {}
-    context["form"] = AppForm(instance = app)
-    context["instance"] = True
+@login_required(login_url="login")
+def update_app(request, id):
+    # 1. Fetching the app
+    try:
+        app = app_service.get_app(id=id)
+    except ObjectNotFound as e:
+        messages.error(request, str(e))
+        logger.info(f"{request.user} tried to update an app with id:{id}. But, this app was not found.")
+        return redirect("all-apps")
+
+    # Checking ownership
     if app.user != request.user:
-        messages.warning(request , "Can't update this app")
-        return redirect("app-detail" , id)
+        messages.warning(request, "Can't update this app")
+        return redirect("app-detail", id)
     
     if request.method == "POST":
-        form = AppForm(instance = app , data = request.POST , files = request.FILES)
-        images = request.FILES.getlist("images" , None)
-        try:
-            updated_app = app_service.update_app(form = form)
-            if images:
-                app_image_service.add_images(updated_app , images)
-            return redirect("app-detail" , id)
+        form = AppForm(instance=app, data=request.POST, files=request.FILES)
+        images = request.FILES.getlist("images", None)
         
-        except InvalidForm as e:
-            messages.error(request , str(e))
-            return render(request , "create-app.html" , {"form":form})
-        
-        except TooManyObject as e:
-            messages.info(request , str(e))
-        
-        except Exception as e:
-            messages.info(request , "Something went wrong. Please try again later")
-    return render(request , "create-app.html" , context)
+        if form.is_valid():
+            try:
+                with transaction.atomic():
+                    app_service.update_app(form=form)
+                    if images:
+                        app_image_service.add_images(app, images)
+                
+                logger.info(f"{request.user} updated {app.name}")
+                messages.success(request, f"{app.name} updated successfully!")
+                return redirect("app-detail", id)
+                
+            except TooManyObject as e:
+                logger.error(f"{request.user} tried to upload more than 5 images for {app.name}")
+                messages.error(request, str(e))
+                
+            except Exception as e:
+                logger.exception(f"Exception occurred while {request.user} tried to update app {id}")
+                messages.error(request, "Something went wrong. Please try again later")
+        else:
+            messages.error(request, "Please correct the errors below.")
+            
+    else:
+        form = AppForm(instance=app)
+
+    context = {
+        "form": form, 
+        "instance": True
+    }
+    return render(request, "create-app.html", context)
 
 @require_POST
 @login_required(login_url = "login")
