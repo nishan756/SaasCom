@@ -74,9 +74,9 @@ def post_job(request):
         if not form.is_valid():
             return messages.error(request , "Invalid Form data")
         try:
-            job_service.post_job(user = request.user , form = form)
+            job = job_service.post_job(user = request.user , form = form)
             messages.success(request , "Successfully posted your job")
-            return redirect("job-detail" , id = form.instance.id)
+            return redirect("job-detail" , id = job.id)
         
         except InvalidForm as e:
             messages.error(request , str(e))
