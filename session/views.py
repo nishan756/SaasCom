@@ -251,10 +251,11 @@ def change_password(request):
     HTTP_REFERER = is_safe_url(url = request.META.get("HTTP_REFERER") , allowed_hosts = request.get_host())
     form = CustomPasswordChangeForm(request.user , request.POST)
     try:
-        user_service.change_password(request , form)
-        messages.success(request , "Successfuly changed your password")
-        return redirect('password_change_done')
-
+        is_updated = user_service.change_password(request , form)
+        if is_updated:
+            logout(request)
+            messages.success(request , "Successfully changed your password. Please login again")
+            return redirect("login")
     except InvalidForm as e:
         messages.info(request , str(e))
         

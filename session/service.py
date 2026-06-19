@@ -38,9 +38,12 @@ class UserService:
         raise InvalidForm(user_form.errors)
 
     def change_password(self , request , form):
+        is_updated = False
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request , user)
+            is_updated = True
+            return is_updated
         raise InvalidForm(form.errors)
     
     def change_email(self , user , email):
