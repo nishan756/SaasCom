@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'css/email-verification.css' %}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h2>Email Verification</h2>
+    </div>
+
+    <div class="content">
+
+        <p>Hello <strong>{{ full_name }}</strong>,</p>
+
+        <p>Your code is</p>
+
+        <div class="code-box">
+            {{ code }}
+        </div>
+
+        <p>This code will expire in <strong>10 minutes</strong>.</p>
+
+        <p>If you did not request this change, you can safely ignore this email.</p>
+
+    </div>
+
+    <div class="footer">
+        © {{ year }} SaasCom. All rights reserved.
+    </div>
+
+</div>
+
+</body>
+</html>

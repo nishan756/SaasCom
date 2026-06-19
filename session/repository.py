@@ -1,5 +1,5 @@
 from .models import User , Follow
-from saas_com.core.exceptions import ObjectNotFound
+from saas_com.core.exceptions import ObjectNotFound , AlreadyExists
 from django.contrib.auth import authenticate
 from django.db.models import Q , Count , Prefetch
 from apps.models import App
@@ -14,6 +14,13 @@ class UserRepo:
             return User.objects.get(username = username)
         except User.DoesNotExist:
             raise ObjectNotFound("User not found")
+    
+    def check_user_with_email_or_username(self , email = None , username = None):
+        
+        if email:
+            return User.objects.filter(email = email)
+        
+        return User.objects.filter(username = username)
     
     def get_users(self , user_type):
         users = User.objects.prefetch_related("apps" , "followers" , "following").filter(user_type = user_type).exclude(Q(is_superuser = True)|Q(is_staff = True)).annotate(total_apps = Count("apps") , total_follower = Count("followers")).only("first_name" , "last_name" , "username" , "image" , "bio" , "joined_at")
@@ -30,6 +37,10 @@ class UserRepo:
 
     def edit_profile(self , user_form):
         return user_form.save()
+
+    def change_email(self , user , email):
+        user.email = email
+        return user.save()
     
     def authenticated(self , request , username , password):
         user = authenticate(request , username = username , password = password)

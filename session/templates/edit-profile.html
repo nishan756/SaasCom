@@ -59,6 +59,12 @@
                                     Reset Password
                                 </button>
 
+                                <button class="nav-link"
+                                        data-bs-toggle="pill"
+                                        data-bs-target="#account-security">
+                                    Email
+                                </button>
+
                             </div>
 
                         </div>
@@ -101,13 +107,6 @@
                                                 Username
                                             </label>
                                             {{user_form.username}}
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label">
-                                                Email
-                                            </label>
-                                            {{user_form.email}}
                                         </div>
 
                                         <div class="mb-3">
@@ -195,6 +194,33 @@
                                             Send Reset Link
                                         </button>
 
+                                    </form>
+
+                                </div>
+
+                                <!-- Email Change -->
+                                <div class="tab-pane fade" id="account-security">
+
+                                    <h4 class="section-title">
+                                        Account Security
+                                    </h4>
+
+                                    <p class="text-muted">
+                                        Change your Email. Email change requires verification.
+                                    </p>
+
+                                    <!-- Step 1: Request change -->
+                                    <form method="POST" action="{% url 'change-email' %}">
+                                        {% csrf_token %}
+
+                                        <div class="mb-3">
+                                            <label class="form-label">New Email</label>
+                                            {{email_change_form.email}}
+                                        </div>
+
+                                        <button class="btn btn-primary">
+                                            Send code
+                                        </button>
                                     </form>
 
                                 </div>

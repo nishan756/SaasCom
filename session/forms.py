@@ -64,7 +64,7 @@ class SignUpForm(UserCreationForm):
 class EditProfileForm(forms.ModelForm):
     class Meta(SignUpForm.Meta):
         model = User
-        fields = ["username" ,"first_name" , "last_name" , "bio" , "image" , "gender" , "email"]
+        fields = ["username" ,"first_name" , "last_name" , "bio" , "image" , "gender"]
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -76,6 +76,18 @@ class EditProfileForm(forms.ModelForm):
                 field.widget.attrs.update({'class': 'form-select'})
             else:
                 field.widget.attrs.update({'class': 'form-control' , "placeholder":field_name.capitalize()})
+
+class EmailChangeForm(forms.Form):
+    email = forms.EmailField(
+        required = True,
+        widget = forms.EmailInput(
+            attrs = {
+                "type":"email",
+                "placeholder":"Email",
+                "class":"form-control",
+            }
+        )
+    )
 
 class CustomPasswordChangeForm(PasswordChangeForm):
     def __init__(self, *args, **kwargs):

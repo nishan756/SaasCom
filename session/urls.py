@@ -1,4 +1,4 @@
-from .views import user_signup , user_login , user_logout , follow , unfollow , view_profile , users , edit_profile , change_password
+from .views import user_signup , user_login , user_logout , follow , unfollow , view_profile , users , edit_profile , change_password , change_email , verify_email
 from django.urls import path
 
 
@@ -12,4 +12,6 @@ urlpatterns = [
     path("profile/<str:username>/" , view_profile , name = "profile"),
     path("edit-profile/" , edit_profile , name = "edit-profile"),
     path("change-password/" , change_password , name = "change-password"),
+    path("change-email/" , change_email , name = "change-email"),
+    path("verify-email/" , verify_email , name = "verify-email"),
 ]

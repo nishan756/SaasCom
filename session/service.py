@@ -15,6 +15,11 @@ class UserService:
     def get_user(self , username):
         return self.repo.get_user(username)
     
+    def check_user_with_email_or_username(self , email = None , username = None):
+        if not email and not username:
+            raise ValueError("You must provide email or password")
+        return self.repo.check_user_with_email_or_username(email = email , username = username)
+    
     def view_profile(self , username):
         return self.repo.view_profile(username)
     
@@ -37,6 +42,9 @@ class UserService:
             user = form.save()
             update_session_auth_hash(request , user)
         raise InvalidForm(form.errors)
+    
+    def change_email(self , user , email):
+        return self.repo.change_email(user , email)
     
     def authenticated(self , form , request):
         if form.is_valid():

@@ -3,15 +3,17 @@ from django.contrib.auth import login , logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.http import require_GET , require_POST
-from saas_com.core.exceptions import ObjectNotFound , InvalidForm , FollowException
+from saas_com.core.exceptions import ObjectNotFound , InvalidForm , FollowException , AlreadyExists
 from saas_com.core.service import is_safe_url
+import time , random
+from django.utils import timezone
 
 # =================FORMS=================
-from .forms import LoginForm , SignUpForm , EditProfileForm , CustomPasswordChangeForm
+from .forms import LoginForm , SignUpForm , EditProfileForm , CustomPasswordChangeForm , EmailChangeForm
 from report.forms import ReportForm
 
 # =================SERVICES=============
-from .service import UserService , FollowService
+from .service import UserService , FollowService , EmailService
 from report.service import ReportService
 from jobs.service import JobService
 from apps.service import ReviewService
@@ -161,8 +163,94 @@ def edit_profile(request):
     context = {}
     context["user_form"] = EditProfileForm(instance = user)
     context["password_change_form"] = CustomPasswordChangeForm(user = request.user)
+    context["email_change_form"] = EmailChangeForm()
     return render(request , "edit-profile.html" , context)
 
+@login_required(login_url="login")
+@require_POST
+def change_email(request):
+    form = EmailChangeForm(data=request.POST)
+
+    if form.is_valid():
+        try:
+            email = form.cleaned_data["email"]
+
+            if email == request.user.email:
+                messages.info(request, "This is your existing email")
+                return redirect("edit-profile")
+
+            if user_service.check_user_with_email_or_username(email=email):
+                messages.info(request, "User with this email already exists")
+                return redirect("edit-profile")
+
+            code = str(random.randint(100000, 999999))
+
+            request.session["session_code"] = code
+            request.session["email"] = email
+            request.session[f"otp_attempts:{request.user.username}"] = 0
+            request.session["code_expiry"] = timezone.now().timestamp() + 600 
+
+            from .service import EmailService
+            EmailService.send_email(
+                subject="Email change verification",
+                recipient=email,
+                template_name="send-code.html",
+                context={
+                    "code": code,
+                    "full_name": request.user.full_name
+                }
+            )
+
+            return render(request, "verification.html")
+
+        except Exception as e:
+            messages.error(request, "Something went wrong")
+            return redirect("edit-profile")
+    else:
+        messages.error(request, str(form.errors))
+        return redirect("edit-profile")
+
+
+@login_required(login_url="login")
+@require_POST
+def verify_email(request):
+    try:
+        code = request.POST.get("code")
+        session_code = request.session.get("session_code")
+        email = request.session.get("email")
+        expiry = request.session.get("code_expiry") 
+        attempts = request.session.get(f"otp_attempts:{request.user.username}", 0)
+
+        if attempts >= 3:
+            messages.error(request, "Too many attempts. Request a new code.")
+            return redirect("edit-profile")
+
+        if not all([code, session_code, email, expiry]):
+            messages.error(request, "Invalid request")
+            return redirect("edit-profile")
+
+        if time.time() > float(expiry):
+            messages.error(request, "Code expired")
+            return redirect("edit-profile")
+
+        if code != session_code:
+            request.session[f"otp_attempts:{request.user.username}"] = attempts + 1
+            messages.error(request, "Invalid code")
+            return render(request, "verification.html") 
+        
+        user_service.change_email(request.user, email)
+
+        request.session.pop("session_code", None)
+        request.session.pop("email", None)
+        request.session.pop("code_expiry", None)
+        request.session.pop(f"otp_attempts:{request.user.username}", None)
+
+        messages.success(request, "Email updated successfully")
+        return redirect("profile", username=request.user.username)
+
+    except Exception as e:
+        messages.error(request, "Something went wrong")
+        return redirect("edit-profile")
 
 @login_required(login_url = "login")
 @require_POST
