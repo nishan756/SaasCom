@@ -76,7 +76,7 @@
                                         Edit Profile Information
                                     </h4>
 
-                                    <form method="POST" action="{% url 'edit-profile' %}">
+                                    <form method="POST" enctype = "multipart/form-data" action="{% url 'edit-profile' %}">
                                         {% csrf_token %}
                                         <div class="row">
 
