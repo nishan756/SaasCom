@@ -7,6 +7,7 @@ from saas_com.core.exceptions import ObjectNotFound , InvalidForm , FollowExcept
 from saas_com.core.service import is_safe_url
 import time , random
 from django.utils import timezone
+import threading
 
 # =================FORMS=================
 from .forms import LoginForm , SignUpForm , EditProfileForm , CustomPasswordChangeForm , EmailChangeForm
@@ -190,16 +191,8 @@ def change_email(request):
             request.session[f"otp_attempts:{request.user.username}"] = 0
             request.session["code_expiry"] = timezone.now().timestamp() + 600 
 
-            from .service import EmailService
-            EmailService.send_email(
-                subject="Email change verification",
-                recipient=email,
-                template_name="send-code.html",
-                context={
-                    "code": code,
-                    "full_name": request.user.full_name
-                }
-            )
+            email_thread = threading.Thread(target = EmailService.send_email , args = ("Email change verification" , email, "send-code.html", {"code": code , "full_name": request.user.full_name}))
+            email_thread.start()
 
             return render(request, "verification.html")
 
