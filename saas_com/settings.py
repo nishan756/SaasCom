@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "debug_toolbar",
     'django_summernote',
     'session',
     'apps',
@@ -74,7 +73,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'saas_com.urls'
@@ -227,12 +225,13 @@ INTERNAL_IPS = [
 
 TESTING = "test" in sys.argv or "PYTEST_VERSION" in os.environ
 
-if not TESTING:
-    INSTALLED_APPS = [
-        *INSTALLED_APPS,
+if DEBUG:
+    INSTALLED_APPS += [
+        "debug_toolbar",
     ]
-    MIDDLEWARE = [
-        *MIDDLEWARE,
+
+    MIDDLEWARE += [
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
     ]
 
 LOGS_DIR = os.path.join(BASE_DIR , "logs")
