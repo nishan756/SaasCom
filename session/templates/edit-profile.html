@@ -53,11 +53,6 @@
                                     Change Password
                                 </button>
 
-                                <button class="nav-link"
-                                        data-bs-toggle="pill"
-                                        data-bs-target="#reset-password">
-                                    Reset Password
-                                </button>
 
                                 <button class="nav-link"
                                         data-bs-toggle="pill"
@@ -166,38 +161,6 @@
 
                                 </div>
 
-                                <!-- Reset Password -->
-                                <div class="tab-pane fade"
-                                     id="reset-password">
-
-                                    <h4 class="section-title">
-                                        Reset Password
-                                    </h4>
-
-                                    <div class="alert alert-warning">
-                                        Clicking the button below will send
-                                        a password reset link to your email.
-                                    </div>
-
-                                    <form>
-
-                                        <div class="mb-3">
-                                            <label class="form-label">
-                                                Email Address
-                                            </label>
-
-                                            <input type="email"
-                                                   class="form-control">
-                                        </div>
-
-                                        <button class="btn btn-danger">
-                                            Send Reset Link
-                                        </button>
-
-                                    </form>
-
-                                </div>
-
                                 <!-- Email Change -->
                                 <div class="tab-pane fade" id="account-security">
 
@@ -209,7 +172,6 @@
                                         Change your Email. Email change requires verification.
                                     </p>
 
-                                    <!-- Step 1: Request change -->
                                     <form method="POST" action="{% url 'change-email' %}">
                                         {% csrf_token %}
 
