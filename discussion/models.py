@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
 from vote.models import Vote
 from comment.models import Comment
-from django.urls import path
+from django.urls import reverse
 
 User = get_user_model()
 
@@ -42,7 +42,7 @@ class Discussion(models.Model):
         return self.title
     
     def get_absolute_url(self):
-        return reverse("discussion-detail", kwargs={"pk": self.id})
+        return reverse("discussion-detail", kwargs={"id": self.id})
     
 
     class Meta:
