@@ -6,6 +6,7 @@ from django_summernote.fields import SummernoteTextField
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from cloudinary.models import CloudinaryField
+from django.urls import reverse
 
 User = get_user_model()
 
@@ -135,6 +136,10 @@ class Job(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def get_absolute_url(self):
+        return reverse("job-detail", kwargs={"id": self.id})
+    
     
     class Meta:
         indexes = [

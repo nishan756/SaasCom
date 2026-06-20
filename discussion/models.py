@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
 from vote.models import Vote
 from comment.models import Comment
+from django.urls import path
 
 User = get_user_model()
 
@@ -36,6 +37,13 @@ class Discussion(models.Model):
     comments = GenericRelation(Comment , related_query_name = "comments")
 
     posted_at = models.DateTimeField(auto_now_add = True)
+
+    def __str__(self):
+        return self.title
+    
+    def get_absolute_url(self):
+        return reverse("discussion-detail", kwargs={"pk": self.id})
+    
 
     class Meta:
         ordering = ["-posted_at"]

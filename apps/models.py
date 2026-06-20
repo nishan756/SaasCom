@@ -8,6 +8,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from vote.models import Vote
 from django.core.validators import MinValueValidator , MaxValueValidator
 from saas_com.core.exceptions import TooManyObject
+from django.urls import reverse
 
 User = get_user_model()
 
@@ -47,6 +48,10 @@ class App(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def get_absolute_url(self):
+        return reverse("app-detail", kwargs={"id": self.id})
+    
     
     class Meta:
         ordering = ["-added_at"]
