@@ -1,8 +1,10 @@
 from .repository import BookmarkRepo
+from django.core.paginator import Paginator
 
 # ==============MODELS=============
 from apps.models import App
 from jobs.models import Job
+from discussion.models import Discussion
 
 # ==============GenericPrograms=====
 from saas_com.core.service import get_content_type
@@ -16,8 +18,14 @@ class BookmarkService:
         "job":Job,
     }
 
-    def bookmarks(self , user):
-        return self.repo.bookmarks(user = user)
+    def bookmarks(self , user , content_type_str = None , page = 1):
+        if not content_type_str:
+            return
+        content_type = get_content_type(content_type_str , self.CONTENT_TYPES)
+        bookmarks = self.repo.bookmarks(user = user , content_type = content_type)
+        paginator = Paginator(bookmarks , 1)
+        bookmarks = paginator.get_page(int(page))
+        return bookmarks
     
     def is_bookmarked(self , user , content_type , object_id):
         content_type = get_content_type(content_type , self.CONTENT_TYPES)

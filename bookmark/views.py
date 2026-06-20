@@ -1,6 +1,6 @@
 from django.shortcuts import render , redirect
 from django.contrib import messages
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST , require_GET
 from django.contrib.auth.decorators import login_required
 from apps.views import is_safe_url
 
@@ -8,7 +8,7 @@ from apps.views import is_safe_url
 from .service import BookmarkService
 
 # ==================Exceptions=====================
-from saas_com.core.exceptions import AlreadyExists , ObjectNotFound
+from saas_com.core.exceptions import AlreadyExists , ObjectNotFound , InvalidContentType
 
 bookmark_service = BookmarkService()
 
@@ -41,3 +41,20 @@ def del_bookmark(request  , id):
         messages.error(request , str(e))
     
     return redirect(HTTP_REFERER)
+
+@login_required(login_url = "login")
+@require_GET
+def bookmarks(request):
+    content_type = request.GET.get("content_type")
+    page = request.GET.get("page" , 1)
+    context = {}
+    try:
+        context["bookmarks"] = bookmark_service.bookmarks(request.user , content_type , page)
+    
+    except InvalidContentType as e:
+        messages.info(request , str(e))
+    
+    except Exception as e:
+        messages.error(request , "Something went wrong")
+
+    return render(request , "bookmarks.html" , context)

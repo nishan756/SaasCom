@@ -3,8 +3,8 @@ from saas_com.core.exceptions import ObjectNotFound
 
 class BookmarkRepo:
 
-    def bookmarks(self , user):
-        return Bookmark.objects.filter(user = user)
+    def bookmarks(self , user , content_type):
+        return Bookmark.objects.filter(user = user , content_type = content_type)
 
     def is_bookmarked(self , user , content_type , object_id):
         return Bookmark.objects.filter(user = user , content_type = content_type , object_id = object_id).first()
