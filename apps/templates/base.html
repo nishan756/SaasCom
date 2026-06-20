@@ -70,17 +70,9 @@
 
                             <li><hr class="dropdown-divider"></li>
 
-                            {% if request.user.is_developer %}
-                                <li>
-                                    <a class="dropdown-item" href="{% url 'my-applications' %}">
-                                        My Applications
-                                    </a>
-                                </li>
-                            {% endif %}
-
                             <li>
-                                <a class="dropdown-item" href="{% url 'bookmarks' %}">
-                                    My Bookmarks
+                                <a class="dropdown-item" href="{% url 'dashboard-entry-point' %}">
+                                    Dashboard
                                 </a>
                             </li>
 
@@ -107,11 +99,6 @@
 
                 </li>
             </ul>
-            {% if 'app' in request.path %}
-                <a class="btn btn-primary ms-3" href="{% url 'create-app' %}">Create App</a>
-            {% elif 'discussion' in request.path  %}
-                <a class="btn btn-primary ms-3" href="{% url 'post-discussion' %}">Post Discussion</a>
-            {% endif %}
             </div>
         </div>
         </nav>
