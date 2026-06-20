@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+{{request.user.full_name}} | Applications
+{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/my-applications.css' %}">
+{% endblock css %}
+
+{% block content %}
+<div class="container py-4">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">My Job Applications</h2>
+            <p class="text-muted mb-0">
+                Track all your submitted job applications
+            </p>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+
+            <form method="GET" class="row g-3" action="{% url 'my-applications' %}">
+
+                <!-- Search -->
+                <div class="col-md-4">
+                    <label class="form-label">Search</label>
+                    <input
+                        type="text"
+                        name="job_title"
+                        value="{{ request.GET.job_title }}"
+                        class="form-control"
+                        placeholder="Job title..."
+                    >
+                </div>
+
+                <!-- Date -->
+                <div class="col-md-3">
+                    <label class="form-label">Applied Date</label>
+                    <input
+                        type="date"
+                        name="applied_at"
+                        value="{{ request.GET.date }}"
+                        class="form-control"
+                    >
+                </div>
+
+                <!-- Status -->
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="">All Status</option>
+                        <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="approved" {% if request.GET.status == 'approved' %}selected{% endif %}>Approved</option>
+                        <option value="shortlisted" {% if request.GET.status == 'shortlisted' %}selected{% endif %}>Shortlisted</option>
+                        <option value="rejected" {% if request.GET.status == 'rejected' %}selected{% endif %}>Rejected</option>
+                    </select>
+                </div>
+
+                <!-- Button -->
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-primary w-100">
+                        Filter
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Applications Table -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+                        <tr>
+                            <th>Job</th>
+                            <th>Company</th>
+                            <th>Applied Date</th>
+                            <th>Status</th>
+                            <th>HR Message</th>
+                            <th>Action</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for application in applications %}
+
+                        <tr>
+
+                            <td>
+                                <div class="fw-semibold">
+                                    {{ application.job.title }}
+                                </div>
+                            </td>
+
+                            <td>
+                                {{ application.job.user.full_name }}
+                            </td>
+
+                            <td>
+                                {{ application.applied_at|date:"d M Y" }}
+                            </td>
+
+                            <td>
+
+                                {% if application.status == "pending" %}
+                                    <span class="badge bg-secondary">
+                                        Pending
+                                    </span>
+
+                                {% elif application.status == "shortlisted" %}
+                                    <span class="badge bg-primary">
+                                        Shortlisted
+                                    </span>
+
+                                {% elif application.status == "approved" %}
+                                    <span class="badge bg-success">
+                                        approved
+                                    </span>
+
+                                {% elif application.status == "rejected" %}
+                                    <span class="badge bg-danger">
+                                        Rejected
+                                    </span>
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                {% if application.hr_message %}
+                                    {{application.hr_message}}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <a
+                                    href="{% url 'job-detail' application.job.id %}"
+                                    class="btn btn-sm btn-outline-primary"
+                                >
+                                    View Job
+                                </a>
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="6">
+                                <div class="text-center py-5">
+
+                                    <h5>No Applications Found</h5>
+
+                                    <p class="text-muted mb-0">
+                                        You haven't applied for any jobs yet.
+                                    </p>
+
+                                </div>
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    {% if applications.has_other_pages %}
+
+    <nav class="mt-4">
+
+        <ul class="pagination justify-content-center">
+
+            {% if applications.has_previous %}
+                <li class="page-item">
+                    <a
+                        class="page-link"
+                        href="?page={{ applications.previous_page_number }}"
+                    >
+                        Previous
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for page in applications.paginator.page_range %}
+
+                {% if page == applications.number %}
+
+                    <li class="page-item active">
+                        <span class="page-link">
+                            {{ page }}
+                        </span>
+                    </li>
+
+                {% else %}
+
+                    <li class="page-item">
+                        <a
+                            class="page-link"
+                            href="?page={{ page }}"
+                        >
+                            {{ page }}
+                        </a>
+                    </li>
+
+                {% endif %}
+
+            {% endfor %}
+
+            {% if applications.has_next %}
+                <li class="page-item">
+                    <a
+                        class="page-link"
+                        href="?page={{ applications.next_page_number }}"
+                    >
+                        Next
+                    </a>
+                </li>
+            {% endif %}
+
+        </ul>
+
+    </nav>
+
+    {% endif %}
+
+</div>
+{% endblock content %}

@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Apps | Dashboard
+{% endblock title %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/apps-dashboard.css'%}">
+{% endblock css %}
+
+{% block content %}
+
+<div class="container-fluid px-0">
+    <div class="apps-dashboard-header">
+        <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start">
+            <div>
+                <h1 class="fw-bold display-6 mb-2"><i class="bi bi-cpu me-2"></i>Apps Dashboard</h1>
+                <p class="lead text-white-50 mb-0">Manage your published SaaS applications, track stats</p>
+            </div>
+            <div class="mt-3 mt-md-0">
+                <a href="{% url 'create-app' %}" class="btn btn-light btn-lg fw-bold text-primary shadow-sm">
+                    <i class="bi bi-plus-circle me-2"></i>Submit New App
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row g-4 mb-5">
+        
+        <div class="col-md-4">
+            <div class="card stat-card p-4 d-flex flex-row align-items-center">
+                <div>
+                    <h6 class="text-muted mb-1">Total Apps</h6>
+                    <h3 class="fw-bold mb-0">{{ apps.count|default:0 }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card stat-card p-4 d-flex flex-row align-items-center">
+                <div>
+                    <h6 class="text-muted mb-1">Pending Apps</h6>
+                    <h3 class="fw-bold mb-0">{{total_pending_apps|default:0}}</h3> </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card stat-card p-4 d-flex flex-row align-items-center">
+                <div>
+                    <h6 class="text-muted mb-1">Rejected Apps</h6>
+                    <h3 class="fw-bold mb-0">{{total_rejected_apps|default:0}}</h3> </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card app-table-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold text-dark mb-0">Your Submitted Applications</h4>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light text-secondary">
+                    <tr>
+                        <th scope="col" style="width: 30%;">App</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Published Date</th>
+                        <th scope="col" class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for app in apps %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="{{app.logo.url}}" alt="App Icon" class="app-thumbnail me-3">
+                                    <div>
+                                        <a href="{% url 'app-stats' app.id %}" style="text-decoration:none;"><h6 class="fw-bold mb-1">{{app.name}}</h6></a>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-success bg-opacity-10">{{app.status}}</span>
+                            </td>
+                            <td>{{app.added_at}}</td>
+                            <td class="text-end">
+                                <a href="{% url 'update-app' app.id %}" class="btn btn-outline-secondary btn-action me-1"><i class="bi bi-pencil-square me-1"></i>Update</a>
+                                <a href="" class="btn btn-outline-danger btn-action"><i class="bi bi-trash me-1"></i>Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

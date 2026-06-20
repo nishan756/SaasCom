@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {{request.user.full_name}} | Dashboard
+{% endblock title %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/dashboard-entry-point.css' %}">
+{% endblock css %}
+
+{% block content %}
+
+    <div class="container-fluid px-0">
+    <div class="dashboard-header text-center">
+        <div class="container">
+            <h1 class="fw-bold display-5 mb-2">User Dashboard</h1>
+            <p class="lead text-black-50 mb-3">Manage your apps, job {% if request.user.is_developer %}applications{% endif %} , and community discussions in one central hub.</p>
+            <span class="badge-role"><i class="bi bi-person-badge me-1"></i> {{ request.user.user_type|title }} Account</span>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row g-4 justify-content-center">
+        
+        <div class="col-md-6 col-lg-4">
+            <div class="card card-menu p-4 d-flex flex-column">
+                <div class="icon-box bg-apps">
+                    <i class="bi bi-cpu"></i>
+                </div>
+                <h4 class="fw-bold mb-2">Apps</h4>
+                <p class="text-muted flex-grow-1">Upload, edit, and track upvotes for your built SaaS applications.</p>
+                <a href="{% url 'apps-dashboard' %}" class="btn btn-outline-primary btn-enter mt-3">
+                    Enter <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+
+        {% if request.user.is_company %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card card-menu p-4 d-flex flex-column">
+                    <div class="icon-box bg-jobs">
+                        <i class="bi bi-briefcase"></i>
+                    </div>
+                    <h4 class="fw-bold mb-2">Job Board</h4>
+                    <p class="text-muted flex-grow-1">View your job posts and track candidate applications seamlessly.</p>
+                    <a href="{% url 'jobs-dashboard' %}" class="btn btn-outline-success btn-enter mt-3">
+                        Enter <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card card-menu p-4 d-flex flex-column">
+                    <div class="icon-box bg-jobs">
+                        <i class="bi bi-card-checklist"></i>
+                    </div>
+                    <h4 class="fw-bold mb-2">Applications</h4>
+                    <p class="text-muted flex-grow-1">View your submitted applications and track their current status.</p>
+                    <a href="{% url 'my-applications' %}" class="btn btn-outline-success btn-enter mt-3">
+                        Enter <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card card-menu p-4 d-flex flex-column">
+                <div class="icon-box bg-discuss">
+                    <i class="bi bi-chat-square-text"></i>
+                </div>
+                <h4 class="fw-bold mb-2">Discussions</h4>
+                <p class="text-muted flex-grow-1">Manage your engineering articles, view comment replies, and check engagement statistics.</p>
+                <a href="{% url 'discussion-dashboard' %}" class="btn btn-outline-danger btn-enter mt-3">
+                    Enter <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="p-4 bg-white rounded-3 shadow-sm border-start border-primary border-4">
+                <h5 class="fw-bold mb-2"><i class="bi bi-info-circle text-primary me-2"></i> Quick Tips</h5>
+                <p class="text-muted mb-0">Each specific dashboard section allows you to submit new data individually (e.g., adding a new app or posting a new topic). If you experience any issues, please reach out via our community support forum.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
