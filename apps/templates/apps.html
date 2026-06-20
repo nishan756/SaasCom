@@ -137,7 +137,7 @@
 
                     </div>
 
-                    <a href="{% url 'app-detail' app.id %}" class="view-btn">
+                    <a href="{{app.get_absolute_url}}" class="view-btn">
                         View App
                     </a>
 

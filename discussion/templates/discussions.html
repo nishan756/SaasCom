@@ -83,7 +83,7 @@ Discussions
 
                     <!-- Title -->
                     <h5 class="card-title">
-                        <a href="{% url 'discussion-detail' d.id %}" class="text-decoration-none">
+                        <a href="{{d.get_absolute_url}}" class="text-decoration-none">
                             {{ d.title }}
                         </a>
                     </h5>
