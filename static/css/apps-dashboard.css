@@ -1,0 +1,37 @@
+    .apps-dashboard-header {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a4ebd 100%);
+        color: white;
+        padding: 40px 0;
+        margin-bottom: 30px;
+        border-radius: 0 0 20px 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .stat-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        background: white;
+    }
+    .app-table-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        background: white;
+    }
+    .app-thumbnail {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    .badge-status {
+        padding: 6px 12px;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    .btn-action {
+        padding: 5px 10px;
+        font-size: 0.9rem;
+        border-radius: 6px;
+    }
