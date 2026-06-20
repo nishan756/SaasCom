@@ -74,7 +74,9 @@ class AppService:
             raise InvalidPassword("Invalid password")
 
         return self.repo.del_app(app)
-
+    
+    def get_user_apps(self , user):
+        return self.repo.get_user_apps(user)
 
 class AppImageService:
     repo = AppImageRepo()

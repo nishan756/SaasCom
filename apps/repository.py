@@ -40,7 +40,7 @@ class AppRepo:
     
     def get_app(self , id):
         try:
-            return App.objects.get(id = id)
+            return App.objects.select_related("user").get(id = id)
         except App.DoesNotExist:
             raise ObjectNotFound("App not found")
 
@@ -94,6 +94,18 @@ class AppRepo:
         ).order_by("-trending_score")
 
         return apps
+    
+    
+    def get_user_apps(self , user):
+
+        apps = App.objects.filter(user = user).select_related("user")
+        
+        apps_count = apps.aggregate(
+            total_pending_apps = Count("id" , filter = Q(status = "pending")),
+            total_rejected_apps = Count("id" , filter = Q(status = "rejected")),
+        )
+
+        return {"apps":apps , "total_pending_apps":apps_count["total_pending_apps"] , "total_rejected_apps":apps_count["total_rejected_apps"]}
 
 class AppImageRepo:
 
