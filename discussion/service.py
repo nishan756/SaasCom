@@ -31,6 +31,9 @@ class DiscussionService:
     
     def get_discussion(self , user , id):
         return self.repo.get_discussion(user , id = id)
+    
+    def get_user_discussions(self , user):
+        return self.repo.get_user_discussions(user)
 
     def trending_discussions(self):
         return self.repo.trending_discussions()

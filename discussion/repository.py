@@ -39,6 +39,9 @@ class DiscussionRepo:
             return Discussion.objects.get(user = user , id = id)
         except Discussion.DoesNotExist:
             raise ObjectNotFound("Discussion not found")
+
+    def get_user_discussions(self , user):
+        return Discussion.objects.filter(user = user)
     
     def discussion_detail(self , id):
         try:
