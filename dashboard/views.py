@@ -6,7 +6,7 @@ from django.contrib import messages
 
 # ===========SERVICES=============
 from apps.service import AppService , ReviewService
-from jobs.service import ApplicationService , JobService
+from jobs.service import ApplicationService , JobService , JobCatService
 from discussion.service import DiscussionService
 from vote.service import VoteService
 
@@ -67,7 +67,7 @@ def app_stats(request , id):
 @require_GET
 def my_applications(request):
     query_param = request.GET.dict()
-    page_num = request.GET.get("page" , 1)
+    page_num = query_param.pop("page" , 1)
     if not request.user.is_developer:
         messages.info(request , "This feature isn't available for you")
         return redirect("home")
@@ -78,8 +78,18 @@ def my_applications(request):
 @login_required(login_url = "login")
 @require_GET
 def jobs_dashboard(request):
+    query_param = request.GET.dict()
+    page = query_param.pop("page" , 1)
     context = {}
-    return render(request , "jobs-dashboard" , context)
+    context["jobs"] = job_service.get_user_jobs(request.user , page , **query_param)
+    return render(request , "jobs-dashboard.html" , context)
+
+@login_required(login_url = "login")
+@require_GET
+def job_stats(request):
+    query_param = request.GET.dict()
+    context = {}
+    return render(request , "job-stats.html" , context)
 
 
 @login_required(login_url = "login")
