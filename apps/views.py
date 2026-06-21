@@ -18,7 +18,7 @@ from discussion.service import DiscussionService
 from saas_com.core.exceptions import AlreadyExists , ObjectNotFound, PermissionDenied , TooManyObject , InvalidForm , InvalidPassword
 
 # =================FORMS=================
-from .forms import ReviewForm , AppForm , AppDeletionConfirmationForm
+from .forms import ReviewForm , AppForm
 from report.forms import ReportForm
 
 # =========LOGGING==========
@@ -77,7 +77,6 @@ def app_detail(request , id):
         context["user_report"] = report_service.has_user_report(content_type_str = "app" , object_id = id , reporter = request.user)
         context["bookmark"] = bookmark_service.is_bookmarked(user = request.user , content_type = 'app' , object_id = id)
     
-    context["app_del_form"] = AppDeletionConfirmationForm()
     context["report_form"] = ReportForm()
     context["form"] = ReviewForm()
     context["rating_range"] = range(5)
@@ -165,21 +164,18 @@ def update_app(request, id):
 @login_required(login_url = "login")
 def del_app(request , id):
     HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER" , "/") , request.get_host())
-    form = AppDeletionConfirmationForm(data = request.POST)
     user= request.user
     try:
-        app_service.del_app(id , user , form)
+        app_service.del_app(id , user)
         messages.success(request , "Successfully deleted your app")
         return redirect("all-apps")
     
     except PermissionDenied as e:
         messages.warning(request , str(e))
-    
-    except InvalidForm as e:
-        messages.error(request , str(e))
-    
-    except InvalidPassword as e:
-        messages.error(request , str(e))
+
+    except Exception as e:
+        messages.error(request , "Something went wrong")
+
     return redirect(HTTP_REFERER)
 
 @require_POST
