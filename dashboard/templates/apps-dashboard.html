@@ -91,7 +91,16 @@ Apps | Dashboard
                             <td>{{app.added_at}}</td>
                             <td class="text-end">
                                 <a href="{% url 'update-app' app.id %}" class="btn btn-outline-secondary btn-action me-1"><i class="bi bi-pencil-square me-1"></i>Update</a>
-                                <a href="" class="btn btn-outline-danger btn-action"><i class="bi bi-trash me-1"></i>Delete</a>
+
+                                <form method="POST" action="{% url 'del-app' app.id %}" style="display:inline;">
+                                    {% csrf_token %}
+
+                                    <button type="submit"
+                                            class="btn btn-outline-danger btn-action"
+                                            onclick="return confirm('Are you sure you want to delete {{ app.name }}?');">
+                                        <i class="bi bi-trash me-1"></i>Delete
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     {% endfor %}

@@ -17,8 +17,31 @@ class JobRepo:
             jobs = jobs.filter(title__icontains = query_set["title"])
         return jobs
     
-    def get_user_jobs(self , user):
-        return Job.objects.filter(user = user)
+    def get_user_jobs(self , user , **query_param):
+        jobs = Job.objects.filter(user = user).select_related("category")
+        # Query
+        date_from = query_param.get("date_from")
+        date_to = query_param.get("date_to")
+        deadline = query_param.get("deadline")
+        is_active = query_param.get("is_active")
+
+        if date_from and date_to:
+            jobs = jobs.filter(posted_at__gte = date_from , posted_at__lte = date_to)
+        
+        elif date_from:
+            jobs = jobs.filter(posted_at__gte = date_from)
+        
+        elif date_to:
+            jobs = jobs.filter(posted_at__lte = date_to)
+        
+        if is_active:
+            jobs = jobs.filter(is_active = is_active)
+        
+        if deadline:
+            jobs = jobs.filter(deadline__lte = deadline)
+        
+        return jobs
+        
     
     def get_job(self , id):
         try:
@@ -42,6 +65,9 @@ class JobRepo:
     def update_job(self , job , skills):
         job.skills.set(skills)
         return job.save()
+    
+    def delete_job(self , job):
+        return job.delete()
 
 class JobCatRepo:
 

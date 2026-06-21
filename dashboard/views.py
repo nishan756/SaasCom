@@ -5,8 +5,8 @@ from django.contrib import messages
 
 
 # ===========SERVICES=============
-from apps.service import AppService
-from jobs.service import ApplicationService , JobService
+from apps.service import AppService , ReviewService
+from jobs.service import ApplicationService , JobService , JobCatService
 from discussion.service import DiscussionService
 from vote.service import VoteService
 
@@ -19,6 +19,7 @@ application_service = ApplicationService()
 job_service = JobService()
 discussion_service = DiscussionService()
 vote_service = VoteService()
+review_service = ReviewService()
 
 
 @login_required(login_url = "login")
@@ -51,6 +52,7 @@ def app_stats(request , id):
         vote_stats = vote_service.get_object_votes_stats('app' , id , **query_param)
         context["total_upvote"] = vote_stats["total_upvote"]
         context["total_downvote"] = vote_stats["total_downvote"]
+        context["avg_rating"] = review_service.get_app_rating_stats(context["app"] , **query_param)
         return render(request , "app-stats.html" , context)
 
     except ObjectNotFound as e:
@@ -65,7 +67,7 @@ def app_stats(request , id):
 @require_GET
 def my_applications(request):
     query_param = request.GET.dict()
-    page_num = request.GET.get("page" , 1)
+    page_num = query_param.pop("page" , 1)
     if not request.user.is_developer:
         messages.info(request , "This feature isn't available for you")
         return redirect("home")
@@ -76,8 +78,18 @@ def my_applications(request):
 @login_required(login_url = "login")
 @require_GET
 def jobs_dashboard(request):
+    query_param = request.GET.dict()
+    page = query_param.pop("page" , 1)
     context = {}
-    return render(request , "jobs-dashboard" , context)
+    context["jobs"] = job_service.get_user_jobs(request.user , page , **query_param)
+    return render(request , "jobs-dashboard.html" , context)
+
+@login_required(login_url = "login")
+@require_GET
+def job_stats(request):
+    query_param = request.GET.dict()
+    context = {}
+    return render(request , "job-stats.html" , context)
 
 
 @login_required(login_url = "login")

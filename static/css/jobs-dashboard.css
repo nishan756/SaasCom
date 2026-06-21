@@ -1,0 +1,50 @@
+html {
+        overflow-y: scroll !important;
+    }
+    body {
+        padding-right: 0px !important;
+    }
+    .jobs-dashboard-header {
+        background: linear-gradient(135deg, #198754 0%, #11623c 100%);
+        color: white;
+        padding: 40px 0;
+        margin-bottom: 30px;
+        border-radius: 0 0 20px 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .filter-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        background: white;
+    }
+    .job-table-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        background: white;
+    }
+    .badge-active {
+        background-color: rgba(25, 135, 84, 0.15);
+        color: #198754;
+        padding: 6px 12px;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+    .badge-inactive {
+        background-color: rgba(108, 117, 125, 0.15);
+        color: #6c757d;
+        padding: 6px 12px;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+    .btn-action {
+        padding: 5px 10px;
+        font-size: 0.85rem;
+        border-radius: 6px;
+    }
+    .table-responsive {
+        overflow: visible !important;
+    }

@@ -13,8 +13,13 @@ class JobService:
         jobs = paginator.get_page(page_num)
         return jobs
     
-    def get_user_jobs(self , user):
-        return self.repo.get_user_jobs(user)
+    def get_user_jobs(self , user , page , **query_param):
+        supported_query_field = ["date_from" , "date_to" , "is_active" , "deadline"]
+        query_param = {key:value for key , value in query_param.items() if key in supported_query_field}
+        jobs = self.repo.get_user_jobs(user , **query_param)
+        paginator = Paginator(jobs , 20)
+        jobs = paginator.get_page(page)
+        return jobs
     
     def job_detail(self , id):
         return self.repo.job_detail(id = id)
@@ -33,6 +38,12 @@ class JobService:
        job = form.save(commit = False)
        skills = form.cleaned_data.get("skills")
        return self.repo.update_job(job , skills)
+    
+    def delete_job(self , user , job):
+        if job.user != user:
+            raise PermissionDenied("OOPS! Can't perform this operation")
+        
+        return self.repo.delete_job(job)
         
 
 class JobCatService:

@@ -157,7 +157,26 @@ class ReviewRepo:
     def del_review(self , review):
         review.delete()
         return
+    
+    def get_app_rating_stats(self , app , **query_param):
+        reviews = Review.objects.filter(app = app)
+        date_from = query_param.get("date_from" , None)
+        date_to = query_param.get("date_to" , None)
 
+        if date_from and date_to:
+            reviews = reviews.filter(added_at__gte = date_from , added_at__lte = date_to)
+        
+        elif date_from:
+            reviews = reviews.filter(added_at__gte = date_from)
+        
+        elif date_to:
+            reviews = reviews.filter(added_at__lte = date_to)
+        
+        rating_stats = reviews.aggregate(
+            avg_rating = Avg("rating")
+        )
+
+        return rating_stats["avg_rating"]
     
     
 

@@ -121,6 +121,24 @@ def update_job(request , id):
     context["instance"] = True
     return render(request , "post-job.html" , context)
 
+@login_required(login_url = "login")
+@require_POST
+def delete_job(request , id):
+    HTTP_REFERER = is_safe_url(request.META.get("HTTP_REFERER" , "/") , request.get_host())
+    try:
+        job = job_service.get_job(id)
+        job_service.delete_job(request.user, job)
+    
+    except ObjectNotFound as e:
+        messages.error(request , str(e))
+    
+    except PermissionDenied as e:
+        messages.warning(request , str(e))
+    
+    except Exception as e:
+        messages.error(request , "Something went wrong")
+    
+    return redirect(HTTP_REFERER)
 
 @login_required(login_url = "login")
 @require_POST
