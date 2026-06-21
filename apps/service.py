@@ -59,20 +59,12 @@ class AppService:
         category = form.cleaned_data.get("category")
         return self.repo.update_app(form , category)
 
-    def del_app(self, id, user, form):
+    def del_app(self, id, user):
         app = self.get_app(id=id)
 
         if app.user != user:
             raise PermissionDenied("You can't delete this app")
-
-        if not form.is_valid():
-            raise InvalidForm("Invalid form data")
-
-        password = form.cleaned_data.get("password")
-
-        if not user.check_password(password):
-            raise InvalidPassword("Invalid password")
-
+        
         return self.repo.del_app(app)
     
     def get_user_apps(self , user):
@@ -125,6 +117,11 @@ class ReviewService:
         if review.user != user:
             raise PermissionDenied("You can't delete this review")
         self.repo.del_review(review)
+    
+    def get_app_rating_stats(self , app , **query_param):
+        supported_query_param = ["date_from" , "date_to"]
+        query_param = {key:value for key , value in query_param.items() if key in supported_query_param}
+        return self.repo.get_app_rating_stats(app , **query_param)
 
 
         
