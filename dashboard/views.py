@@ -1,17 +1,17 @@
 from django.shortcuts import render , redirect
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET , require_POST
 from django.contrib import messages
 
 
 # ===========SERVICES=============
 from apps.service import AppService , ReviewService
-from jobs.service import ApplicationService , JobService , JobCatService
+from jobs.service import ApplicationService , JobService
 from discussion.service import DiscussionService
 from vote.service import VoteService
 
 # ===========Exceptions===========
-from saas_com.core.exceptions import ObjectNotFound
+from saas_com.core.exceptions import ObjectNotFound , PermissionDenied
 
 
 app_service = AppService()
@@ -83,6 +83,61 @@ def jobs_dashboard(request):
     context = {}
     context["jobs"] = job_service.get_user_jobs(request.user , page , **query_param)
     return render(request , "jobs-dashboard.html" , context)
+
+@login_required(login_url = "login")
+@require_GET
+def job_applications(request , id):
+    context = {}
+    query_set = request.GET.dict()
+    page_num = query_set.pop("page" , 1)
+    try:
+        applications = application_service.applications(id = id , user = request.user , page_num = page_num , **query_set)
+    except ObjectNotFound as e:
+        messages.error(request , str(e))
+        return redirect("profile" , request.user.username)
+    except PermissionDenied as e:
+        messages.warning(request , str(e))
+        return redirect("profile" , request.user.username)
+    except Exception as e:
+        messages.info(request , "Something went wrong")
+        return redirect("profile" , request.user.username)
+    context['applications'] = applications
+    return render(request , 'job-applications.html' , context)
+
+
+@login_required(login_url = "login")
+@require_POST
+def update_application_status(request , id , status):
+    if not request.user.is_company:
+        return redirect("home")
+    job_id = request.POST.get("job_id")
+    hr_message = request.POST.get("hr_message" , None)
+    try:
+        application_service.update_application_status(id = id , user = request.user , status = status , hr_message = hr_message)
+        messages.success(request , "Successfully updated application status")
+        return redirect("application-detail" , id)
+    
+    except ObjectNotFound as e:
+        messages.error(request , str(e))
+        return redirect()
+    
+    except Exception as e:
+        messages.error(request , "Something went wrong")
+    
+    return redirect("applications" , job_id)
+
+
+@login_required(login_url = "login")
+@require_GET
+def application_detail(request , id):
+    context = {}
+    try:
+        application = application_service.get_application(id , user = request.user)
+    except ObjectNotFound as e:
+        messages.error(request , str(e))
+    context['application'] = application
+
+    return render(request , "application-detail.html" , context)
 
 @login_required(login_url = "login")
 @require_GET
