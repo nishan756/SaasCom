@@ -5,7 +5,7 @@ from django.contrib import messages
 
 
 # ===========SERVICES=============
-from apps.service import AppService
+from apps.service import AppService , ReviewService
 from jobs.service import ApplicationService , JobService
 from discussion.service import DiscussionService
 from vote.service import VoteService
@@ -19,6 +19,7 @@ application_service = ApplicationService()
 job_service = JobService()
 discussion_service = DiscussionService()
 vote_service = VoteService()
+review_service = ReviewService()
 
 
 @login_required(login_url = "login")
@@ -51,6 +52,7 @@ def app_stats(request , id):
         vote_stats = vote_service.get_object_votes_stats('app' , id , **query_param)
         context["total_upvote"] = vote_stats["total_upvote"]
         context["total_downvote"] = vote_stats["total_downvote"]
+        context["avg_rating"] = review_service.get_app_rating_stats(context["app"] , **query_param)
         return render(request , "app-stats.html" , context)
 
     except ObjectNotFound as e:

@@ -69,8 +69,8 @@
                 </div>
                 <h6 class="text-muted uppercase fw-semibold small mb-1">Average Rating</h6>
                 <h2 class="fw-bold text-dark mb-0">
-                    {% if app.filtered_avg_rating %}
-                        {{ app.filtered_avg_rating|floatformat:1 }} <span class="fs-5 text-muted">/ 5</span>
+                    {% if avg_rating %}
+                        {{ avg_rating|floatformat:1 }} <span class="fs-5 text-muted">/ 5</span>
                     {% else %}
                         N/A
                     {% endif %}
