@@ -168,23 +168,3 @@ def application_detail(request , id):
 
     return render(request , "application-detail.html" , context)
 
-
-@login_required(login_url = "login")
-@require_POST
-def update_application_status(request , id , status):
-    if not request.user.is_company:return redirect("home")
-    job_id = request.POST.get("job_id")
-    hr_message = request.POST.get("hr_message" , None)
-    try:
-        application_service.update_application_status(id = id , user = request.user , status = status , hr_message = hr_message)
-        messages.success(request , "Successfully updated application status")
-        return redirect("application-detail" , id)
-    
-    except ObjectNotFound as e:
-        messages.error(request , str(e))
-        return redirect()
-    
-    except Exception as e:
-        messages.error(request , "Something went wrong")
-    
-    return redirect("applications" , job_id)
