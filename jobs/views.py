@@ -155,25 +155,6 @@ def apply(request , id):
         messages.error(request , "Something went wrong")
     return redirect("job-detail" , id = id)
 
-@login_required(login_url = "login")
-@require_GET
-def applications(request , id):
-    context = {}
-    query_set = request.GET.dict()
-    page_num = request.GET.get("page" , 1)
-    try:
-        applications = application_service.applications(id = id , user = request.user , page_num = page_num , **query_set)
-    except ObjectNotFound as e:
-        messages.error(request , str(e))
-        return redirect("profile" , request.user.username)
-    except PermissionDenied as e:
-        messages.warning(request , str(e))
-        return redirect("profile" , request.user.username)
-    except Exception as e:
-        messages.info(request , "Something went wrong")
-        return redirect("profile" , request.user.username)
-    context['applications'] = applications
-    return render(request , 'applications.html' , context)
 
 @login_required(login_url = "login")
 @require_GET
