@@ -156,15 +156,3 @@ def apply(request , id):
     return redirect("job-detail" , id = id)
 
 
-@login_required(login_url = "login")
-@require_GET
-def application_detail(request , id):
-    context = {}
-    try:
-        application = application_service.get_application(id , user = request.user)
-    except ObjectNotFound as e:
-        messages.error(request , str(e))
-    context['application'] = application
-
-    return render(request , "application-detail.html" , context)
-
