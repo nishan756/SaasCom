@@ -48,7 +48,7 @@
 
                         <span>
                             <i class="fa-solid fa-briefcase"></i>
-                            {{ job.job_type.capitalize }}
+                            {{ job.get_job_type_display }}
                         </span>
 
                     </div>
@@ -152,7 +152,7 @@
 
                 <strong>
                     {% if job.experience %}
-                        {{ job.experience.capitalize }}
+                        {{ job.get_experience_display }}
                     {% else %}
                         N/A
                     {% endif %}
@@ -163,7 +163,7 @@
                 <span>Job Type</span>
 
                 <strong>
-                    {{ job.job_type.capitalize }}
+                    {{ job.get_job_type_display }}
                 </strong>
             </div>
 
