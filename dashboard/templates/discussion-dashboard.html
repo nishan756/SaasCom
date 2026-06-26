@@ -1,0 +1,406 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+    Discussion | Dashboard
+{% endblock title %}
+
+{% block content %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/discussion-dashboard.css' %}">
+{% endblock css %}
+
+<div class="container-fluid px-0">
+    <div class="discussion-header">
+        <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start">
+            <div>
+                <h1 class="fw-bold display-6 mb-2"><i class="bi bi-chat-square-text me-2"></i>Discussions Dashboard</h1>
+                <p class="lead text-white-50 mb-0">Manage your forum threads, track community engagements, and view topic stats.</p>
+            </div>
+            <div class="mt-3 mt-md-0">
+                <a href="{% url 'post-discussion' %}" class="btn btn-light btn-lg fw-bold text-primary shadow-sm" style="color: #6f42c1 !important;">
+                    <i class="bi bi-plus-circle me-2"></i>Post New Discussion
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    
+    <div class="card filter-card p-4 mb-5">
+        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-funnel text-primary me-2" style="color: #6f42c1 !important;"></i>Filter Discussion</h5>
+        <form method="GET" class="row g-3 align-items-end">
+            
+            <div class="col-md-3">
+                <label for="title" class="form-label text-secondary small fw-semibold">Search Title</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" class="form-control border-start-0" id="title" name="title" placeholder="Type discussion title..." value="{{ request.GET.title }}">
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="date_from" class="form-label text-secondary small fw-semibold">Posted From</label>
+                <input type="date" class="form-control" id="date_from" name="date_from" value="{{ request.GET.date_from }}">
+            </div>
+
+            <div class="col-md-3">
+                <label for="date_to" class="form-label text-secondary small fw-semibold">Posted To</label>
+                <input type="date" class="form-control" id="date_to" name="date_to" value="{{ request.GET.date_to }}">
+            </div>
+
+            <div class="col-md-3 d-grid gap-2 d-md-flex justify-content-md-end">
+                <a href="{% url 'discussion-dashboard' %}" class="btn btn-outline-secondary w-100 fw-semibold">Reset</a>
+                <button type="submit" class="btn btn-primary w-100 fw-semibold" style="background-color: #6f42c1; border-color: #6f42c1;">Apply</button>
+            </div>
+        </form>
+    </div>
+
+    <!--Start of Analytics Board-->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1 text-dark">Discussion Analytics Dashboard</h2>
+        </div>
+        <a href="{% url 'discussion-dashboard' %}"><button class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-arrows-rotate me-1"></i> Refresh</button></a>
+    </div>
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-2">
+            <div class="card stat-card shadow-sm h-100 p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="text-muted text-uppercase small font-weight-bold">Total Views</h6>
+                        <h3 class="fw-bold mb-0 text-dark">Coming Soon</h3>
+                    </div>
+                    <div class="icon-shape bg-primary-subtle text-primary">
+                        <i class="fa fa-eye"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card stat-card shadow-sm h-100 p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="text-muted text-uppercase small font-weight-bold">Total Discussions</h6>
+                        <h3 class="fw-bold mb-0 text-dark">{{stats.total_discussions}}</h3>
+                    </div>
+                    <div class="icon-shape bg-primary-subtle text-primary">
+                        <i class="fa-regular fa-comments"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card stat-card shadow-sm h-100 p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="text-muted text-uppercase small">Total Comments</h6>
+                        <h3 class="fw-bold mb-0 text-dark">{{stats.total_comments}}</h3>
+                    </div>
+                    <div class="icon-shape bg-success-subtle text-success">
+                        <i class="fa-regular fa-comment-dots"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card stat-card shadow-sm h-100 p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="text-muted text-uppercase small">Total Votes</h6>
+                        <h3 class="fw-bold mb-0 text-dark">{{stats.total_votes}}</h3>
+                    </div>
+                    <div class="icon-shape bg-warning-subtle text-warning">
+                        <img src="{% static 'icons/up.png'%}" class='icon'>
+                        <img src="{% static 'icons/down.png'%}" class='icon'>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card stat-card shadow-sm h-100 p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="text-muted text-uppercase small">Total Reports</h6>
+                        <h3 class="fw-bold mb-0 text-dark">{{stats.total_reports}}</h3>
+                    </div>
+                    <div class="icon-shape bg-info-subtle text-info">
+                        <i class="fa fa-flag"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% comment %}
+        <div class="col-md-2">
+            <div class="card stat-card shadow-sm h-100 p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="text-muted text-uppercase small">Active Participants</h6>
+                        <h3 class="fw-bold mb-0 text-dark">420</h3>
+                    </div>
+                    <div class="icon-shape bg-info-subtle text-info">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endcomment %}
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-3 h-100">
+                <!--Comment and Replies Ratio-->
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold mb-0"><i class="fa-solid fa-chart-pie me-2 text-primary"></i> Comment and Replies Ratio</h5>
+                </div>
+                <div class="card-body pt-0">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span>Direct comments Ratio</span>
+                            <span class="fw-bold">{{stats.direct_comments}} ({{stats.direct_comments_ratio}})</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-primary" style="width: {{stats.direct_comments_ratio}}"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span>Replies Ratio</span>
+                            <span class="fw-bold">{{stats.total_replies}} ({{stats.reply_ratio}})</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-info" style="width: {{stats.reply_ratio}}"></div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row text-center mt-3">
+                        <div class="col-6 border-end">
+                            <span class="text-muted small d-block">Average Comment</span>
+                            <span class="fs-4 fw-bold text-dark">{{stats.avarage_comments}}</span>
+                        </div>
+
+                        {% comment %} 
+                        <div class="col-6">
+                            <span class="text-muted small d-block">Response velocity</span>
+                            <span class="fs-4 fw-bold text-success">45 minute</span>
+                        </div> 
+                        {% endcomment %}
+
+                    </div>
+                </div>
+
+                <hr>
+                
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold mb-0"><i class="fa-solid fa-chart-pie me-2 text-primary"></i>Upvote and Downvote Ratio</h5>
+                </div>
+                <div class="card-body pt-0">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span>Upvote Ratio</span>
+                            <span class="fw-bold">{{stats.total_upvote}} ({{stats.upvote_ratio}})</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-primary" style="width: {{stats.upvote_ratio}}"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span>Downvote Ratio</span>
+                            <span class="fw-bold">{{stats.total_downvote}} ({{stats.upvote_ratio}})</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-info" style="width: {{stats.downvote_ratio}}"></div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row text-center mt-3">
+                        <div class="col-6 border-end">
+                            <span class="text-muted small d-block">Average Vote</span>
+                            <span class="fs-4 fw-bold text-dark">{{stats.avarage_votes}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+        </div>
+
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-3 h-100">
+                <!--Header-->
+                <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0"><i class="fa-solid fa-tags me-2 text-warning"></i> Top performing tags</h5>
+                    <span class="badge bg-secondary-subtle text-secondary rounded-pill">Total 42 tags</span>
+                </div>
+
+                <!--Main-->
+                <div class="card-body pt-0">
+                        <div class="table-responsive">
+                            <table class="table table-borderless table-sm align-middle mb-0">
+                                <thead>
+                                    <tr class="text-muted small border-bottom">
+                                        <th>Tag title</th>
+                                        <th class="text-center">Total discussions</th>
+                                        <th class="text-end">Engagement score</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for i in "123456789" %}
+                                    <tr>
+                                        <td><a href="#" class="tag-badge">#django</a></td>
+                                        <td class="text-center fw-semibold">৩১২</td>
+                                        <td class="text-end text-success fw-bold">৮.৫k</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!--End of Analytics Board-->
+
+    <!--Start of discussions-->
+    <div class="card discussion-table-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold text-dark mb-0">Your Discussions</h4>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light text-secondary">
+                    <tr>
+                        <th scope="col" class="text-start" style="width: 40%;">Topic Title</th>
+                        <th scope="col" class="text-center">Posted At</th>
+                        <th scope="col" class="text-center" style="width: 35%;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for discussion in discussions %}
+                        <tr>
+                            <td class="text-start">
+                                <div>
+                                    <h6 class="fw-bold text-dark mb-1">{{ discussion.title }}</h6>
+                                    <p class="text-muted small mb-0 text-truncate" style="max-width: 350px;">
+                                        {{ discussion.short_description|default:discussion.detail|striptags }}
+                                    </p>
+                                </div>
+                            </td>
+                            
+                            <td class="text-center text-secondary small">{{ discussion.posted_at|date:"M d, Y" }}</td>
+                            
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center gap-1 flex-wrap">
+                                    <a href="{% url 'discussion-stats' discussion.id %}" class="btn btn-outline-primary btn-action" title="View Engagement Stats">
+                                        <i class="bi bi-bar-chart-line me-1"></i>Stats
+                                    </a>
+                                    
+                                    <a href="{{ discussion.get_absolute_url }}" class="btn btn-outline-info btn-action text-dark" title="View Live Thread">
+                                        <i class="bi bi-eye me-1"></i>View
+                                    </a>
+                                    
+                                    <a href="{% url 'update-discussion' discussion.id %}" class="btn btn-outline-secondary btn-action" title="Edit Thread">
+                                        <i class="bi bi-pencil-square me-1"></i>Edit
+                                    </a>
+                                    
+                                    <button type="button" class="btn btn-outline-danger btn-action" data-bs-toggle="modal" data-bs-target="#deleteDiscussionModal-{{ discussion.id }}" title="Delete Thread">
+                                        <i class="bi bi-trash me-1"></i>Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                <i class="bi bi-chat-left-x fs-2 mb-2 d-block text-secondary"></i>
+                                No discussions found matching your filters.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        {% if discussions.has_other_pages %}
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 pt-3 border-top">
+                <div class="text-secondary small mb-3 mb-md-0">
+                    Showing Page <strong class="text-dark">{{ discussions.number }}</strong> of {{ discussions.paginator.num_pages }}
+                </div>
+
+                <nav aria-label="Discussion board navigation">
+                    <ul class="pagination pagination-md mb-0 justify-content-center">
+                        
+                        {% if discussions.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" style="color: #6f42c1;" href="?page={{ discussions.previous_page_number }}{% if request.GET.title %}&title={{ request.GET.title }}{% endif %}{% if request.GET.date %}&date={{ request.GET.date }}{% endif %}{% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo; Previous</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">&laquo; Previous</span>
+                            </li>
+                        {% endif %}
+
+                        {% if discussions.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" style="color: #6f42c1;" href="?page={{ discussions.next_page_number }}{% if request.GET.title %}&title={{ request.GET.title }}{% endif %}{% if request.GET.date %}&date={{ request.GET.date }}{% endif %}{% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}" aria-label="Next">
+                                    <span aria-hidden="true">Next &raquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Next &raquo;</span>
+                            </li>
+                        {% endif %}
+
+                    </ul>
+                </nav>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{% for discussion in discussions %}
+    <div class="modal fade" id="deleteDiscussionModal-{{ discussion.id }}" tabindex="-1" aria-labelledby="deleteDiscussionModalLabel-{{ discussion.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header border-0 bg-light">
+                    <h5 class="modal-title fw-bold text-dark" id="deleteDiscussionModalLabel-{{ discussion.id }}">
+                        <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Delete Discussion Topic
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{% url 'delete-discussion' discussion.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-body text-start p-4">
+                        <p class="text-secondary mb-0">
+                            Are you sure you want to permanently delete <strong class="text-dark">{{ discussion.title }}</strong>? All comments, replies, and votes under this topic will be removed forever.
+                        </p>
+                    </div>
+                    <div class="modal-footer border-0 bg-light p-3">
+                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger px-4">Yes, Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+{% endblock %}

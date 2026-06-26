@@ -1,0 +1,52 @@
+html {
+        overflow-y: scroll !important;
+    }
+    body {
+        padding-right: 0px !important;
+    }
+    .discussion-header {
+        background: linear-gradient(135deg, #6f42c1 0%, #492783 100%);
+        color: white;
+        padding: 40px 0;
+        margin-bottom: 30px;
+        border-radius: 0 0 20px 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .filter-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        background: white;
+    }
+    .discussion-table-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        background: white;
+    }
+    .btn-action {
+        padding: 5px 10px;
+        font-size: 0.85rem;
+        border-radius: 6px;
+    }
+    .vote-badge {
+        background-color: rgba(111, 66, 193, 0.1);
+        color: #6f42c1;
+        font-weight: 600;
+        padding: 5px 10px;
+        border-radius: 8px;
+    }
+    .table-responsive {
+        overflow: visible !important;
+    }
+    .tag-table {
+    max-height: 450px;      /* প্রয়োজন অনুযায়ী পরিবর্তন করুন */
+    overflow-y: auto;
+}
+
+.tag-table thead th {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 2;
+}
