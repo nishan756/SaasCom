@@ -9,6 +9,7 @@ from apps.service import AppService , ReviewService
 from jobs.service import ApplicationService , JobService
 from discussion.service import DiscussionService
 from vote.service import VoteService
+from .service import DiscussionDashboardService
 
 # ===========Exceptions===========
 from saas_com.core.exceptions import ObjectNotFound , PermissionDenied
@@ -150,6 +151,22 @@ def job_stats(request):
 @login_required(login_url = "login")
 @require_GET
 def discussion_dashboard(request):
+    query_param = request.GET.dict()
     context = {}
+    try:
+        result = DiscussionDashboardService().main_dashboard(request.user , **query_param)
+        context["stats"] = result["stats"]
+        context["discussions"] = result["discussions"]
+    
+    except Exception as e:
+        messages.info(request , "This page has some issues.")
+        return redirect('dashboard-entry-point')
+    
     return render(request , "discussion-dashboard.html" , context)
 
+
+@login_required(login_url = "login")
+@require_GET
+def discussion_stats(request , id):
+    context = {}
+    return render(request , "discussion-stats.html" , context)
