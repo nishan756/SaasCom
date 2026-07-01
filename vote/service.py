@@ -47,4 +47,13 @@ class VoteService:
         query_param = {key:value for key , value in query_param.items() if key in supporter_query_param}
 
         content_type_obj = get_content_type(content_type_str , self.CONTENT_TYPES)
-        return self.repo.get_object_votes_stats(content_type_obj , object_id , **query_param)
+
+        stats =  self.repo.get_object_votes_stats(content_type_obj , object_id , **query_param)
+
+        stats["upvote_ratio"] = f"{round(stats["total_upvote"]*100 / stats["total_vote"] if stats["total_vote"] > 0 else 0 , 2)}%"
+
+        stats["downvote_ratio"] = f"{round(stats["total_downvote"]*100 / stats["total_vote"] , 2) if stats["total_vote"] > 0 else 0 }%"
+
+        stats["vote_score"] = stats["total_upvote"] - stats["total_downvote"]
+
+        return stats
