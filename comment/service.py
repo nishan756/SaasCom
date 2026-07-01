@@ -17,9 +17,11 @@ class CommentService:
     def get_comment_by_id(self , id):
         return self.repo.get_comment_by_id(id)
     
-    def get_comments(self , content_type_str , object_id):
+    def get_comments(self , content_type_str , object_id , **query_param):
         content_type_obj = get_content_type(content_type_str , self.CONTENT_TYPES)
-        return self.repo.get_comments(content_type_obj , object_id)
+        supported_query_field = ["date_from" , "date_to"]
+        query_param = {key:value for key , value in query_param.items() if key in supported_query_field}
+        return self.repo.get_comments(content_type_obj , object_id , **query_param)
     
     def build_comment_tree(self , comments:QuerySet):
         root_comments = []
