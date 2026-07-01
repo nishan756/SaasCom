@@ -1,4 +1,4 @@
-from .views import dashboard_entry_point , apps_dashboard , app_stats , my_applications , discussion_dashboard , jobs_dashboard , job_stats , job_applications , update_application_status , application_detail
+from .views import dashboard_entry_point , apps_dashboard , app_stats , my_applications , discussion_dashboard , jobs_dashboard , job_stats , job_applications , update_application_status , application_detail , discussion_stats
 from django.urls import path
 
 urlpatterns = [
@@ -17,5 +17,6 @@ urlpatterns = [
 
     # Dsicussion related URLS
     path("discussion/" , discussion_dashboard , name = "discussion-dashboard"),
+    path("discussion/stats/<uuid:id>/" , discussion_stats , name = "discussion-stats"),
 
 ]

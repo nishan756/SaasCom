@@ -1,25 +1,20 @@
 from .repository import DiscussionDashboardRepo
 from django.core.paginator import Paginator
 from django.db.models import Count , Q , Avg
+from vote.service import VoteService
 
 class DiscussionDashboardService:
 
+    repo = DiscussionDashboardRepo()
+
     def main_dashboard(self , user , **query_param):
         page = query_param.pop("page" , 1)
-        discussions = DiscussionDashboardRepo().main_dashbaord(user , **query_param)
+        
+        result = DiscussionDashboardRepo().main_dashbaord(user , **query_param)
 
-        # Total discussions
-        stats = discussions.aggregate(
-            total_discussions = Count("id" , distinct = True),
-            total_comments = Count("comments" , distinct = True),
-            direct_comments = Count("comments" , filter = Q(comments__parent__isnull = True) , distinct = True),
-            total_replies = Count("comments" , filter = Q(comments__parent__isnull = False) , distinct = True),
-            total_reports = Count("reports" , distinct = True),
+        stats = result["stats"]
 
-            total_votes = Count("votes" , distinct = True),
-            total_upvote = Count("votes" , filter = Q(votes__vote_type = "upvote") , distinct = True),
-            total_downvote = Count("votes" , filter = Q(votes__vote_type = "downvote") , distinct = True)
-        )
+        discussions = result["discussions"]
 
         # Comment and their ratios
         stats["direct_comments_ratio"] = f"{round(stats["direct_comments"]*100 / stats["total_comments"] if stats["total_comments"] > 0 else 0 , 2)}%"
@@ -37,10 +32,41 @@ class DiscussionDashboardService:
 
         stats["total_views"] = 0
 
-        paginator = Paginator(discussions , 1)
+        paginator = Paginator(discussions , 20)
         discussions = paginator.get_page(page)
 
         return {
             "stats":stats , 
             "discussions":discussions
+        }
+    
+    def discussion_stats(self , id , **query_param):
+        vote_stats = VoteService().get_object_votes_stats("discussion" , id , **query_param)
+
+        components = self.repo.discussion_stats_component(id , **query_param)
+
+        stats = {}
+
+        comment_stats = components.pop("comment_stats")
+
+        report_stats = components.pop("report_stats")
+
+        bookmark_stats = components.pop("bookmark_stats")
+
+        for key , value in comment_stats.items():
+            stats[key] = value
+        
+        for key , value in report_stats.items():
+            stats[key] = value
+        
+        for key , value in vote_stats.items():
+            stats[key] = value
+        
+        for key , value in bookmark_stats.items():
+            stats[key] = value
+
+        return {
+            "stats":stats,
+            "comments":components["comments"],
+            "reports":components["reports"],
         }

@@ -1,4 +1,10 @@
 from discussion.models import Discussion
+from discussion.service import DiscussionService
+from comment.service import CommentService
+from report.service import ReportService
+from django.db.models import Count , Q
+from vote.service import VoteService
+from bookmark.service import BookmarkService
 
 class DiscussionDashboardRepo:
 
@@ -21,6 +27,48 @@ class DiscussionDashboardRepo:
         if title:
             discussions = discussions.filter(title__icontains = title)
         
-        return discussions
+        # Total discussions
+        stats = discussions.aggregate(
+            total_discussions = Count("id" , distinct = True),
+            total_comments = Count("comments" , distinct = True),
+            direct_comments = Count("comments" , filter = Q(comments__parent__isnull = True) , distinct = True),
+            total_replies = Count("comments" , filter = Q(comments__parent__isnull = False) , distinct = True),
+            total_reports = Count("reports" , distinct = True),
 
+            total_votes = Count("votes" , distinct = True),
+            total_upvote = Count("votes" , filter = Q(votes__vote_type = "upvote") , distinct = True),
+            total_downvote = Count("votes" , filter = Q(votes__vote_type = "downvote") , distinct = True)
+        )
         
+        return {
+            "stats": stats,
+            "discussions": discussions
+        }
+    
+    def discussion_stats_component(self , id , **query_param):
+
+        comments = CommentService().get_comments("discussion" , id , **query_param)
+
+        comment_stats = comments.aggregate(
+            total_comment = Count("id" , distinct = True),
+            direct_comment = Count("id" , distinct = True , filter = Q(parent__isnull = True)),
+            total_replies = Count("id" , distinct = True , filter = Q(parent__isnull = False)),
+        )
+
+        reports = ReportService().get_reports("discussion" , id , **query_param)
+
+        report_stats = reports.aggregate(
+            total_report = Count("id" , distinct = True),
+        )
+
+        bookmark_stats = BookmarkService().get_object_bookmarks("discussion" , id , **query_param).aggregate(
+            total_bookmark = Count("id" , distinct = True)
+        )
+        
+        return {
+            "comment_stats":comment_stats , 
+            "report_stats":report_stats,
+            "comments":comments,
+            "reports":reports,
+            "bookmark_stats":bookmark_stats
+        }

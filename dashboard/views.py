@@ -21,6 +21,7 @@ job_service = JobService()
 discussion_service = DiscussionService()
 vote_service = VoteService()
 review_service = ReviewService()
+discussion_dashboard_service = DiscussionDashboardService()
 
 
 @login_required(login_url = "login")
@@ -154,7 +155,7 @@ def discussion_dashboard(request):
     query_param = request.GET.dict()
     context = {}
     try:
-        result = DiscussionDashboardService().main_dashboard(request.user , **query_param)
+        result = discussion_dashboard_service.main_dashboard(request.user , **query_param)
         context["stats"] = result["stats"]
         context["discussions"] = result["discussions"]
     
@@ -168,5 +169,23 @@ def discussion_dashboard(request):
 @login_required(login_url = "login")
 @require_GET
 def discussion_stats(request , id):
+    query_param = request.GET.dict()
     context = {}
-    return render(request , "discussion-stats.html" , context)
+    try:
+        context["discussion"] = discussion_service.get_discussion(request.user , id)
+        result = discussion_dashboard_service.discussion_stats(id , **query_param)
+
+        context["comments"] = result.get("comments")
+        context["reports"] = result.get("reports")
+
+        context["stats"] = result.get("stats")
+
+        return render(request , "discussion-stats.html" , context)
+    
+    except ObjectNotFound as e:
+        messages.error(request , str(e))
+    
+    except Exception as e:
+        messages.error(request , "Something went wrong")
+
+    return redirect("discussion-dashboard")
