@@ -16,6 +16,7 @@ class BookmarkService:
     CONTENT_TYPES = {
         "app" : App,
         "job":Job,
+        "discussion":Discussion
     }
 
     def bookmarks(self , user , content_type_str = None , page = 1):
@@ -33,6 +34,15 @@ class BookmarkService:
     
     def get_bookamark(self , user , id):
         return self.repo.get_bookamark(user , id)
+
+    def get_object_bookmarks(self , content_type , object_id , **query_param):
+        supported_query_field = ["date_from" , "date_to"]
+
+        query_param = {key:value for key , value in query_param.items() if key in supported_query_field}
+
+        content_type = get_content_type(content_type , self.CONTENT_TYPES)
+        
+        return self.repo.get_object_bookmarks(content_type = content_type , object_id = object_id , *query_param)
     
     def add_bookmark(self , user , content_type , object_id):
         if self.is_bookmarked(user , content_type , object_id):
