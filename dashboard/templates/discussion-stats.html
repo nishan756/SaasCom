@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+    {{discussion.title}} | Stats
+{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/discussion-stats.css' %}">
+{% endblock css %}
+    
+{% block content %}
+
+<div class="container py-5" style="max-width: 1040px;">
+
+    <!-- Top Navigation Bar (Strictly Following Sketch) -->
+    <div class="d-flex justify-content-between align-items-center mb-4 p-3 ui-card">
+        <a href="{% url 'discussion-dashboard' %}" class="text-decoration-none text-muted fw-medium small"><i class="fa-solid fa-arrow-left me-2"></i>Back to Discussions</a>
+        <span class="fw-bold text-secondary small text-uppercase tracking-wider">Discussion Stats</span>
+    </div>
+
+    <!-- Main Thread Meta Summary Card -->
+    <div class="ui-card p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+            <h3 class="fw-bold text-slate mb-0" style="font-size: 1.45rem;">{{discussion.title}}</h3>
+        </div>
+        
+        <div class="row g-3 text-secondary small border-top pt-3">
+            <div class="col-6 col-sm-3"><i class="fa-regular fa-calendar me-2 opacity-70"></i><strong>{{discussion.posted_at|date}} at {{discussion.posted_at|time}}</strong></div>
+            <div class="col-6 col-sm-3"><i class="fa-regular fa-user me-2 opacity-70"></i><a href="{% url 'profile' discussion.user.username %}" class="text-decoration-none text-muted"><strong>{{discussion.user.full_name}}</strong></a></div>
+            <div class="col-12 col-sm-6 text-sm-end mt-2 mt-sm-0">
+
+                {% for tag in discussion.tags.all %}
+                    <span class="badge-tag me-1"><i class="fa-solid fa-hashtag me-1 opacity-50"></i>{{tag.title}}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- High-Level Counters Grid (Strict Block Layout) -->
+    <div class="row g-0 mb-4 rounded-3 overflow-hidden shadow-sm border-0">
+        <div class="col-6 col-md-3 metric-tile">
+            <span class="text-muted small d-block fw-medium mb-1"><i class="fa-regular fa-comment me-1.5"></i>Comments</span>
+            <span class="fs-2 fw-bold text-dark">{{stats.total_comment}}</span>
+        </div>
+        <div class="col-6 col-md-3 metric-tile">
+            <span class="text-muted small d-block fw-medium mb-1">
+                <img src="{% static 'icons/up.png'%}" class='icon'>
+                <img src="{% static 'icons/down.png'%}" class='icon'>
+                Votes
+            </span>
+            <span class="fs-2 fw-bold text-dark">846</span>
+        </div>
+        <div class="col-6 col-md-3 metric-tile">
+            <span class="text-muted small d-block fw-medium mb-1"><i class="fa-regular fa-bookmark me-1.5"></i>Bookmarks</span>
+            <span class="fs-2 fw-bold text-dark">{{stats.total_bookmark}}</span>
+        </div>
+        <div class="col-6 col-md-3 metric-tile">
+            <span class="text-danger small d-block fw-medium mb-1"><i class="fa-regular fa-flag me-1.5"></i>Reports</span>
+            <span class="fs-2 fw-bold text-danger">{{stats.total_report}}</span>
+        </div>
+    </div>
+    <!---->
+    <div class="row g-4 mb-4">
+        <!--Comment Section-->
+        <div class="col-md-6">
+            <div class="ui-card">
+                <div class="ui-header"><i class="fa-regular fa-comments me-2 text-muted"></i>Comment Breakdown</div>
+                <div class="p-0">
+                    <div class="stats-row"><span>Total Comments</span><span class="fw-semibold">{{stats.total_comment}}</span></div>
+                    <div class="stats-row"><span>Direct Comment</span><span class="fw-semibold">{{stats.direct_comment}}</span></div>
+                    <div class="stats-row"><span>Replies</span><span class="fw-semibold">{{stats.total_replies}}</span></div>
+                    <div class="stats-row"><span>Average Replies / Comment</span><span class="fw-semibold text-muted">{{stats.avg_rplies_per_comment}}</span></div>
+                </div>
+            </div>
+        </div>
+        <!--Vote Section-->
+        <div class="col-md-6">
+            <div class="ui-card">
+                <div class="ui-header"><i class="fa-regular fa-thumbs-up me-2 text-muted"></i>Voting Analytics</div>
+                <div class="p-0">
+                    <div class="stats-row"><span>Total Upvotes</span><span class="fw-semibold text-success">{{stats.total_upvote}}</span></div>
+                    <div class="stats-row"><span>Total Downvotes</span><span class="fw-semibold text-danger">{{stats.total_downvote}}</span></div>
+                    <div class="stats-row"><span>Vote Score</span><span class="fw-bold">{{stats.vote_score}}</span></div>
+                    <div class="stats-row"><span>Approval Rating Percentage</span><span class="fw-semibold text-success">{{stats.upvote_ratio}}</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="ui-card">
+                <div class="ui-header"><i class="fa-regular fa-bookmark me-2 text-muted"></i>Saving Behavior</div>
+                <div class="p-0">
+                    <div class="stats-row"><span>Total Unique Bookmarks</span><span class="fw-semibold">92</span></div>
+                    <div class="stats-row"><span>Bookmark to Visitor Ratio</span><span class="fw-semibold text-secondary">42%</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="ui-card">
+                <div class="ui-header text-danger-emphasis"><i class="fa-regular fa-flag me-2 text-danger"></i>Report Logs Summary</div>
+                <div class="p-0">
+                    <div class="stats-row"><span>Total Flags Received</span><span class="fw-semibold text-danger">3</span></div>
+                    <div class="stats-row"><span>Pending Admin Action</span><span class="fw-semibold text-warning">1</span></div>
+                    <div class="stats-row"><span>Resolved Audits</span><span class="fw-semibold text-success">2</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui-card">
+        <div class="ui-header"><i class="fa-solid fa-history me-2 text-muted"></i>Recent Feed Activity</div>
+        <div class="activity-scroll">
+            <div class="p-0">
+                <!-- Safe to show name for interaction -->
+                <div class="stats-row">
+                    <div><i class="fa-regular fa-comment text-primary me-2.5"></i><strong>Ahmed</strong> published a comment response</div>
+                    <span class="text-muted small">2 mins ago</span>
+                </div>
+                <!-- Anonymous Protection Layer -->
+                <div class="stats-row">
+                    <div><i class="fa-solid fa-arrow-up text-success me-2.5"></i>An anonymous developer <strong>upvoted</strong> this thread</div>
+                    <span class="text-muted small">10 mins ago</span>
+                </div>
+                <div class="stats-row">
+                    <div><i class="fa-regular fa-bookmark text-warning me-2.5"></i><strong>Karim</strong> bookmarked this technical design</div>
+                    <span class="text-muted small">1 hour ago</span>
+                </div>
+                <!-- Anonymous Protection Layer -->
+                <div class="stats-row">
+                    <div><i class="fa-regular fa-flag text-danger me-2.5"></i>The discussion was <strong>flagged anonymously</strong> (Spam Violation)</div>
+                    <span class="text-muted small">3 hours ago</span>
+                </div>
+                <div class="stats-row">
+                    <div><i class="fa-solid fa-arrow-down text-danger me-2.5"></i>An anonymous user <strong>downvoted</strong> this thread</div>
+                    <span class="text-muted small">5 hours ago</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock content %}

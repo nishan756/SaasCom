@@ -1,0 +1,60 @@
+        /* Premium Soft Borders & Glass-like Cards */
+        .ui-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .ui-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #334155;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Metrics Row Adjustments */
+        .metric-tile {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            text-align: center;
+            flex: 1;
+        }
+        .metric-tile:first-child { border-radius: 12px 0 0 12px; }
+        .metric-tile:last-child { border-radius: 0 12px 12px 0; border-right: 1px solid #e2e8f0; }
+        @media (max-width: 768px) {
+            .metric-tile { border-radius: 12px !important; border-right: 1px solid #e2e8f0 !important; margin-bottom: 10px; }
+        }
+
+        /* Custom Scrollable Area for Activities */
+        .activity-scroll {
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        /* Fine Tuning Table UI */
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.9rem;
+        }
+        .stats-row:last-child {
+            border-bottom: none;
+        }
+        
+        .badge-tag {
+            background-color: #f1f5f9;
+            color: #475569;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
