@@ -28,8 +28,9 @@ class VoteRepo:
             votes = votes.filter(added_at__date__lte = date_to)
 
         stats = votes.aggregate(
+            total_vote = Count("id" , distinct = True),
             total_upvote = Count("id" , filter = Q(vote_type = "upvote")),
             total_downvote = Count("id" , filter = Q(vote_type = "downvote")),
         )
 
-        return {"total_upvote":stats["total_upvote"] , "total_downvote":stats["total_downvote"]}
+        return {"total_upvote":stats["total_upvote"] , "total_downvote":stats["total_downvote"] , "total_vote":stats["total_vote"]}
