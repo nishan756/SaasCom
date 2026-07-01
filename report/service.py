@@ -20,9 +20,11 @@ class ReportService:
     def get_report(self , id):
         return self.repo.get_report(id = id)
     
-    def get_reports(self , content_type_str , object_id):
+    def get_reports(self , content_type_str , object_id , **query_param):
         content_type_obj = get_content_type(content_type_str , self.CONTENT_TYPES)
-        return self.repo.get_reports(content_type_obj , object_id)
+        supported_query_field = ["date_from" , "date_to"]
+        query_param = {key:value for key , value in query_param.items() if key in supported_query_field}
+        return self.repo.get_reports(content_type_obj , object_id , **query_param)
     
     def has_user_report(self ,content_type_str ,  object_id , reporter):
         content_type_obj = get_content_type(content_type_str , self.CONTENT_TYPES)
