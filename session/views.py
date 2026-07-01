@@ -35,14 +35,14 @@ def user_login(request):
             login(request , user)
             messages.success(request, "You have been logged in successfully.")
             return redirect("home")
+        
         except InvalidForm:
             messages.error(request, "Invalid form data.")
+
         except ObjectNotFound:
             messages.error(request, "Invalid username or password.")
-        return redirect("login")
     else:
         form = LoginForm()
-    
     return render(request , "login.html" , {"form":form})
 
 @login_required(login_url = "login")
