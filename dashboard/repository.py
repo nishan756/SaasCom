@@ -61,14 +61,19 @@ class DiscussionDashboardRepo:
             total_report = Count("id" , distinct = True),
         )
 
+        report_stats_by_category = reports.values("report_type").annotate(
+            total_report = Count("id"),
+        )
+
         bookmark_stats = BookmarkService().get_object_bookmarks("discussion" , id , **query_param).aggregate(
             total_bookmark = Count("id" , distinct = True)
         )
-        
+
         return {
             "comment_stats":comment_stats , 
             "report_stats":report_stats,
             "comments":comments,
             "reports":reports,
-            "bookmark_stats":bookmark_stats
+            "bookmark_stats":bookmark_stats,
+            "report_stats_by_category":report_stats_by_category
         }

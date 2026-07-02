@@ -53,6 +53,18 @@ class DiscussionDashboardService:
 
         bookmark_stats = components.pop("bookmark_stats")
 
+        report_stats_by_category = components.pop("report_stats_by_category")
+
+        
+        temp_stats = {}
+        
+        for report in report_stats_by_category:
+            temp_stats[report["report_type"].capitalize()] = report["total_report"]
+        
+        stats["report_stats_by_category"] = temp_stats
+
+        stats["avg_reply_per_comment"] = round(comment_stats["total_replies"] / comment_stats["direct_comment"] if comment_stats["direct_comment"] > 0 else 0 , 2)
+
         for key , value in comment_stats.items():
             stats[key] = value
         
