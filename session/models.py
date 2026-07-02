@@ -67,7 +67,7 @@ class CustomUser(AbstractBaseUser , PermissionsMixin):
     class GenderChoices(models.TextChoices):
         MALE = "male" , "Male"
         FEMALE = "female" , "Female"
-        THIRD = "Third" , "third"
+        THIRD = "third" , "Third"
         TRANSGENDER = "transgender" , "Transgender"
     gender = models.CharField(max_length = 12 , default = GenderChoices.MALE , choices = GenderChoices.choices)
     date_of_birth = models.DateField(blank = True , null = True)
