@@ -24,9 +24,9 @@ class DiscussionDashboardService:
         stats["avarage_comments"] = round(stats["total_comments"] / stats["total_discussions"] , 2)  if stats["total_discussions"] > 0 else 0
 
         # Votes and their ratios
-        stats["avarage_votes"] = round(stats["total_votes"] / stats["total_discussions"] , 2)  if stats["total_votes"] > 0 else 0
+        stats["avarage_votes"] = round(stats["total_votes"] / stats["total_discussions"] , 2)  if stats["total_discussions"] > 0 else 0
 
-        stats["upvote_ratio"] = f"{round(stats["total_upvote"]*100 / stats["total_votes"] if stats["total_votes"] > 0 else 0 , 2)}%"
+        stats["upvote_ratio"] = f"{round(stats["total_upvote"]*100 / stats["total_votes"] , 2) if stats["total_votes"] > 0 else 0 }%"
 
         stats["downvote_ratio"] = f"{round(stats["total_downvote"]*100 / stats["total_votes"] , 2) if stats["total_votes"] > 0 else 0 }%"
 
