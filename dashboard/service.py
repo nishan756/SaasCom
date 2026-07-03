@@ -10,7 +10,7 @@ class DiscussionDashboardService:
     def main_dashboard(self , user , **query_param):
         page = query_param.pop("page" , 1)
         
-        result = DiscussionDashboardRepo().main_dashbaord(user , **query_param)
+        result = self.repo.main_dashboard(user , **query_param)
 
         stats = result["stats"]
 
@@ -21,7 +21,7 @@ class DiscussionDashboardService:
 
         stats["reply_ratio"] = f"{round(stats["total_replies"]*100 / stats["total_comments"] , 2) if stats["total_comments"] > 0 else 0 }%"
 
-        stats["avarage_comments"] = round(stats["total_comments"] / stats["total_discussions"] , 2)  if stats["total_comments"] > 0 else 0
+        stats["avarage_comments"] = round(stats["total_comments"] / stats["total_discussions"] , 2)  if stats["total_discussions"] > 0 else 0
 
         # Votes and their ratios
         stats["avarage_votes"] = round(stats["total_votes"] / stats["total_discussions"] , 2)  if stats["total_votes"] > 0 else 0
