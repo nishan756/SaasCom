@@ -206,7 +206,7 @@ def add_review(request , id):
     except AlreadyExists as e:
         messages.info(request , str(e))
     except PermissionDenied as e:
-        messages.error(request , str(e))
+        messages.info(request , str(e))
     return redirect("app-detail" , id = id)    
 
 @require_POST
