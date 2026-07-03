@@ -8,7 +8,7 @@ from bookmark.service import BookmarkService
 
 class DiscussionDashboardRepo:
 
-    def main_dashbaord(self , user , **query_param):
+    def main_dashboard(self , user , **query_param):
         discussions = Discussion.objects.prefetch_related("comments" , "tags" , "votes" , "reports").filter(user = user)
 
         date_from = query_param.get("date_from" , None)
