@@ -110,6 +110,7 @@ def unfollow(request , username):
 @require_GET
 def view_profile(request , username):
     context = {}
+    page = request.GET.get("page" , 1)
     try:
         context["profile"] = user_service.view_profile(username)
 
@@ -121,7 +122,7 @@ def view_profile(request , username):
             context["is_following"] = follow_service.is_following(follower = request.user , following = context["profile"])
             context["user_report"] = report_service.has_user_report('user' , context["profile"].id , request.user)
         if context["profile"].is_company:
-            context["jobs"] = job_service.get_user_jobs(context["profile"])
+            context["jobs"] = job_service.get_user_jobs(context["profile"] , page)
     
     except ObjectNotFound as e:
         messages.error(request , str(e))
