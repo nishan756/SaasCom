@@ -3,8 +3,8 @@ from discussion.service import DiscussionService
 from comment.service import CommentService
 from report.service import ReportService
 from django.db.models import Count , Q
-from vote.service import VoteService
 from bookmark.service import BookmarkService
+from jobs.service import JobService
 
 class DiscussionDashboardRepo:
 
@@ -77,3 +77,30 @@ class DiscussionDashboardRepo:
             "bookmark_stats":bookmark_stats,
             "report_stats_by_category":report_stats_by_category
         }
+
+
+class JobDashboardRepo:
+
+    def main_dashboard(self , user , page , **query_param):
+        jobs = JobService().get_user_jobs(user , page , **query_param)
+
+        stats = jobs.object_list.aggregate(
+            total_job = Count("id" , distinct = True),
+            total_active_job = Count("id" , filter = Q(is_active = True) , distinct = True),
+            total_inactive_job = Count("id" , filter = Q(is_active = False) , distinct = True),
+        )
+
+        application_stats = jobs.object_list.prefetch_related("applications").aggregate(
+            total_application = Count("applications" , distinct = True),
+        )
+
+        for stat in application_stats:
+            stats[stat] = application_stats[stat]
+        
+        return {
+            "stats":stats,
+            "jobs":jobs
+        }
+
+    def job_stats(self):
+        pass

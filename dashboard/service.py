@@ -1,4 +1,4 @@
-from .repository import DiscussionDashboardRepo
+from .repository import DiscussionDashboardRepo, JobDashboardRepo
 from django.core.paginator import Paginator
 from django.db.models import Count , Q , Avg
 from vote.service import VoteService
@@ -82,3 +82,19 @@ class DiscussionDashboardService:
             "comments":components["comments"],
             "reports":components["reports"],
         }
+
+
+class JobDashboardService:
+
+    repo = JobDashboardRepo()
+
+    def main_dashboard(self , user , page , per_page , **query_param):
+        jobs = self.repo.main_dashboard(user , page , **query_param).get("jobs")
+        paginator = Paginator(jobs , per_page)
+        jobs = paginator.get_page(page)
+        result =  self.repo.main_dashboard(user , page , **query_param)
+        result["jobs"] = jobs
+        return result
+
+    def job_stats(self):
+        pass

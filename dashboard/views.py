@@ -9,12 +9,12 @@ from apps.service import AppService , ReviewService
 from jobs.service import ApplicationService , JobService
 from discussion.service import DiscussionService
 from vote.service import VoteService
-from .service import DiscussionDashboardService
+from .service import DiscussionDashboardService, JobDashboardService
 
 # ===========Exceptions===========
 from saas_com.core.exceptions import ObjectNotFound , PermissionDenied
 
-
+job_dashboard_service = JobDashboardService()
 app_service = AppService()
 application_service = ApplicationService()
 job_service = JobService()
@@ -82,8 +82,16 @@ def my_applications(request):
 def jobs_dashboard(request):
     query_param = request.GET.dict()
     page = query_param.pop("page" , 1)
+    per_page = query_param.pop("per_page" , 20)
     context = {}
-    context["jobs"] = job_service.get_user_jobs(request.user , page , **query_param)
+    try:
+        result = job_dashboard_service.main_dashboard(request.user , page , per_page , **query_param)
+        context["jobs"] = result["jobs"]
+        context["stats"] = result["stats"]
+    
+    except Exception as e:
+        messages.error(request , "Something went wrong")
+        
     return render(request , "jobs-dashboard.html" , context)
 
 @login_required(login_url = "login")
