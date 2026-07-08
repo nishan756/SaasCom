@@ -133,7 +133,7 @@
                         <div class="d-flex justify-content-between">
                             <a href="{% url 'job-detail' job.id %}" class="btn btn-sm btn-outline-primary">Details</a>
                             {% if request.user == profile %}
-                                <a href="{% url 'applications' job.id %}" class="btn btn-sm btn-success">Applicants</a>
+                                <a href="{% url 'job-applications' job.id %}" class="btn btn-sm btn-success">Applicants</a>
                             {% endif %}
                         </div>
                     </div>
