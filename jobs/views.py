@@ -29,9 +29,19 @@ report_service = ReportService()
 def all_jobs(request):
     # Query
     query_set = request.GET.dict()
-    page_num = request.GET.get("page" , 1)
-    jobs = job_service.all_jobs(page_num = page_num , **query_set)
+    page_num = query_set.pop("page" , 1)
     categories = job_cat_service.categories()
+    try:
+        jobs = job_service.all_jobs(page_num = page_num , **query_set)
+
+    except InvalidForm as e:
+        messages.error(request , str(e))
+        return redirect("home")
+    
+    except Exception as e:
+        messages.error(request , "Something went wrong")
+        return redirect("home")
+    
     context = {
         "jobs":jobs,
         "categories":categories
