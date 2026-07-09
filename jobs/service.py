@@ -6,7 +6,7 @@ class JobService:
     repo = JobRepo()
 
     def all_jobs(self , page_num , **query_set):
-        supported_q_field = ["category" , "job_type" , "experience" , "title"]
+        supported_q_field = ["category" , "job_type" , "experience" , "title" , "status"]
         query_set = {key:value for key , value in query_set.items() if key in supported_q_field}
         jobs = self.repo.all_jobs(**query_set)
         paginator = Paginator(jobs , 15)

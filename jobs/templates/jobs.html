@@ -84,6 +84,21 @@
                 </select>
             </div>
 
+            <div class="filter-item">
+                <select name="status">
+                    <option value="">Status</option>
+                    <option value="True"
+                        {% if request.GET.status == "True" %}selected{% endif %}>
+                        Active
+                    </option>
+
+                    <option value="False"
+                        {% if request.GET.status == "False" %}selected{% endif %}>
+                        Inactive
+                    </option>
+                </select>
+            </div>
+
             <button type="submit" class="btn btn-primary">
                 Apply Filter
             </button>
@@ -119,7 +134,7 @@
                             {% if job.is_active %}
                                 <span class="active">Active</span>
                             {% else %}
-                                <span class="active">Inactive</span>
+                                <span class="inactive">Inactive</span>
                             {% endif %}
 
                             <div class="company-row">

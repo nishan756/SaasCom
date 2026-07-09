@@ -15,6 +15,8 @@ class JobRepo:
             jobs = jobs.experience(query_set["experience"])
         if query_set.get("title"):
             jobs = jobs.filter(title__icontains = query_set["title"])
+        if query_set.get("status"):
+            jobs = jobs.filter(is_active = query_set["status"])
         return jobs
     
     def get_user_jobs(self , user , **query_param):
