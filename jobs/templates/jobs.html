@@ -87,13 +87,13 @@
             <div class="filter-item">
                 <select name="status">
                     <option value="">Status</option>
-                    <option value="True"
-                        {% if request.GET.status == "True" %}selected{% endif %}>
+                    <option value="active"
+                        {% if request.GET.status == "active" %}selected{% endif %}>
                         Active
                     </option>
 
-                    <option value="False"
-                        {% if request.GET.status == "False" %}selected{% endif %}>
+                    <option value="inactive"
+                        {% if request.GET.status == "inactive" %}selected{% endif %}>
                         Inactive
                     </option>
                 </select>

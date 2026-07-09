@@ -6,8 +6,23 @@ class JobService:
     repo = JobRepo()
 
     def all_jobs(self , page_num , **query_set):
-        supported_q_field = ["category" , "job_type" , "experience" , "title" , "status"]
+        supported_q_field = {"category" , "job_type" , "experience" , "title" , "status"}
+
         query_set = {key:value for key , value in query_set.items() if key in supported_q_field}
+
+        status_dict = {
+            "active":'True',
+            "inactive":'False',
+        }
+
+        status = query_set.get("status" , None)
+
+        if status and status not in ["active" , "inactive"]:
+            raise InvalidForm("Invalid status value. Supported values are 'active' and 'inactive'")
+        
+        elif status:
+            query_set["status"] = status_dict.get(status)
+
         jobs = self.repo.all_jobs(**query_set)
         paginator = Paginator(jobs , 15)
         jobs = paginator.get_page(page_num)
