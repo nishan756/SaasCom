@@ -160,11 +160,16 @@ class Application(models.Model):
     cover_letter = CloudinaryField(folder = "saas_com/assets/jobs/cover_letter")
     resume = CloudinaryField(folder = "saas_com/assets/jobs/resume")
     class StatusChoices(models.TextChoices):
-        PENDING = "pending" , "Pending"
-        APPROVED = "approved" , "Approved"
-        REJECTED = "rejected" , "Rejected"
-        SHORTLISTED = "shortlisted" , "Shortlisted"
-    status = models.CharField(max_length = 15 , choices = StatusChoices.choices , default = StatusChoices.PENDING)
+        PENDING = "pending", "Pending"
+        UNDER_REVIEW = "under_review", "Under Review"
+        SHORTLISTED = "shortlisted", "Shortlisted"
+        INTERVIEW_SCHEDULED = "interview_scheduled", "Interview Scheduled"
+        OFFERED = "offered", "Offered"
+        HIRED = "hired", "Hired"
+        REJECTED_BY_EMPLOYER = "rejected_by_employer", "Rejected by Employer"
+        REJECTED_BY_HR = "rejected_by_hr", "Rejected by HR"
+        WITHDRAWN = "withdrawn", "Withdrawn"
+    status = models.CharField(max_length = 20 , choices = StatusChoices.choices , default = StatusChoices.PENDING)
     hr_message = models.TextField(blank = True , null = True) 
     applied_at = models.DateTimeField(auto_now_add = True)
 
