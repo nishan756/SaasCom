@@ -175,6 +175,15 @@ class Application(models.Model):
 
     def __str__(self):
         return f"{self.user.full_name()} applied to {self.job.title}"
+    
+    def get_application_status_dict(self):
+        application_statuses = self.StatusChoices.choices
+        application_status_dict = {}
+
+        for i in range(len(application_statuses)):
+            application_status_dict[application_statuses[i][0]] = application_statuses[i][1]
+        
+        return application_status_dict
 
     class Meta:
         ordering = ["job" , "applied_at"]
