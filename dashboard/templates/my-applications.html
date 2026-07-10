@@ -57,10 +57,13 @@
                     <label class="form-label">Status</label>
                     <select name="status" class="form-select">
                         <option value="">All Status</option>
-                        <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
-                        <option value="approved" {% if request.GET.status == 'approved' %}selected{% endif %}>Approved</option>
-                        <option value="shortlisted" {% if request.GET.status == 'shortlisted' %}selected{% endif %}>Shortlisted</option>
-                        <option value="rejected" {% if request.GET.status == 'rejected' %}selected{% endif %}>Rejected</option>
+
+                        {% for key , value in statuses.items %}
+                            <option value = "{{key}}" {% if request.GET.status == key %} selected {% endif %}>
+                                {{value}}
+                            </option>
+                        {% endfor %}
+                        
                     </select>
                 </div>
 
@@ -235,7 +238,25 @@
                 <li class="page-item">
                     <a
                         class="page-link"
-                        href="?page={{ applications.next_page_number }}"
+                        href="
+                        ?page={{ applications.next_page_number }} 
+                        {% if request.GET.status %}
+                            ?status='{{request.GET.status}}' 
+                        {% endif %} 
+                        
+                        {% if request.GET.job_title %} 
+                            ?job_title='{{request.GET.job_title}}' 
+                        {% endif %}
+                        
+                        {% if request.GET.job_title %} 
+                            ?job_title='{{request.GET.job_title}}' 
+                        {% endif %}
+
+                        {% if request.GET.applied_at %}
+                            ?applied_at='{{request.GET.applied_at}}' 
+                        {% endif %}
+                        
+                        "
                     >
                         Next
                     </a>

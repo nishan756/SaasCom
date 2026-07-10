@@ -39,37 +39,11 @@
                                 All Status
                             </option>
 
-                            <option value="pending"
-                            {% if request.GET.status == "pending" %}
-                                selected
-                            {% endif %}
-                            >
-                                Pending
-                            </option>
-
-                            <option value="rejected"
-                            {% if request.GET.status == "rejected" %}
-                                selected
-                            {% endif %}
-                            >
-                                Rejected
-                            </option>
-
-                            <option value="approved"
-                            {% if request.GET.status == "approved" %}
-                                selected
-                            {% endif %}
-                            >
-                                Approved
-                            </option>
-
-                            <option value="shortlisted"
-                            {% if request.GET.status == "shortlisted" %}
-                                selected
-                            {% endif %}
-                            >
-                                Shortlisted
-                            </option>
+                            {% for key , value in statuses.items %}
+                                <option value = "{{key}}" {% if request.GET.status == key %} selected {% endif %}>
+                                    {{value}}
+                                </option>
+                            {% endfor %}
 
                         </select>
 

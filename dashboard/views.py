@@ -2,6 +2,7 @@ from django.shortcuts import render , redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET , require_POST
 from django.contrib import messages
+from jobs.models import Application
 
 
 # ===========SERVICES=============
@@ -75,6 +76,7 @@ def my_applications(request):
         return redirect("home")
     context = {}
     context["applications"] = application_service.get_user_applications(request.user , page_num , **query_param)
+    context["statuses"] = Application().get_application_status_dict()
     return render(request , "my-applications.html" , context)
 
 @login_required(login_url = "login")
@@ -112,6 +114,7 @@ def job_applications(request , id):
         messages.info(request , "Something went wrong")
         return redirect("profile" , request.user.username)
     context['applications'] = applications
+    context["statuses"] = Application().get_application_status_dict()
     return render(request , 'job-applications.html' , context)
 
 
