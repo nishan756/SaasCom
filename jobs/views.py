@@ -35,8 +35,8 @@ def all_jobs(request):
         jobs = job_service.all_jobs(page_num = page_num , **query_set)
 
     except InvalidForm as e:
-        messages.error(request , str(e))
-        return redirect("home")
+        messages.info(request , str(e))
+        return redirect("all-jobs")
     
     except Exception as e:
         messages.error(request , "Something went wrong")
