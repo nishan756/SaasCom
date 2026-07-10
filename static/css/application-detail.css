@@ -1,4 +1,4 @@
-.application-wrapper{
+    .application-wrapper{
         background: #f5f7fb;
         min-height: 100vh;
         padding: 40px 0;
@@ -77,40 +77,6 @@
     .info-value{
         font-size: 17px;
         font-weight: 600;
-    }
-
-    .status-badge{
-        padding: 8px 14px;
-        border-radius: 50px;
-        font-size: 14px;
-        font-weight: 600;
-        display: inline-block;
-    }
-
-    .status-pending{
-        background: #fff3cd;
-        color: #856404;
-    }
-
-    .status-approved{
-        background: #d4edda;
-        color: #155724;
-    }
-
-    .status-rejected{
-        background: #f8d7da;
-        color: #721c24;
-    }
-
-    .status-shortlisted{
-        background: #d1ecf1;
-        color: #0c5460;
-    }
-
-    .section-title{
-        font-size: 20px;
-        font-weight: 700;
-        margin-bottom: 15px;
     }
 
     .cover-letter-box{

@@ -1,0 +1,29 @@
+.status-pending {
+    background: #6c757d;
+}
+
+.status-under_review {
+    background: #0dcaf0;
+}
+
+.status-shortlisted {
+    background: #0d6efd;
+}
+
+.status-interview_scheduled {
+    background: #ffc107;
+    color: #000;
+}
+
+.status-offered {
+    background: #198754;
+}
+
+.status-hired {
+    background: #212529;
+}
+
+.status-rejected_by_hr,
+.status-rejected_by_employer {
+    background: #dc3545;
+}
