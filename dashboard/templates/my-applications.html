@@ -8,6 +8,7 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/my-applications.css' %}">
+<link rel="stylesheet" href="{% static 'css/application-status.css' %}">
 {% endblock css %}
 
 {% block content %}
@@ -122,26 +123,9 @@
 
                             <td>
 
-                                {% if application.status == "pending" %}
-                                    <span class="badge bg-secondary">
-                                        Pending
-                                    </span>
-
-                                {% elif application.status == "shortlisted" %}
-                                    <span class="badge bg-primary">
-                                        Shortlisted
-                                    </span>
-
-                                {% elif application.status == "approved" %}
-                                    <span class="badge bg-success">
-                                        approved
-                                    </span>
-
-                                {% elif application.status == "rejected" %}
-                                    <span class="badge bg-danger">
-                                        Rejected
-                                    </span>
-                                {% endif %}
+                                <span class='badge bg status-{{application.status}}'>
+                                    {{application.get_status_display}}
+                                </span>
 
                             </td>
 
