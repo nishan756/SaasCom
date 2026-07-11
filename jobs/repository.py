@@ -1,5 +1,6 @@
 from .models import Job , JobCategory , Application
-from django.db.models import Count , Q
+from django.db.models import Count , Q , Value
+from django.db.models.functions import Concat
 from saas_com.core.exceptions import ObjectNotFound
 from django.db import transaction
 
@@ -112,8 +113,12 @@ class ApplicationRepo:
     
     def applications(self , job , **query_set):
         applications = Application.objects.select_related("user").filter(job = job)
-        if query_set.get("username"):
-            applications = applications.filter(user__username = query_set["username"])
+
+        if query_set.get("full_name"):
+            applications = applications.annotate(
+                full_name = Concat("user__first_name" , Value(" ") , "user__last_name")
+            ).filter(Q(full_name__icontains = query_set["full_name"]))
+
         if query_set.get("status"):
             applications = applications.filter(status = query_set["status"])
         return applications

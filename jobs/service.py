@@ -138,7 +138,7 @@ class ApplicationService:
         if job.user != user:
             raise PermissionDenied("You can\'t see applicants for this job")
         # Quering
-        supported_q_fields = ["username" ,  "status"]
+        supported_q_fields = ["full_name" ,  "status"]
         query_set = {key:value for key , value in query_set.items() if key in supported_q_fields}
         
         # Pagination
