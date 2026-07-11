@@ -118,9 +118,8 @@ class ApplicationRepo:
             applications = applications.filter(status = query_set["status"])
         return applications
     
-    def update_application_status(self , application , status , hr_message = None):
+    def update_application_status(self , application , status):
         application.status = status
-        if hr_message:application.hr_message = hr_message
         return application.save() 
 
          
