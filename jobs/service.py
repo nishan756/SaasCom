@@ -69,6 +69,36 @@ class JobCatService:
 
 class ApplicationService:
     repo = ApplicationRepo()
+    
+    APPLICATION_ACTIONS = {
+        "pending": {
+            "under_review":"Under review",
+            "rejected_by_hr":"Rejected by HR",
+        },
+
+        "under_review": {
+            "shortlisted":"Shortlisted",
+            "rejected_by_hr":"Rejected by HR",
+
+        },
+
+        "shortlisted": {
+            "interview_scheduled":"Interview Scheduled",
+            "offered":"Offered",
+            "rejected_by_hr":"Rejected by HR",
+
+        },
+
+        "interview_scheduled": {
+            "offered":"Offered",
+            "rejected_by_hr":"Rejected by HR",
+        },
+
+        "offered": {
+            "hired":"Hired",
+        },
+
+    }
 
     def has_application(self , job_id , user):
         return self.repo.has_application(job_id , user)
@@ -117,15 +147,25 @@ class ApplicationService:
         jobs = paginator.get_page(page_num)
         return jobs
     
-    def update_application_status(self , id , user , status , hr_message = None):
-        application = self.get_application(id , user)
+    def update_application_status(self , id , user , status):
         
-        if application.hr_message:
-            application.hr_message = None
+        application = self.get_application(id=id, user=user)
 
-        if application.status != status:
-            if application.hr_message:
-                application.hr_message = None
-            return self.repo.update_application_status(application , status , hr_message)
+        allowed_actions = self.APPLICATION_ACTIONS.get(application.status, {})
+
+        if status not in allowed_actions:
+            raise InvalidForm("You can't perform this operation.")
+
+        if application.status == status:
+            raise InvalidForm("Application is already in this status.")
+
+        return self.repo.update_application_status(
+            application=application,
+            status=status,
+        )
+    
+    @classmethod
+    def application_actions(cls):
+        return cls.APPLICATION_ACTIONS
         
             
