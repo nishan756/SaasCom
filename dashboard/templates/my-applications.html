@@ -95,7 +95,6 @@
                             <th>Company</th>
                             <th>Applied Date</th>
                             <th>Status</th>
-                            <th>HR Message</th>
                             <th>Action</th>
                             <th></th>
                         </tr>
@@ -127,14 +126,6 @@
                                     {{application.get_status_display}}
                                 </span>
 
-                            </td>
-
-                            <td>
-                                {% if application.hr_message %}
-                                    {{application.hr_message}}
-                                {% else %}
-                                    N/A
-                                {% endif %}
                             </td>
 
                             <td>
