@@ -25,7 +25,7 @@
                 <div>
 
                     <p class="page-subtitle">
-                        Application of {{application.user.full_name}} <span>&rarr;</span> <a href="{% url 'job-applications' application.job.id %}">View other applications</a>
+                        Application of {{application.user.full_name}} <span>&rarr;</span> <a href="{% url 'job-applications' application.job.id %}" class='no-underline'>View other applications</a>
                     </p>
 
                 </div>
@@ -60,14 +60,14 @@
                     >
                 {% endif %}
                 <div>
+                    
+                    <a href="{% url 'profile' application.user.username %}" class='no-underline' target="_blank">
+                        <div class="candidate-name">
+                            {{ application.user.full_name }}
+                        </div>
+                    </a>
 
-                    <div class="candidate-name">
-                        {{ application.user.full_name }}
-                    </div>
-
-                    <div class="candidate-username">
-                        <a href="{% url 'profile' application.user.username %}">{{ application.user.username }}</a>
-                    </div>
+                    <h5 style="font-size:20px;">Email:<a href='mailto:{{application.user.email}}' class='no-underline'>{{application.user.email}}</a></h5>
 
                 </div>
 
@@ -82,9 +82,11 @@
                     <div class="info-label">
                         Applied Job
                     </div>
-
+                    
                     <div class="info-value">
-                        {{ application.job.title }}
+                        <a href="{{application.job.get_absolute_url}}" class='no-underline'>
+                            {{ application.job.title }}
+                        </a>
                     </div>
 
                 </div>
@@ -133,74 +135,27 @@
 
             </div>
 
-            <!-- HR MESSAGE -->
-
-            {% if application.hr_message %}
-
-                <div class="hr-message-box">
-
-                    <h6 class="fw-bold mb-2">
-                        HR Message
-                    </h6>
-
-                    <p class="mb-0">
-                        {{ application.hr_message }}
-                    </p>
-
-                </div>
-
-            {% endif %}
-
             <!-- ACTION BUTTONS -->
 
-            {% if application.status != "offered" and application.status != "hired" and application.status != "rejected_by_hr" and application.status != "rejected_by_employer" %}
+            {% if actions %}
 
                 <div class="action-buttons">
 
-                    <!-- APPROVE -->
-
-                    <form method="POST" 
-                    action="{% url 'update-application-status' application.id 'approved' %}"
-                    onsubmit="return confirm('Are you sure you want to approve this application?')"
-                    >
-                        <input type="hidden" value="{{application.job.id}}" name="job_id">
-
-                        {% csrf_token %}
-
-                        <button class="btn btn-success">
-                            Approve
-                        </button>
-
-                    </form>
-
-                    {% if application.status != 'shortlisted'%}
-                        <!-- SHORTLIST -->
-                        
+                    {% for key , value in actions.items %}
                         <form method="POST" 
-                        action="{% url 'update-application-status' application.id 'shortlisted' %}"
-                        onsubmit="return confirm('Are you sure you want to shortlist this application?')"
+                        action="{% url 'update-application-status' application.id key %}"
+                        onsubmit="return confirm('Are you sure you want to {{value}} this application?')"
                         >
+                            <input type="hidden" value="{{application.job.id}}" name="job_id">
 
                             {% csrf_token %}
-                            <input type="hidden" value="{{application.job.id}}" name="job_id">
-                            <button class="btn btn-primary">
-                                Shortlist
+
+                            <button class="btn status-{{key}}" style="color:white;">
+                                {{value}}
                             </button>
 
                         </form>
-                    {% endif %}
-                    
-                    {% if application.status != 'rejected' %}
-                        <!-- REJECT -->
-
-                        <button
-                            class="btn btn-danger"
-                            data-bs-toggle="modal"
-                            data-bs-target="#rejectModal"
-                        >
-                            Reject
-                        </button>
-                    {% endif %}
+                    {% endfor %}
 
                 </div>
 
@@ -211,75 +166,4 @@
     </div>
 
 </div>
-
-{% if application.status != 'rejected' %}
-<!-- REJECT MODAL --> 
-
-<div class="modal fade"
-     id="rejectModal"
-     tabindex="-1"
-     aria-hidden="true">
-
-    <div class="modal-dialog modal-dialog-centered">
-
-        <div class="modal-content">
-
-            <form method="POST" action="{% url 'update-application-status' application.id 'rejected' %}">
-                <input type="hidden" value="{{application.job.id}}" name="job_id">
-
-                {% csrf_token %}
-
-                <div class="modal-header">
-
-                    <h5 class="modal-title">
-                        Reject Application
-                    </h5>
-
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal">
-                    </button>
-
-                </div>
-
-                <div class="modal-body">
-
-                    <label class="form-label fw-semibold">
-                        Rejection Message
-                    </label>
-
-                    <textarea
-                        name="hr_message"
-                        rows="5"
-                        class="form-control"
-                        placeholder="Write rejection reason or feedback..."
-                    ></textarea>
-
-                </div>
-
-                <div class="modal-footer">
-
-                    <button
-                        type="button"
-                        class="btn btn-light"
-                        data-bs-dismiss="modal"
-                    >
-                        Cancel
-                    </button>
-
-                    <button class="btn btn-danger">
-                        Reject Application
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
-
-    </div>
-
-</div>
-{% endif %}
 {% endblock %}
