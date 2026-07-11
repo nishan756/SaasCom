@@ -13,7 +13,7 @@ from vote.service import VoteService
 from .service import DiscussionDashboardService, JobDashboardService
 
 # ===========Exceptions===========
-from saas_com.core.exceptions import ObjectNotFound , PermissionDenied
+from saas_com.core.exceptions import ObjectNotFound , PermissionDenied , InvalidForm
 
 job_dashboard_service = JobDashboardService()
 app_service = AppService()
@@ -123,21 +123,24 @@ def job_applications(request , id):
 def update_application_status(request , id , status):
     if not request.user.is_company:
         return redirect("home")
+    
     job_id = request.POST.get("job_id")
-    hr_message = request.POST.get("hr_message" , None)
+    
     try:
-        application_service.update_application_status(id = id , user = request.user , status = status , hr_message = hr_message)
+        application_service.update_application_status(id = id , user = request.user , status = status)
         messages.success(request , "Successfully updated application status")
         return redirect("application-detail" , id)
     
     except ObjectNotFound as e:
         messages.error(request , str(e))
-        return redirect()
     
+    except InvalidForm as e:
+        messages.info(request , str(e))
+
     except Exception as e:
         messages.error(request , "Something went wrong")
     
-    return redirect("applications" , job_id)
+    return redirect("job-applications" , job_id)
 
 
 @login_required(login_url = "login")
@@ -149,7 +152,7 @@ def application_detail(request , id):
     except ObjectNotFound as e:
         messages.error(request , str(e))
     context['application'] = application
-
+    context["actions"] = ApplicationService.application_actions().get(application.status)
     return render(request , "application-detail.html" , context)
 
 @login_required(login_url = "login")
