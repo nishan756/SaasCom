@@ -5,6 +5,7 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/applications.css' %}">
+    <link rel="stylesheet" href="{% static 'css/application-status.css' %}">
 {% endblock css %}
 
 {% block content %}
@@ -134,6 +135,10 @@
                                     <!-- STATUS -->
 
                                     <td>
+
+                                        <span class="badge bg status-{{application.status}}">
+                                            {{application.get_status_display}}
+                                        </span>
 
                                         {% if application.status == "pending" %}
 
