@@ -170,20 +170,14 @@ class Application(models.Model):
         REJECTED_BY_HR = "rejected_by_hr", "Rejected by HR"
         WITHDRAWN = "withdrawn", "Withdrawn"
     status = models.CharField(max_length = 20 , choices = StatusChoices.choices , default = StatusChoices.PENDING)
-    hr_message = models.TextField(blank = True , null = True) 
     applied_at = models.DateTimeField(auto_now_add = True)
 
     def __str__(self):
         return f"{self.user.full_name()} applied to {self.job.title}"
     
-    def get_application_status_dict(self):
-        application_statuses = self.StatusChoices.choices
-        application_status_dict = {}
-
-        for i in range(len(application_statuses)):
-            application_status_dict[application_statuses[i][0]] = application_statuses[i][1]
-        
-        return application_status_dict
+    @classmethod
+    def get_application_status_dict(cls):
+        return dict(cls.StatusChoices.choices)
 
     class Meta:
         ordering = ["job" , "applied_at"]
