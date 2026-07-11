@@ -27,3 +27,7 @@
 .status-rejected_by_employer {
     background: #dc3545;
 }
+
+.status-withdrawn{
+    background: blue;
+}
