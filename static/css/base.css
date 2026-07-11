@@ -83,3 +83,7 @@ body { font-family: Arial, sans-serif; }
 .vote-btn.downvote {
     color: #dc3545;
 }
+
+.no-underline{
+    text-decoration: none;
+}
