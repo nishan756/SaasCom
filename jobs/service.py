@@ -142,10 +142,10 @@ class ApplicationService:
         query_set = {key:value for key , value in query_set.items() if key in supported_q_fields}
         
         # Pagination
-        jobs = self.repo.applications(job = job , **query_set)
-        paginator = Paginator(jobs , 20)
-        jobs = paginator.get_page(page_num)
-        return jobs
+        applications = self.repo.applications(job = job , **query_set)
+        paginator = Paginator(applications , 20)
+        applications = paginator.get_page(page_num)
+        return applications
     
     def update_application_status(self , id , user , status):
         
