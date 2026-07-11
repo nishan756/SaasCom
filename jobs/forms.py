@@ -57,7 +57,7 @@ class JobForm(forms.ModelForm):
 class ApplicationForm(forms.ModelForm):
     class Meta:
         model = Application
-        exclude = ["job" , "user" , "applied_at" , "hr_message" , "status"]
+        exclude = ["job" , "user" , "applied_at" , "status"]
         widgets = {
             "cover_letter": forms.FileInput(attrs={
                 "class": "form-control",
