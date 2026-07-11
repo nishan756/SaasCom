@@ -104,18 +104,20 @@ def job_applications(request , id):
     page_num = query_set.pop("page" , 1)
     try:
         applications = application_service.applications(id = id , user = request.user , page_num = page_num , **query_set)
+        context['applications'] = applications
+        context["statuses"] = Application().get_application_status_dict()
+        return render(request , 'job-applications.html' , context)
     except ObjectNotFound as e:
+
         messages.error(request , str(e))
-        return redirect("profile" , request.user.username)
+    
     except PermissionDenied as e:
         messages.warning(request , str(e))
-        return redirect("profile" , request.user.username)
+    
     except Exception as e:
         messages.info(request , "Something went wrong")
-        return redirect("profile" , request.user.username)
-    context['applications'] = applications
-    context["statuses"] = Application().get_application_status_dict()
-    return render(request , 'job-applications.html' , context)
+        
+    return redirect("job-applications" , id)
 
 
 @login_required(login_url = "login")
