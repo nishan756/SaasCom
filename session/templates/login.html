@@ -22,6 +22,10 @@
                 <form method="POST" action="login">
                     {% csrf_token %}
 
+                    {% if request.GET.next %}
+                        <input type="hidden" value="{{request.GET.next}}" name="next"></input>
+                    {% endif %}
+
                     <!-- Username or Email -->
 
                     {% for field in form %}

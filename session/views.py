@@ -34,8 +34,15 @@ def user_login(request):
             user = user_service.authenticated(form, request)
             login(request , user)
             messages.success(request, "You have been logged in successfully.")
+
+            # Redirection
+            next_url = is_safe_url(request.POST.get("next" , None) , request.get_host())
+            if next_url:
+
+                return redirect(next_url)
+            
             return redirect("home")
-        
+
         except InvalidForm:
             messages.error(request, "Invalid form data.")
 
@@ -239,7 +246,7 @@ def verify_email(request):
         request.session.pop("code_expiry", None)
         request.session.pop(f"otp_attempts:{request.user.username}", None)
 
-        messages.success(request, "Email updated successfully")
+        messages.success(request, "Verification Successfull")
         return redirect("profile", username=request.user.username)
 
     except Exception as e:
