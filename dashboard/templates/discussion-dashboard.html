@@ -42,14 +42,19 @@
                 </div>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label for="date_from" class="form-label text-secondary small fw-semibold">Posted From</label>
                 <input type="date" class="form-control" id="date_from" name="date_from" value="{{ request.GET.date_from }}">
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label for="date_to" class="form-label text-secondary small fw-semibold">Posted To</label>
                 <input type="date" class="form-control" id="date_to" name="date_to" value="{{ request.GET.date_to }}">
+            </div>
+
+            <div class="col-md-2">
+                <label for="per_page" class="form-label text-secondary small fw-semibold">Per Page</label>
+                <input type="number" class="form-control" id="per_page" name="per_page" value="{{ request.GET.per_page|default:'20' }}" min="5" max="100">
             </div>
 
             <div class="col-md-3 d-grid gap-2 d-md-flex justify-content-md-end">

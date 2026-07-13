@@ -1,7 +1,7 @@
 from .repository import DiscussionDashboardRepo, JobDashboardRepo
 from django.core.paginator import Paginator
-from django.db.models import Count , Q , Avg
 from vote.service import VoteService
+from django.core.paginator import Paginator
 
 class DiscussionDashboardService:
 
@@ -9,6 +9,8 @@ class DiscussionDashboardService:
 
     def main_dashboard(self , user , **query_param):
         page = query_param.pop("page" , 1)
+
+        per_page = query_param.pop("per_page" , 20)
         
         result = self.repo.main_dashboard(user , **query_param)
 
@@ -32,7 +34,7 @@ class DiscussionDashboardService:
 
         stats["total_views"] = 0
 
-        paginator = Paginator(discussions , 20)
+        paginator = Paginator(discussions , per_page)
         discussions = paginator.get_page(page)
 
         return {
