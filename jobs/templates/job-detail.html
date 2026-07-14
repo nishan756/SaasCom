@@ -300,27 +300,17 @@
                                     <!-- User -->
                                     <div class="d-flex align-items-center gap-3">
 
-                                        {% if report.reporter.image %}
-                                            <img
-                                                src="{{report.reporter.image.url}}"
-                                                class="rounded-circle object-fit-cover"
-                                                width="55"
-                                                height="55"
-                                                alt="reporter-{{reporter.user.username}}"
-                                            >
-                                        {% else %}
-                                            <img
+                                        <img
                                                 src="{% static 'img/unknown_avatar.jpg' %}"
                                                 class="rounded-circle object-fit-cover"
                                                 width="55"
                                                 height="55"
                                                 alt="reporter-unknwonAvatar"
-                                            >
-                                        {% endif %}
+                                        >
 
                                         <div>
                                             <h6 class="mb-1 fw-bold">
-                                                {{report.reporter.full_name}}
+                                                Reporter {{forloop.counter}}
                                             </h6>
 
                                             <small class="text-muted">

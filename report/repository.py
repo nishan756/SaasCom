@@ -10,7 +10,8 @@ class ReportRepo:
             raise ObjectNotFound("Report not found")
     
     def get_reports(self , content_type , object_id , **query_param):
-        reports =  Report.objects.prefetch_related("reporter").filter(content_type = content_type , object_id = object_id)
+        reports =  Report.objects.filter(content_type = content_type , object_id = object_id).only("report_type" , "reason")
+        print(reports.query)
 
         date_from = query_param.get("date_from" , None)
         date_to = query_param.get("date_to" , None)
