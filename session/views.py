@@ -144,8 +144,9 @@ def view_profile(request , username):
 @require_GET
 def users(request , user_type):
     context = {}
+    query_param = request.GET.dict()
     context["user_type"] = user_type.capitalize()
-    context["users"] = user_service.get_users(user_type = user_type)
+    context["users"] = user_service.get_users(user_type = user_type.lower() , **query_param)
     return render(request , "users.html" , context)
 
 @login_required(login_url = "login")

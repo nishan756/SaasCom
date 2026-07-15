@@ -23,8 +23,22 @@ class UserService:
     def view_profile(self , username):
         return self.repo.view_profile(username)
     
-    def get_users(self , user_type):
-        return self.repo.get_users(user_type = user_type)
+    def get_users(self , user_type , **query_param):
+        supported_query_field = {"full_name" , "sort_by"}
+
+        query_param = {key:value for key , value in query_param.items() if key in supported_query_field}
+
+        sort_dict = {
+            "less_follower_first":"total_follower",
+            "most_follower_first":"-total_follower",
+            "most_apps_first":"-total_apps",
+            "less_apps_first":"total_apps",
+
+        }
+
+        query_param["sort_by"] = sort_dict[query_param["sort_by"]] if query_param.get("sort_by" , None) else sort_dict["most_follower_first"]
+
+        return self.repo.get_users(user_type = user_type , **query_param)
     
     def signup(self , form):
         if form.is_valid():

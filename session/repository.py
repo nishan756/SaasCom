@@ -1,7 +1,8 @@
 from .models import User , Follow
 from saas_com.core.exceptions import ObjectNotFound , AlreadyExists
 from django.contrib.auth import authenticate
-from django.db.models import Q , Count , Prefetch
+from django.db.models import Q , Count , Prefetch , Value
+from django.db.models.functions import Concat
 from apps.models import App
 
 class UserRepo:
@@ -22,9 +23,21 @@ class UserRepo:
         
         return User.objects.filter(username = username)
     
-    def get_users(self , user_type):
-        users = User.objects.prefetch_related("apps" , "followers" , "following").filter(user_type = user_type).exclude(Q(is_superuser = True)|Q(is_staff = True)).annotate(total_apps = Count("apps") , total_follower = Count("followers")).only("first_name" , "last_name" , "username" , "image" , "bio" , "joined_at")
-        return users
+    def get_users(self, user_type, **query_param):
+        users = (
+            User.objects
+            .filter(user_type=user_type)
+            .exclude(is_superuser=True, is_staff=True)
+            .annotate(
+                total_apps=Count("apps", distinct=True),
+                total_follower=Count("followers", distinct=True),
+                full_name = Concat("first_name" , Value(" ") , "last_name")
+            )
+        )
+
+        if full_name := query_param.get("full_name"):
+            users = users.filter(Q(full_name__icontains=full_name)|Q(full_name__icontains = full_name))
+        return users.order_by(query_param.get("sort_by"))
 
     def view_profile(self , username):
         try:

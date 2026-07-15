@@ -21,15 +21,24 @@
         </div>
 
         <!-- Search -->
-        <form method="GET" class="d-flex" style="max-width: 350px; width:100%;" action="{% url 'users' user_type%}">
+        <form method="GET" class="d-flex" style="max-width: 500px; width:100%;" action="{% url 'users' user_type%}">
             <input 
                 type="text"
-                name="name"
+                name="full_name"
                 class="form-control me-2"
                 placeholder="Search {% if user_type == 'Company'%}Company{% else %}Developer{% endif %}..."
-                value="{{ request.GET.name }}"
+                value="{{ request.GET.full_name }}"
             >
-            <button class="btn btn-dark">
+
+            <select name="sort_by" class='form-select me-2'>
+                <option value="">Sort By</option>
+                <option value="most_follower_first" {% if request.GET.sort_by == "most_follower_first" %} selected {% endif %}>Most Follower First</option>
+                <option value="less_follower_first" {% if request.GET.sort_by == "less_follower_first" %} selected {% endif %}>Less Follower First</option>
+                <option value="most_apps_first" {% if request.GET.sort_by == "most_apps_first" %} selected {% endif %}>Most Apps First</option>
+                <option value="less_apps_first" {% if request.GET.sort_by == "less_apps_first" %} selected {% endif %}>Less Apps First</option>
+            </select>
+
+            <button class="btn btn-dark" style="">
                 Search
             </button>
         </form>
@@ -73,7 +82,7 @@
                                     href="{% url 'profile' user.username %}"
                                     class="text-decoration-none text-dark"
                                 >
-                                    {{ user.first_name }} {{user.last_name}}
+                                    {{ user.full_name }}
                                 </a>
                             </h6>
 
