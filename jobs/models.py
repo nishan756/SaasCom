@@ -115,6 +115,7 @@ class Job(models.Model):
         PART_TIME = "part_time" , "Part time"
         CONTRACT = "contract" , "Contract"
         REMOTE = "remote" , "Remote"
+        HYBRID = "hybrid" , "Hybrid"
     job_type = models.CharField(max_length = 20 , choices = JobTypeChoices.choices)
     class ExperienceType(models.TextChoices):
         SENIOR = "senior" , "Senior"
@@ -140,6 +141,9 @@ class Job(models.Model):
     def get_absolute_url(self):
         return reverse("job-detail", kwargs={"id": self.id})
     
+    @classmethod
+    def get_job_type_as_dict(cls):
+        return dict(cls.JobTypeChoices.choices)
     
     class Meta:
         indexes = [
