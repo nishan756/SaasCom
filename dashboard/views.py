@@ -81,13 +81,17 @@ def user_application_dashboard(request):
     
     context = {}
 
-    result = application_dashboard_service.main_dashboard(request.user , per_page , page_num , **query_param)
+    try:
+        result = application_dashboard_service.main_dashboard(request.user , per_page , page_num , **query_param)
+        context["categories"] = JobCategory.objects.select_related("parent").all()
+        context["job_types"] = Job().get_job_type_as_dict()
+        context.update(result)
+        return render(request , "user-application-dashboard.html" , context)
     
-    context["statuses"] = Application().get_application_status_dict()
-    context["categories"] = JobCategory.objects.select_related("parent").all()
-    context["job_types"] = Job().get_job_type_as_dict()
-    context.update(result)
-    return render(request , "user-application-dashboard.html" , context)
+    except Exception as e:
+        messages.error(request , "Somethinf went wrong")
+
+    return redirect("dashboard-entry-point")
 
 @login_required(login_url = "login")
 @require_GET
