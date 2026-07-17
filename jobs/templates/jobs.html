@@ -35,31 +35,9 @@
             <div class="filter-item">
                 <select name="job_type">
                     <option value="">Job Type</option>
-
-                    <option value="full_time"
-                        {% if request.GET.job_type == "full_time" %}selected{% endif %}>
-                        Full Time
-                    </option>
-
-                    <option value="part_time"
-                        {% if request.GET.job_type == "part_time" %}selected{% endif %}>
-                        Part Time
-                    </option>
-
-                    <option value="full_time"
-                        {% if request.GET.job_type == "intern" %}selected{% endif %}>
-                        Intern
-                    </option>
-
-                    <option value="remote"
-                        {% if request.GET.job_type == "remote" %}selected{% endif %}>
-                        Remote
-                    </option>
-
-                    <option value="remote"
-                        {% if request.GET.job_type == "contract" %}selected{% endif %}>
-                        Contract
-                    </option>
+                    {% for key , value in job_types.items %}
+                        <option value="{{key}}" {% if request.GET.job_type == key %}selected{% endif %}>{{value}}</option>
+                    {% endfor %}
                 </select>
             </div>
 
@@ -102,12 +80,6 @@
             <button type="submit" class="btn btn-primary">
                 Apply Filter
             </button>
-
-            {% if request.user.is_company %}
-                <a href="{% url 'post-job'%}" class="btn btn-primary">
-                    Post Job
-                </a>
-            {% endif %}
 
         </form>
     </div>
