@@ -2,7 +2,7 @@ from django.shortcuts import render , redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET , require_POST
 from django.contrib import messages
-from jobs.models import Application
+from jobs.models import Application , JobCategory , Job
 
 
 # ===========SERVICES=============
@@ -10,7 +10,7 @@ from apps.service import AppService , ReviewService
 from jobs.service import ApplicationService , JobService
 from discussion.service import DiscussionService
 from vote.service import VoteService
-from .service import DiscussionDashboardService, JobDashboardService
+from .service import DiscussionDashboardService, JobDashboardService , ApplicationDashboardService
 
 # ===========Exceptions===========
 from saas_com.core.exceptions import ObjectNotFound , PermissionDenied , InvalidForm
@@ -23,6 +23,7 @@ discussion_service = DiscussionService()
 vote_service = VoteService()
 review_service = ReviewService()
 discussion_dashboard_service = DiscussionDashboardService()
+application_dashboard_service = ApplicationDashboardService()
 
 
 @login_required(login_url = "login")
@@ -68,16 +69,25 @@ def app_stats(request , id):
 
 @login_required(login_url = "login")
 @require_GET
-def my_applications(request):
+def user_application_dashboard(request):
     query_param = request.GET.dict()
     page_num = query_param.pop("page" , 1)
+
+    per_page = query_param.pop("per_page" , 20)
+
     if not request.user.is_developer:
         messages.info(request , "This feature isn't available for you")
         return redirect("home")
+    
     context = {}
-    context["applications"] = application_service.get_user_applications(request.user , page_num , **query_param)
+
+    result = application_dashboard_service.main_dashboard(request.user , per_page , page_num , **query_param)
+    
     context["statuses"] = Application().get_application_status_dict()
-    return render(request , "my-applications.html" , context)
+    context["categories"] = JobCategory.objects.select_related("parent").all()
+    context["job_types"] = Job().get_job_type_as_dict()
+    context.update(result)
+    return render(request , "user-application-dashboard.html" , context)
 
 @login_required(login_url = "login")
 @require_GET

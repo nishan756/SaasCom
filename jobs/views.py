@@ -3,6 +3,7 @@ from django.views.decorators.http import require_GET , require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from saas_com.core.service import is_safe_url
+from .models import Job
 
 # =============Forms===============
 from .forms import JobForm , ApplicationForm
@@ -31,6 +32,7 @@ def all_jobs(request):
     query_set = request.GET.dict()
     page_num = query_set.pop("page" , 1)
     categories = job_cat_service.categories()
+    job_types = Job().get_job_type_as_dict()
     try:
         jobs = job_service.all_jobs(page_num = page_num , **query_set)
 
@@ -44,7 +46,8 @@ def all_jobs(request):
     
     context = {
         "jobs":jobs,
-        "categories":categories
+        "categories":categories,
+        "job_types":job_types
     }
     return render(request , "jobs.html" , context)
 

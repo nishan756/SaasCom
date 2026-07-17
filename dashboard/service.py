@@ -1,4 +1,4 @@
-from .repository import DiscussionDashboardRepo, JobDashboardRepo
+from .repository import DiscussionDashboardRepo, JobDashboardRepo , ApplicationDashboardRepo
 from django.core.paginator import Paginator
 from vote.service import VoteService
 from django.core.paginator import Paginator
@@ -100,3 +100,50 @@ class JobDashboardService:
 
     def job_stats(self):
         pass
+
+
+class ApplicationDashboardService:
+
+    repo = ApplicationDashboardRepo()
+
+    def main_dashboard(self , user , per_page , page_num ,  **query_param):
+        supported_query_field = {"date_from" , "date_to" , "job_title" , "status" , "category" , "job_type"}
+
+        query_param = {key:value for key , value in query_param.items() if key in supported_query_field}
+
+        result = self.repo.main_dashboard(user , **query_param)
+
+        applications = result.pop("applications")
+
+        paginator = Paginator(applications , per_page)
+
+        applications = paginator.get_page(page_num)
+        
+        result["applications"] = applications
+
+        total_full_time = result["stats"].pop("total_full_time")
+        total_remote = result["stats"].pop("total_remote")
+        total_intern = result["stats"].pop("total_intern")
+        total_contract = result["stats"].pop("total_contract")
+        total_hybrid = result["stats"].pop("total_hybrid")
+        total_part_time = result["stats"].pop("total_part_time")
+
+        total_application = result["stats"]["total_application"]
+
+        temp_stats = {}
+
+        temp_stats["full_time_ratio"] = f"{round(total_full_time*100 / total_application , 2) if total_application > 0 else 0 }%"
+
+        temp_stats["part_time_ratio"] = f"{round(total_part_time*100 / total_application , 2) if total_application > 0 else 0 }%"
+
+        temp_stats["contract_ratio"] = f"{round(total_contract*100 / total_application , 2) if total_application > 0 else 0 }%"
+
+        temp_stats["hybrid_ratio"] = f"{round(total_hybrid *100 / total_application , 2) if total_application > 0 else 0 }%"
+
+        temp_stats["intern_ratio"] = f"{round(total_intern *100 / total_application , 2) if total_application > 0 else 0 }%"
+
+        temp_stats["remote_ratio"] = f"{round(total_remote *100 / total_application , 2) if total_application > 0 else 0 }%"
+
+        result["stats"].update(temp_stats)
+
+        return result

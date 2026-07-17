@@ -5,6 +5,7 @@ from report.service import ReportService
 from django.db.models import Count , Q
 from bookmark.service import BookmarkService
 from jobs.service import JobService
+from jobs.models import Application
 
 class DiscussionDashboardRepo:
 
@@ -104,3 +105,68 @@ class JobDashboardRepo:
 
     def job_stats(self):
         pass
+
+
+class ApplicationDashboardRepo:
+
+    def main_dashboard(self , user , **query_param):
+        applications = Application.objects.select_related("job" , "job__user" , "job__category").filter(user = user)
+        
+        # Query
+        date_from = query_param.get("date_from" , None)
+        date_to = query_param.get("date_to" , None)
+
+        if date_from and date_to:
+            applications = applications.filter(applied_at__gte = date_from , applied_at__lte = date_to)
+        
+        elif date_from:
+            applications = applications.filter(applied_at__gte = date_from)
+        
+        elif date_to:
+            applications = applications.filter(applied_at__lte = date_to)
+
+        
+        stats = applications.aggregate(
+
+            # By Status
+            total_active_application = Count("id" , filter = Q(status__in = {"pending" , "under_review" , "shortlisted" , "interview_scheduled"})),
+            total_application = Count("id" , distinct = True),
+            total_pending=Count("id", filter=Q(status="pending")),
+            total_under_review=Count("id", filter=Q(status="under_review")),
+            total_shortlisted=Count("id", filter=Q(status="shortlisted")),
+            total_interview_scheduled=Count("id", filter=Q(status="interview_scheduled")),
+            total_offered=Count("id", filter=Q(status="offered")),
+            total_hired=Count("id", filter=Q(status="hired")),
+            total_rejected_by_employer=Count("id", filter=Q(status="rejected_by_employer")),
+            total_rejected_by_hr=Count("id", filter=Q(status="rejected_by_hr")),
+            total_withdrawn=Count("id", filter=Q(status="withdrawn")),
+
+            # By Job Type
+            total_full_time = Count("id" , filter = Q(job__job_type = 'full_time')),
+            total_intern = Count("id" , filter = Q(job__job_type = 'intern')),
+            total_part_time = Count("id" , filter = Q(job__job_type = 'part_time')),
+            total_contract = Count("id" , filter = Q(job__job_type = 'contract')),
+            total_remote = Count("id" , filter = Q(job__job_type = 'remote')),
+            total_hybrid = Count("id" , filter = Q(job__job_type = 'hybrid')),
+            
+        )
+
+
+        job_title = query_param.get("job_title" , None)
+        status = query_param.get("status" , None)
+        category = query_param.get("category" , None)
+
+        if job_title:
+            applications = applications.filter(job__title__icontains = job_title)
+        
+        if status:
+            applications = applications.filter(status = status)
+        
+        if category:
+            applications = applications.filter(job__category__id = category)
+
+
+        return {
+            "applications":applications,
+            "stats":stats,
+        }

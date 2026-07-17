@@ -1,0 +1,494 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+{{request.user.full_name}} | Applications
+{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/user-application-dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/application-status.css' %}">
+{% endblock css %}
+
+{% block content %}
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper" style="margin-right:auto;" id="mainDashboardContent">
+    
+        <form method="GET" action={% url 'user-application-dashboard' %}>
+            
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-body p-3">
+                    <div class="row g-3">
+
+                        <!--Title-->
+                        <div class="col-6 col-md-3">
+                            <div class="position-relative">
+                                <i class="fa-solid fa-magnifying-glass text-muted position-absolute top-50 start-0 translate-middle-y ms-3" style="font-size: 0.85rem;"></i>
+                                <input type="text" class="form-control ps-5" placeholder="Search by job title" name="job_title" value="{{request.GET.job_title}}">
+                            </div>
+                        </div>
+
+                        <!--Filter By Status-->
+                        <div class="col-6 col-md-3">
+                            <select class="form-select" name="status">
+                                <option value="" selected>Status</option>
+                                {% for key , value in statuses.items %}
+                                    <option value="{{key}}" {% if request.GET.status == key %}selected{% endif %}>{{value}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!--Filter By Category-->
+                        <div class="col-6 col-md-3">
+                            <select class="form-select" name="category">
+                                <option value="" selected>Category</option>
+                                {% for cat in categories %}
+                                    <option value="{{cat.id}}">{{cat.title}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                            <select class="form-select" name="job_type">
+                                <option value="" selected>Job Type</option>
+                                {% for key , value in job_types.items %}
+                                    <option value="{{key}}" {% if request.GET.job_type == key %}selected{% endif %}>{{value}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!--Per page-->
+                        <div class="col-6 col-md-3">
+                            <input type="number" class="form-control" name="per_page" value="{{request.GET.per_page | default:'20'}}" placeholder="Application Per Page" max="100" min="1" required>
+                        </div>
+
+                        <!--Date Range-->
+                        <div class="col-6 col-md-3">
+                            <input type="date" class="form-control" name="date_from" value="{{request.GET.date_from}}">
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                            <input type="date" class="form-control" name="date_to" value="{{request.GET.date_to}}">
+                        </div>
+
+                        <button class='col-6 col-md-3 btn btn-primary' type='submit'>Filter</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- 1. Overview Statistics Cards -->
+        <div class="row g-3 mb-4">
+            <!-- Total -->
+            <div class="col-6 col-xl-3">
+                <div class="card p-3 h-90">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <span class="text-muted fw-semibold text-xs text-uppercase" style="font-size: 0.75rem;">Total Applications</span>
+                            <h3 class="fw-bold mt-1 mb-0">{{stats.total_application}}</h3>
+                        </div>
+                        <div class="stat-icon bg-indigo-light text-indigo">
+                            <i class="fa-solid fa-folder-open"></i>
+                        </div>
+                    </div>
+                    
+                    {% comment %}
+                        <div class="text-success text-xs fw-semibold mt-auto" style="font-size: 0.8rem;">
+                            <i class="fa-solid fa-arrow-up me-1"></i>+12% <span class="text-muted fw-normal ms-1">vs last month</span>
+                        </div>
+                    {% endcomment %}
+
+                </div>
+            </div>
+            
+            <!-- Active -->
+            <div class="col-6 col-xl-3">
+                <div class="card p-3 h-90">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <span class="text-muted fw-semibold text-xs text-uppercase" style="font-size: 0.75rem;">Active Applications</span>
+                            <h3 class="fw-bold mt-1 mb-0">{{stats.total_active_application}}</h3>
+                        </div>
+                        <div class="stat-icon text-primary bg-primary-light" style="color: var(--secondary); background-color: #EEF2F6;">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                    </div>
+
+                    {% comment %}
+                        <div class="text-success text-xs fw-semibold mt-auto" style="font-size: 0.8rem;">
+                            <i class="fa-solid fa-arrow-up me-1"></i>+4% <span class="text-muted fw-normal ms-1">vs last week</span>
+                        </div>
+                    {% endcomment %}
+
+                </div>
+            </div>
+            <!-- Pending -->
+            <div class="col-6 col-xl-3">
+                <div class="card p-3 h-100">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <span class="text-muted fw-semibold text-xs text-uppercase" style="font-size: 0.75rem;">Pending</span>
+                            <h3 class="fw-bold mt-1 mb-0">{{stats.total_pending}}</h3>
+                        </div>
+                        <div class="stat-icon" style="color: var(--status-pending); background-color: var(--status-pending-bg);">
+                            <i class="fa-regular fa-clock"></i>
+                        </div>
+                    </div>
+
+                    {% comment %}
+                        <div class="text-muted text-xs mt-auto" style="font-size: 0.8rem;">
+                            Avg: <span class="fw-semibold text-dark">4 days</span> in pipeline
+                        </div>
+                    {% endcomment %}
+                </div>
+            </div>
+            <!-- Shortlisted -->
+            <div class="col-6 col-xl-3">
+                <div class="card p-3 h-100">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <span class="text-muted fw-semibold text-xs text-uppercase" style="font-size: 0.75rem;">Shortlisted</span>
+                            <h3 class="fw-bold mt-1 mb-0">{{stats.total_shortlisted}}</h3>
+                        </div>
+                        <div class="stat-icon" style="color: var(--status-shortlisted); background-color: var(--status-shortlisted-bg);">
+                            <i class="fa-regular fa-star"></i>
+                        </div>
+                    </div>
+
+                    {% comment %}
+                        <div class="text-success text-xs fw-semibold mt-auto" style="font-size: 0.8rem;">
+                            <i class="fa-solid fa-arrow-up me-1"></i>+2 <span class="text-muted fw-normal ms-1">new this week</span>
+                        </div>
+                    {% endcomment %}
+                </div>
+            </div>
+            <!-- Interview Scheduled -->
+            <div class="col-6 col-xl-3">
+                <div class="card p-3 h-100">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <span class="text-muted fw-semibold text-xs text-uppercase" style="font-size: 0.75rem;">Interview Scheduled</span>
+                            <h3 class="fw-bold mt-1 mb-0">{{stats.total_interview_scheduled}}</h3>
+                        </div>
+                        <div class="stat-icon" style="color: var(--status-interview); background-color: var(--status-interview-bg);">
+                            <i class="fa-regular fa-calendar-check"></i>
+                        </div>
+                    </div>
+                    {% comment %}
+                    <div class="text-indigo text-xs fw-semibold mt-auto" style="font-size: 0.8rem;">
+                        Next is scheduled tomorrow
+                    </div>
+                    {% endcomment %}
+                </div>
+            </div>
+            <!-- Accepted -->
+            <div class="col-6 col-xl-3">
+                <div class="card p-3 h-100">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <span class="text-muted fw-semibold text-xs text-uppercase" style="font-size: 0.75rem;">Offerd</span>
+                            <h3 class="fw-bold mt-1 mb-0">{{stats.total_offered}}</h3>
+                        </div>
+                        <div class="stat-icon" style="color: var(--status-accepted); background-color: var(--status-accepted-bg);">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                    </div>
+                    {% comment %}
+                    <div class="text-success text-xs fw-semibold mt-auto" style="font-size: 0.8rem;">
+                        Awesome! Keep it up!
+                    </div>
+                    {% endcomment %}
+                </div>
+            </div>
+            <!-- Rejected -->
+            <div class="col-6 col-xl-3">
+                <div class="card p-3 h-100">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <span class="text-muted fw-semibold text-xs text-uppercase" style="font-size: 0.75rem;">Rejected By HR</span>
+                            <h3 class="fw-bold mt-1 mb-0">{{stats.total_rejected_by_hr}}</h3>
+                        </div>
+                        <div class="stat-icon" style="color: var(--status-rejected); background-color: var(--status-rejected-bg);">
+                            <i class="fa-solid fa-ban"></i>
+                        </div>
+                    </div>
+                    {% comment %}
+                    <div class="text-muted text-xs mt-auto" style="font-size: 0.8rem;">
+                        Rate: <span class="fw-semibold text-dark">16.9%</span> overall
+                    </div>
+                    {% endcomment %}
+                </div>
+            </div>
+
+            <div class="col-6 col-xl-3">
+                <div class="card p-3 h-100">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <span class="text-muted fw-semibold text-xs text-uppercase" style="font-size: 0.75rem;">Rejected By You</span>
+                            <h3 class="fw-bold mt-1 mb-0">{{stats.total_rejected_by_employee}}</h3>
+                        </div>
+                        <div class="stat-icon" style="color: var(--status-rejected); background-color: var(--status-rejected-bg);">
+                            <i class="fa-solid fa-ban"></i>
+                        </div>
+                    </div>
+                    {% comment %}
+                    <div class="text-muted text-xs mt-auto" style="font-size: 0.8rem;">
+                        Rate: <span class="fw-semibold text-dark">16.9%</span> overall
+                    </div>
+                    {% endcomment %}
+                </div>
+            </div>
+            <!-- Withdrawn -->
+            <div class="col-6 col-xl-3">
+                <div class="card p-3 h-100">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <span class="text-muted fw-semibold text-xs text-uppercase" style="font-size: 0.75rem;">Withdrawn</span>
+                            <h3 class="fw-bold mt-1 mb-0">{{stats.total_withdrawn}}</h3>
+                        </div>
+                        <div class="stat-icon" style="color: var(--status-withdrawn); background-color: var(--status-withdrawn-bg);">
+                            <i class="fa-regular fa-circle-xmark"></i>
+                        </div>
+                    </div>
+                    {% comment %}
+                    <div class="text-muted text-xs mt-auto" style="font-size: 0.8rem;">
+                        Manual cancellations
+                    </div>
+                    {% endcomment %}
+                </div>
+            </div>
+        </div>
+
+        <!-- 4 & 5. Category Breakdown & Job Type Statistics -->
+        <div class="row g-4 mb-4">
+
+            <!-- Job Type and Work Model Cards -->
+            <div class="col-12 col-xl-12">
+                <div class="card p-4 h-100">
+                    <div class="mb-4">
+                        <h2 class="h5 fw-bold mb-1">Job Type & Workplace Stats</h2>
+                    </div>
+                    <div class="row g-3 mb-2">
+                        <div class="col-6">
+                            <div class="p-3 border rounded-3 bg-light bg-opacity-50">
+                                <span class="text-muted text-xs d-block">Full-Time</span>
+                                <span class="fs-4 fw-bold">{{stats.total_full_time}}</span> <small class="text-muted">({{stats.full_time_ratio}})</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 border rounded-3 bg-light bg-opacity-50">
+                                <span class="text-muted text-xs d-block">Part-Time</span>
+                                <span class="fs-4 fw-bold">{{stats.total_part_time}}</span> <small class="text-muted">({{stats.part_time_ratio}})</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 border rounded-3 bg-light bg-opacity-50">
+                                <span class="text-muted text-xs d-block">Remote</span>
+                                <span class="fs-4 fw-bold">{{stats.total_remote}}</span> <small class="text-muted">({{stats.remote_ratio}})</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 border rounded-3 bg-light bg-opacity-50">
+                                <span class="text-muted text-xs d-block">Contract</span>
+                                <span class="fs-4 fw-bold">{{stats.total_contract}}</span> <small class="text-muted">({{stats.contract_ratio}})</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 border rounded-3 bg-light bg-opacity-50">
+                                <span class="text-muted text-xs d-block">Hybrid</span>
+                                <span class="fs-4 fw-bold">{{stats.total_hybrid}}</span> <small class="text-muted">({{stats.hybrid_ratio}})</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 border rounded-3 bg-light bg-opacity-50">
+                                <span class="text-muted text-xs d-block">Internship</span>
+                                <span class="fs-4 fw-bold">{{stats.total_intern}}</span> <small class="text-muted">({{stats.intern_ratio}})</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+        <!--Applications Started-->
+        <div class="row g-4 mb-5" id="applications-section">
+
+            <div class="col-12 col-xl-12">
+                <div class="card h-100">
+                    <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="h5 fw-bold mb-1">Your Applications</h2>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">Company</th>
+                                    <th>Job Title</th>
+                                    <th>Category</th>
+                                    <th>Applied Date</th>
+                                    <th>Status</th>
+                                    {% comment %}
+                                        <th class="text-end pe-4">Action</th>
+                                    {% endcomment %}
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                {% for application in applications %}
+                                    <tr>
+                                        <td class="ps-4 fw-semibold">
+                                            <a href="{% url 'profile' application.job.user.username %}" class='no-underline'>
+                                                {{application.job.user.full_name}}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'job-detail' application.job.id %}" class='no-underline'>
+                                                {{application.job.title}}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'all-jobs' %}?category={{application.job.category}}" class='no-underline'>
+                                                {{application.job.category}}
+                                            </a>
+                                        </td>
+                                        <td>{{application.applied_at}}</td>
+                                        <td><span class="badge bg status-{{application.status}}">{{application.get_status_display}}</span></td>
+
+                                        {% comment %}
+                                            <td class="text-end pe-4"><button class="btn btn-light btn-sm text-xs px-3 rounded-pill border">None</button></td>
+                                        {% endcomment %}
+                                    </tr>
+                                {% endfor %}
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            {% if applications.has_other_pages %}
+            <nav aria-label="Application Pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+
+                    <!-- Previous -->
+                    {% if applications.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link"
+                            href="?page={{ applications.previous_page_number }}
+                            {% if request.GET.per_page %}
+                                &per_page={{request.GET.per_page}}
+                            {% endif %}
+                            
+                            {% if request.GET.job_title %}
+                                &job_title={{ request.GET.job_title }}
+                            {% endif %}
+                            
+                            {% if request.GET.status %}
+                                &status={{ request.GET.status }}
+                            {% endif %}
+                            
+                            {% if request.GET.category %}
+                                &category={{ request.GET.category }}
+                            {% endif %}
+                            
+                            {% if request.GET.date_from %}
+                                &date_from={{ request.GET.date_from }}
+                            {% endif %}
+                            
+                            {% if request.GET.date_to %}
+                                &date_to={{ request.GET.date_to }}
+                            {% endif %}">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">
+                            <i class="bi bi-chevron-left"></i>
+                        </span>
+                    </li>
+                    {% endif %}
+
+                    <!-- Next -->
+                    {% if applications.has_next %}
+                    <li class="page-item">
+                            <a class="page-link"
+                            href="?page={{ applications.next_page_number }}
+                            {% if request.GET.per_page %}
+                                &per_page={{request.GET.per_page}}
+                            {% endif %}
+                            
+                            {% if request.GET.job_title %}
+                                &job_title={{ request.GET.job_title }}
+                            {% endif %}
+                            
+                            {% if request.GET.status %}
+                                &status={{ request.GET.status }}
+                            {% endif %}
+                            
+                            {% if request.GET.category %}
+                                &category={{ request.GET.category }}
+                            {% endif %}
+                            
+                            {% if request.GET.date_from %}
+                                &date_from={{ request.GET.date_from }}
+                            {% endif %}
+                            
+                            {% if request.GET.date_to %}
+                                &date_to={{ request.GET.date_to }}
+                            {% endif %}">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">
+                            <i class="bi bi-chevron-right"></i>
+                        </span>
+                    </li>
+                    {% endif %}
+
+                </ul>
+
+                <div class="text-center text-muted small mt-2">
+                    Showing page <strong>{{ applications.number }}</strong>
+                    of
+                    <strong>{{ applications.paginator.num_pages }}</strong>
+
+                    •
+
+                    Total Applications:
+                    <strong>{{ applications.paginator.count }}</strong>
+                </div>
+            </nav>
+            {% endif %}
+
+            <!--End of applications -->
+            
+        </div>
+
+    </div>
+
+    <!-- 10. Empty State Layout (Hidden by Default) -->
+    <div class="container py-5 d-none" id="emptyStateWrapper">
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center">
+                <div class="card border-0 py-5 px-4 shadow-sm">
+                    <div class="p-3 bg-indigo-light text-indigo rounded-circle mx-auto mb-4" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-folder-open fa-2xl"></i>
+                    </div>
+                    <h3 class="fw-bold mb-2 text-dark">You haven't applied to any jobs yet.</h3>
+                    <p class="text-muted mb-4 fs-6">Let's find the perfect matching opportunity for you on our dev community portal.</p>
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button class="btn btn-primary" onclick="toggleEmptyState()"><i class="fa-solid fa-briefcase me-2"></i>Browse Jobs</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

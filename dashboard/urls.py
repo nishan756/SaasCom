@@ -1,4 +1,4 @@
-from .views import dashboard_entry_point , apps_dashboard , app_stats , my_applications , discussion_dashboard , jobs_dashboard , job_stats , job_applications , update_application_status , application_detail , discussion_stats
+from .views import dashboard_entry_point , apps_dashboard , app_stats , user_application_dashboard , discussion_dashboard , jobs_dashboard , job_stats , job_applications , update_application_status , application_detail , discussion_stats
 from django.urls import path
 
 urlpatterns = [
@@ -8,7 +8,7 @@ urlpatterns = [
     path('apps/stats/<uuid:id>/' , app_stats , name = "app-stats"),
 
     # Jobs related URLS
-    path("my-applications/" , my_applications , name = "my-applications"),
+    path("user-application-dashboard/" , user_application_dashboard , name = "user-application-dashboard"),
     path("jobs/" , jobs_dashboard , name = "jobs-dashboard"),
     path("jobs/applications/<uuid:id>" , job_applications , name = "job-applications"),
     path("job/update-application-status/<uuid:id>/<str:status>/" , update_application_status , name = "update-application-status"),
