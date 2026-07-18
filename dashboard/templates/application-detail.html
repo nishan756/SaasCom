@@ -25,7 +25,14 @@
                 <div>
 
                     <p class="page-subtitle">
-                        Application of {{application.user.full_name}} <span>&rarr;</span> <a href="{% url 'job-applications' application.job.id %}" class='no-underline'>View other applications</a>
+                        Application of {{application.user.full_name}} <span>&rarr;</span> 
+                        <a href="{% if request.user.is_company %}
+                                    {% url 'job-applications' application.job.id %}
+                                {% else %}
+                                    {% url 'user-application-dashboard'%} 
+                                {% endif %}" class='no-underline'>
+                            View other applications
+                        </a>
                     </p>
 
                 </div>
