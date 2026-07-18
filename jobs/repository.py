@@ -85,9 +85,9 @@ class ApplicationRepo:
     def has_application(self , job_id , user):
         return Application.objects.filter(Q(job__id = job_id) , Q(user = user)).exists()
     
-    def get_application(self , id , user):
+    def get_application(self , id ):
         try:
-            return Application.objects.select_related("user").get(id = id , job__user = user)
+            return Application.objects.select_related("user").get(id = id)
         except Application.DoesNotExist:
             raise ObjectNotFound("Application not found")
     
