@@ -71,40 +71,63 @@ class ApplicationService:
     repo = ApplicationRepo()
     
     APPLICATION_ACTIONS = {
-        "pending": {
-            "under_review":"Under review",
-            "rejected_by_hr":"Rejected by HR",
+
+        "company":{
+            "pending": {
+                "under_review":"Under review",
+                "rejected_by_hr":"Rejected by HR",
+            },
+
+            "under_review": {
+                "shortlisted":"Shortlisted",
+                "rejected_by_hr":"Rejected by HR",
+
+            },
+
+            "shortlisted": {
+                "interview_scheduled":"Interview Scheduled",
+                "offered":"Offered",
+                "rejected_by_hr":"Rejected by HR",
+
+            },
+
+            "interview_scheduled": {
+                "offered":"Offered",
+                "rejected_by_hr":"Rejected by HR",
+            },
+
+            "offer_accepted":{
+                "hired":"Hired",
+            }
         },
 
-        "under_review": {
-            "shortlisted":"Shortlisted",
-            "rejected_by_hr":"Rejected by HR",
+        "developer":{
+            "pending":{
+                "withdrawn":"Withdrawn",
+            },
+            "offered":{
+                "offer_declined":"Offer Declined",
+                "offer_accepted":"Offer Accepted",
+            },
+            "interview_scheduled": {
+                "withdrawn":"Withdrawn",
+            },
+            "under_review": {
+                "withdrawn":"Withdrawn",
 
-        },
-
-        "shortlisted": {
-            "interview_scheduled":"Interview Scheduled",
-            "offered":"Offered",
-            "rejected_by_hr":"Rejected by HR",
-
-        },
-
-        "interview_scheduled": {
-            "offered":"Offered",
-            "rejected_by_hr":"Rejected by HR",
-        },
-
-        "offered": {
-            "hired":"Hired",
-        },
+            },
+            "shortlisted":{
+                "withdrawn":"Withdrawn",
+            }
+        }
 
     }
 
     def has_application(self , job_id , user):
         return self.repo.has_application(job_id , user)
     
-    def get_application(self , id , user):
-        return self.repo.get_application(id , user)
+    def get_application(self , id):
+        return self.repo.get_application(id)
     
     def get_user_applications(self , user , page_num , **query_param):
         valied_query_fields = ["job_title" , "status" , "company" , "applied_at"]
@@ -149,9 +172,12 @@ class ApplicationService:
     
     def update_application_status(self , id , user , status):
         
-        application = self.get_application(id=id, user=user)
+        application = self.get_application(id=id)
 
-        allowed_actions = self.APPLICATION_ACTIONS.get(application.status, {})
+        allowed_actions = self.APPLICATION_ACTIONS.get(user.user_type , {}).get(application.status , {})
+
+        if application.user != user and application.job.user != user:
+            return PermissionDenied("OOPS! You can't perform this operation")
 
         if status not in allowed_actions:
             raise InvalidForm("You can't perform this operation.")
