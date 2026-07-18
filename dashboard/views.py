@@ -86,6 +86,7 @@ def user_application_dashboard(request):
         context["categories"] = JobCategory.objects.select_related("parent").all()
         context["job_types"] = Job().get_job_type_as_dict()
         context.update(result)
+        context["statuses"] = Application.get_application_status_dict()
         return render(request , "user-application-dashboard.html" , context)
     
     except Exception as e:
@@ -137,26 +138,27 @@ def job_applications(request , id):
 @login_required(login_url = "login")
 @require_POST
 def update_application_status(request , id , status):
-    if not request.user.is_company:
-        return redirect("home")
     
-    job_id = request.POST.get("job_id")
-    
+    job_id = request.POST.get("job_id" , None)
     try:
-        application_service.update_application_status(id = id , user = request.user , status = status)
-        messages.success(request , "Successfully updated application status")
+        application_service.update_application_status(
+            id=id,
+            user=request.user,
+            status=status,
+        )
+        messages.success(request, "Successfully updated application status")
         return redirect("application-detail" , id)
-    
-    except ObjectNotFound as e:
-        messages.error(request , str(e))
-    
-    except InvalidForm as e:
-        messages.info(request , str(e))
 
-    except Exception as e:
-        messages.error(request , "Something went wrong")
+    except ObjectNotFound as e:
+        messages.error(request, str(e))
+
+    except InvalidForm as e:
+        messages.info(request, str(e))
     
-    return redirect("job-applications" , job_id)
+    except PermissionDenied as e:
+        messages.warning(request , str(e))
+
+    return redirect("job-applications" , job_id if request.user.is_company else "user-application-dashboard")
 
 
 @login_required(login_url = "login")
@@ -164,11 +166,16 @@ def update_application_status(request , id , status):
 def application_detail(request , id):
     context = {}
     try:
-        application = application_service.get_application(id , user = request.user)
+        application = application_service.get_application(id)
+        if application.user != request.user and application.job.user != request.user:
+            return redirect("job-applications" if request.user.is_company else "user-application-dashboard")
+        
     except ObjectNotFound as e:
         messages.error(request , str(e))
+        
     context['application'] = application
-    context["actions"] = ApplicationService.application_actions().get(application.status)
+    context["actions"] = ApplicationService.application_actions().get(request.user.user_type , {}).get(application.status , {})
+    
     return render(request , "application-detail.html" , context)
 
 @login_required(login_url = "login")
