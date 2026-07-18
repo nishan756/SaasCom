@@ -136,35 +136,9 @@
 
                                     <td>
 
-                                        <span class="badge bg status-{{application.status}}">
+                                        <span class="badge bg status-{{application.status}}" style="color:white;">
                                             {{application.get_status_display}}
                                         </span>
-
-                                        {% if application.status == "pending" %}
-
-                                            <span class="status-badge status-pending">
-                                                Pending
-                                            </span>
-
-                                        {% elif application.status == "approved" %}
-
-                                            <span class="status-badge status-reviewed">
-                                                Approved
-                                            </span>
-
-                                        {% elif application.status == "shortlisted" %}
-
-                                            <span class="status-badge status-accepted">
-                                                Shortlisted
-                                            </span>
-
-                                        {% elif application.status == "rejected" %}
-
-                                            <span class="status-badge status-rejected">
-                                                Rejected
-                                            </span>
-
-                                        {% endif %}
 
                                     </td>
 
