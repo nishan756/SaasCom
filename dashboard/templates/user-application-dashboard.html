@@ -226,8 +226,8 @@
                 <div class="card p-3 h-100">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <div>
-                            <span class="text-muted fw-semibold text-xs text-uppercase" style="font-size: 0.75rem;">Rejected By You</span>
-                            <h3 class="fw-bold mt-1 mb-0">{{stats.total_rejected_by_employee}}</h3>
+                            <span class="text-muted fw-semibold text-xs text-uppercase" style="font-size: 0.75rem;">Offer Declined</span>
+                            <h3 class="fw-bold mt-1 mb-0">{{stats.total_offer_declined}}</h3>
                         </div>
                         <div class="stat-icon" style="color: var(--status-rejected); background-color: var(--status-rejected-bg);">
                             <i class="fa-solid fa-ban"></i>
@@ -236,6 +236,47 @@
                     {% comment %}
                     <div class="text-muted text-xs mt-auto" style="font-size: 0.8rem;">
                         Rate: <span class="fw-semibold text-dark">16.9%</span> overall
+                    </div>
+                    {% endcomment %}
+                </div>
+            </div>
+
+            <div class="col-6 col-xl-3">
+                <div class="card p-3 h-100">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <span class="text-muted fw-semibold text-xs text-uppercase" style="font-size: 0.75rem;">Offer Accepted</span>
+                            <h3 class="fw-bold mt-1 mb-0">{{stats.total_offer_accepted}}</h3>
+                        </div>
+                        <div class="stat-icon" style="color: var(--status-accepted); background-color: var(--status-accepted-bg);">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                    </div>
+                    
+                    {% comment %}
+                    <div class="text-success text-xs fw-semibold mt-auto" style="font-size: 0.8rem;">
+                        <i class="fa-solid fa-party-horn me-1"></i> Congratulations!
+                    </div>
+                    {% endcomment %}
+                </div>
+            </div>
+
+            <div class="col-6 col-xl-3">
+                <div class="card p-3 h-100">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <span class="text-muted fw-semibold text-xs text-uppercase" style="font-size: 0.75rem;">Hired</span>
+                            <h3 class="fw-bold mt-1 mb-0">{{stats.total_hired}}</h3>
+                        </div>
+                        
+                        <div class="stat-icon" style="color: var(--status-accepted); background-color: var(--status-accepted-bg);">
+                            <i class="fa-solid fa-briefcase"></i>
+                        </div>
+                    </div>
+                    
+                    {% comment %}
+                    <div class="text-success text-xs fw-semibold mt-auto" style="font-size: 0.8rem;">
+                        <i class="fa-solid fa-champagne-glasses me-1"></i> You're in!
                     </div>
                     {% endcomment %}
                 </div>

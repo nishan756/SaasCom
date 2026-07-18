@@ -137,7 +137,8 @@ class ApplicationDashboardRepo:
             total_interview_scheduled=Count("id", filter=Q(status="interview_scheduled")),
             total_offered=Count("id", filter=Q(status="offered")),
             total_hired=Count("id", filter=Q(status="hired")),
-            total_rejected_by_employer=Count("id", filter=Q(status="rejected_by_employer")),
+            total_offer_declined=Count("id", filter=Q(status="offer_declined")),
+            total_offer_accepted=Count("id", filter=Q(status="offer_accepted")),
             total_rejected_by_hr=Count("id", filter=Q(status="rejected_by_hr")),
             total_withdrawn=Count("id", filter=Q(status="withdrawn")),
 
