@@ -33,6 +33,15 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        .dashboard-header {
+            background: linear-gradient(135deg, #23a129 0%, #0e0a27 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
         /* Utility Styles */
         .card {
             background: #FFFFFF;
