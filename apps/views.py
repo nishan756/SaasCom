@@ -222,3 +222,5 @@ def del_review(request , id):
         messages.error(request , str(e))
     return redirect(HTTP_REFERER)    
 
+def custom_404(request , exception):
+    return render(request , "404.html")
