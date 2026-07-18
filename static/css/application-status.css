@@ -15,7 +15,8 @@
     color: #000;
 }
 
-.status-offered {
+.status-offered , 
+.status-offer_accepted {
     background: #198754;
 }
 
@@ -24,8 +25,12 @@
 }
 
 .status-rejected_by_hr,
-.status-rejected_by_employer {
+.status-offer_declined {
     background: #dc3545;
+}
+
+.status-offer_declined{
+    color: white;
 }
 
 .status-withdrawn{
