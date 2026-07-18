@@ -170,7 +170,8 @@ class Application(models.Model):
         INTERVIEW_SCHEDULED = "interview_scheduled", "Interview Scheduled"
         OFFERED = "offered", "Offered"
         HIRED = "hired", "Hired"
-        REJECTED_BY_EMPLOYER = "rejected_by_employer", "Rejected by Employer"
+        OFFER_DECLINED = "offer_declined", "Offer Declined"
+        OFFER_ACCEPTED = "offer_accepted", "Offer Accepted"
         REJECTED_BY_HR = "rejected_by_hr", "Rejected by HR"
         WITHDRAWN = "withdrawn", "Withdrawn"
     status = models.CharField(max_length = 20 , choices = StatusChoices.choices , default = StatusChoices.PENDING)
