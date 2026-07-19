@@ -161,22 +161,38 @@ def update_application_status(request , id , status):
     return redirect("job-applications" , job_id if request.user.is_company else "user-application-dashboard")
 
 
-@login_required(login_url = "login")
+@login_required(login_url="login")
 @require_GET
-def application_detail(request , id):
-    context = {}
+def application_detail(request, id):
     try:
         application = application_service.get_application(id)
-        if application.user != request.user and application.job.user != request.user:
-            return redirect("job-applications" if request.user.is_company else "user-application-dashboard")
-        
-    except ObjectNotFound as e:
-        messages.error(request , str(e))
-        
-    context['application'] = application
-    context["actions"] = ApplicationService.application_actions().get(request.user.user_type , {}).get(application.status , {})
-    
-    return render(request , "application-detail.html" , context)
+    except ObjectNotFound as exc:
+        messages.error(request, str(exc))
+        return redirect(
+            "job-applications"
+            if request.user.is_company
+            else "user-application-dashboard"
+        )
+
+    is_applicant = application.user == request.user
+    is_company = application.job.user == request.user
+
+    if not (is_applicant or is_company):
+        messages.warning(request, "You can't view this application")
+        return redirect(
+            "job-applications"
+            if request.user.is_company
+            else "user-application-dashboard"
+        )
+
+    context = {
+        "application": application,
+        "actions": ApplicationService.application_actions()
+            .get(request.user.user_type, {})
+            .get(application.status, {}),
+    }
+
+    return render(request, "application-detail.html", context)
 
 @login_required(login_url = "login")
 @require_GET
