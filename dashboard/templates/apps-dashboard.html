@@ -8,6 +8,7 @@ Apps | Dashboard
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/apps-dashboard.css'%}">
+    <link rel="stylesheet" href="{% static 'css/app-status.css'%}">
 {% endblock css %}
 
 {% block content %}
@@ -29,85 +30,357 @@ Apps | Dashboard
 </div>
 
 <div class="container my-5">
-    <div class="row g-4 mb-5">
+    
+    <!-- Filter Section -->
+    <div class="card filter-card p-4 mb-5">
+        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-funnel text-primary me-2" style="color: #6f42c1 !important;"></i>Filter</h5>
+        <form method="GET" class="row g-3 align-items-end">
+            
+            <div class="col-md-12">
+                <label for="title" class="form-label text-secondary small fw-semibold">Search App</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" class="form-control border-start-0" id="name" name="name" placeholder="Type name..." value="{{ request.GET.name }}">
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <label for="date_from" class="form-label text-secondary small fw-semibold">Date From</label>
+                <input type="date" class="form-control" id="date_from" name="date_from" value="{{ request.GET.date_from }}">
+            </div>
+
+            <div class="col-md-2">
+                <label for="date_to" class="form-label text-secondary small fw-semibold">Date To</label>
+                <input type="date" class="form-control" id="date_to" name="date_to" value="{{ request.GET.date_to }}">
+            </div>
+
+            <div class="col-md-2">
+                <label for="per_page" class="form-label text-secondary small fw-semibold">Per Page</label>
+                <input type="number" class="form-control" id="per_page" name="per_page" value="{{ request.GET.per_page|default:'20' }}" min="1" max="100" required>
+            </div>
+
+            <div class="col-6 col-md-2">
+                <label for="status" class="form-label text-secondary small fw-semibold">Status</label>
+                <select class="form-select" name="status">
+                    <option value="" selected>Status</option>
+                        {% for key , value in statuses.items %}
+                            <option value="{{key}}" {% if request.GET.status == key %}selected{% endif %}>{{value}}</option>
+                        {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-4 d-grid gap-2 d-md-flex justify-content-md-end">
+                <a href="{% url 'apps-dashboard' %}" class="btn btn-outline-secondary w-100 fw-semibold">Reset</a>
+                <button type="submit" class="btn btn-primary w-100 fw-semibold" style="background-color: #6f42c1; border-color: #6f42c1;">Apply</button>
+            </div>
+        </form>
+    </div>
+
+    <!--Quick Summary-->
+    <section class="row g-3 mb-5" aria-label="Quick Summary">
+        <div class="col-6 col-md-4 col-xl-3">
+            <div class="card h-100 p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-medium">Total Apps</span>
+                    <div class="icon-box bg-primary-subtle text-primary"><i class="fas fa-th"></i></div>
+                </div>
+                <h3 class="fw-bold mb-1">{{ stats.total_app|default:0 }}</h3>
+            </div>
+        </div>
+
+        <!--Total Published Apps-->
+        <div class="col-6 col-md-4 col-xl-3">
+            <div class="card h-100 p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-medium">Published Apps</span>
+                    <div class="icon-box bg-warning-subtle text-warning"><i class="fa fa-upload"></i></div>
+                </div>
+                <h3 class="fw-bold mb-1">{{ stats.total_approved_app|default:0 }}</h3>
+            </div>
+        </div>
+
+        <!--Total Pending Apps-->
+
+        <div class="col-6 col-md-4 col-xl-3">
+            <div class="card h-100 p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-medium">Pending Apps</span>
+                    <div class="icon-box bg-warning-subtle text-warning"><i class="fa fa-clock"></i></div>
+                </div>
+                <h3 class="fw-bold mb-1">{{ stats.total_pending_app|default:0 }}</h3>
+            </div>
+        </div>
         
-        <div class="col-md-4">
-            <div class="card stat-card p-4 d-flex flex-row align-items-center">
-                <div>
-                    <h6 class="text-muted mb-1">Total Apps</h6>
-                    <h3 class="fw-bold mb-0">{{ apps.count|default:0 }}</h3>
+        <!--Total Rejected Apps-->
+
+        <div class="col-6 col-md-4 col-xl-3">
+            <div class="card h-100 p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-medium">Rejected Apps</span>
+                    <div class="icon-box bg-danger-subtle text-danger"><i class="fa fa-x"></i></div>
+                </div>
+                <h3 class="fw-bold mb-1">{{ stats.total_rejected_app|default:0 }}</h3>
+            </div>
+        </div>
+
+        {% comment %}
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card h-100 p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-medium">Total Views</span>
+                    <div class="icon-box bg-info-subtle text-info"><i class="bi bi-eye-fill fs-5"></i></div>
+                </div>
+                <h3 class="fw-bold mb-1">{{ total_views|default:"45.2K" }}</h3>
+                <span class="text-muted small text-truncate">User engagement</span>
+            </div>
+        </div>
+        {% endcomment %}
+
+        <h6 class='text-danger'>You can filter this section by date range</h6>
+        <!--Total Votes-->
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card h-100 p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-medium">Total Votes</span>
+                    <div class="icon-box bg-success-subtle text-success"><i class="fa fa-arrow-up"></i></div>
+                    <div class="icon-box bg-success-subtle text-success"><i class="fa fa-arrow-down"></i></div>
+                </div>
+                <h3 class="fw-bold mb-1">{{ stats.total_vote|default:"0" }}</h3>
+            </div>
+        </div>
+
+        <!--Total upvotes-->
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card h-100 p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-medium">Total Upvotes</span>
+                    <div class="icon-box bg-success-subtle text-success"><i class="fa fa-arrow-up"></i></div>
+                </div>
+                <h3 class="fw-bold mb-1">{{ stats.total_upvote|default:"0" }}</h3>
+            </div>
+        </div>
+
+        <!--Total downvotes-->
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card h-100 p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-medium">Total Downvotes</span>
+                    <div class="icon-box bg-success-subtle text-success"><i class="fa fa-arrow-down"></i></div>
+                </div>
+                <h3 class="fw-bold mb-1">{{ stats.total_downvote|default:"0" }}</h3>
+            </div>
+        </div>
+
+        <!--Total Rating-->
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card h-100 p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-medium">Total Rating</span>
+                    <div class="icon-box bg-warning-subtle text-warning"><i class="fa fa-star"></i></div>
+                </div>
+                <h3 class="fw-bold mb-1">{{ stats.total_rating|default:"0.0" }}</h3>
+                <span class="text-muted small text-truncate">Sum of ratings</span>
+            </div>
+        </div>
+
+        <!--Total Report-->
+        {% for key , value in stats.report_stats.items %}
+            <div class="col-6 col-md-4 col-xl-2">
+                <div class="card h-100 p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted small fw-medium">Total {{key|cut:'total_'|title}}</span>
+                        <div class="icon-box bg-warning-subtle text-warning"><i class="fa fa-flag fs-5"></i></div>
+                    </div>
+                    <h3 class="fw-bold mb-1">{{ value|default:"0" }}</h3>
+                </div>
+            </div>
+        {% endfor %}
+    </section>
+
+    <div class="row g-4 mb-5">
+
+        <div class="col-12 col-lg-12">
+            <div class="card h-100 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="h5 fw-bold mb-0">Top Performing Apps</h3>
+                    <span class="badge bg-primary-subtle text-primary px-2 py-1">Top 5</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>App</th>
+                                <th>Upvotes</th>
+                                <th>Avg Rating</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for app in top_apps|slice:":5" %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <img src="{{ app.logo.url }}" alt="" class="app-thumbnail">
+                                        <span class="fw-semibold small">{{ app.name }}</span>
+                                    </div>
+                                </td>
+                                <td class="text small fw-medium">{{ app.total_upvote|default:'0' }}</td>
+                                <td><span class="text-warning small"><i class="bi bi-star-fill me-1"></i>{{ app.avg_rating|default:'0' }}</span></td>
+                                <td class="text-end"><a href="{% url 'app-stats' app.id %}" class="btn btn-sm btn-light border py-1 px-2 small">View Stats</a></td>
+                            </tr>
+                                
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-4">
-            <div class="card stat-card p-4 d-flex flex-row align-items-center">
-                <div>
-                    <h6 class="text-muted mb-1">Pending Apps</h6>
-                    <h3 class="fw-bold mb-0">{{total_pending_apps|default:0}}</h3> </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card stat-card p-4 d-flex flex-row align-items-center">
-                <div>
-                    <h6 class="text-muted mb-1">Rejected Apps</h6>
-                    <h3 class="fw-bold mb-0">{{total_rejected_apps|default:0}}</h3> </div>
-            </div>
-        </div>
-
     </div>
 
-    <div class="card app-table-card p-4">
+    <!-- 8. MAIN APP TABLE -->
+    <section class="card p-4 mb-4" aria-labelledby="main-table-title">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="fw-bold text-dark mb-0">Your Submitted Applications</h4>
+            <h3 id="main-table-title" class="h5 fw-bold mb-0">Your Applications</h3>
         </div>
-
+        
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-light text-secondary">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
                     <tr>
-                        <th scope="col" style="width: 30%;">App</th>
+                        <th scope="col" style="width: 25%;">Name</th>
+                        <th scope="col">Category</th>
                         <th scope="col">Status</th>
+                        <th scope="col">Upvote</th>
+                        <th scope="col">Downvote</th>
+                        <th scope="col">Avg Rating</th>
                         <th scope="col">Published Date</th>
                         <th scope="col" class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-
                     {% for app in apps %}
                         <tr>
                             <td>
                                 <div class="d-flex align-items-center">
                                     <img src="{{app.logo.url}}" alt="App Icon" class="app-thumbnail me-3">
                                     <div>
-                                        <a href="{% url 'app-stats' app.id %}" style="text-decoration:none;"><h6 class="fw-bold mb-1">{{app.name}}</h6></a>
+                                        <a href="{% url 'app-detail' app.id %}" class="no-underline">
+                                            <h6 class="fw-bold text-dark mb-0 small">{{app.name}}</h6>
+                                        </a>
                                     </div>
                                 </div>
                             </td>
+                            <td><span class="text-muted small">{{ app.category|default:"SaaS Tool" }}</span></td>
                             <td>
-                                <span class="badge bg-success bg-opacity-10">{{app.status}}</span>
+                                
+                                <span class="badge status-{{app.status}}">
+                                    {{app.get_status_display}}
+                                </span>
                             </td>
-                            <td>{{app.added_at}}</td>
+                            <td>{{ app.total_upvote }}</td>
+                            <td>{{ app.total_downvote }}</td>
+                            <td>
+                                <span class="text-warning small">
+                                    <i class="bi bi-star-fill me-1"></i>{{ app.avg_rating|default:"0.0" }}
+                                </span>
+                            </td>
+                            <td class="small text-muted">{{app.added_at|date:"M d, Y"}}</td>
                             <td class="text-end">
-                                <a href="{% url 'update-app' app.id %}" class="btn btn-outline-secondary btn-action me-1"><i class="bi bi-pencil-square me-1"></i>Update</a>
-
-                                <form method="POST" action="{% url 'del-app' app.id %}" style="display:inline;">
-                                    {% csrf_token %}
-
-                                    <button type="submit"
-                                            class="btn btn-outline-danger btn-action"
-                                            onclick="return confirm('Are you sure you want to delete {{ app.name }}?');">
-                                        <i class="bi bi-trash me-1"></i>Delete
+                                <!-- Action Dropdown Menu -->
+                                <div class="dropdown d-inline-block">
+                                    <button class="btn btn-sm btn-light border" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots"></i>
                                     </button>
-                                </form>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item small" href="{% url 'app-stats' app.id %}"><i class="bi bi-eye me-2 text-muted"></i> View Stats</a></li>
+                                        <li><a class="dropdown-item small" href="{% url 'update-app' app.id %}"><i class="bi bi-pencil-square me-2 text-muted"></i> Update</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <button type="button" 
+                                                    class="dropdown-item small text-danger" 
+                                                    onclick="openDeleteModal('{{ app.name }}', '{% url "del-app" app.id %}')">
+                                                <i class="bi bi-trash me-2"></i>Delete
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <!-- 10. EMPTY STATE IF NO APPS -->
+                        <tr>
+                            <td colspan="8" class="text-center py-5">
+                                <div class="text-muted display-6 mb-3"><i class="bi bi-box-seam"></i></div>
+                                <h4 class="h6 fw-bold mb-1">No Apps Found</h4>
+                                <p class="small text-muted mb-0">You haven't submitted any SaaS applications yet.</p>
                             </td>
                         </tr>
                     {% endfor %}
-
-                    </tbody>
+                </tbody>
             </table>
+        </div>
+
+        <!-- 9. PAGINATION -->
+        {% if apps.has_other_pages %}
+        <nav class="d-flex justify-content-between align-items-center mt-4" aria-label="Table Navigation">
+            <span class="small text-muted">Page {{ apps.number }} of {{ apps.paginator.num_pages }}</span>
+            <ul class="pagination pagination-sm mb-0">
+                {% if apps.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" 
+                            href="?page={{ apps.previous_page_number }}{% if query_param %}&{{query_param}}{% endif %}">
+                            Previous
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                {% endif %}
+                
+                <li class="page-item active"><span class="page-link">{{ apps.number }}</span></li>
+                
+                {% if apps.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" 
+                            href="?page={{ apps.next_page_number }}{% if query_param %}&{{query_param}}{% endif %}">
+                            Next
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Next</span></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </section>
+
+</div>
+<!-- ================= BOOTSTRAP DELETE CONFIRMATION MODAL ================= -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 0.75rem;">
+            <div class="modal-header border-0 pt-4 px-4 pb-0">
+                <h5 class="modal-title fw-bold text-dark" id="deleteModalLabel">Delete Application?</h5>
+                <button type="button" class="btn-close" data-bs-dynamic-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body px-4 py-3">
+                <p class="text-muted mb-0">Are you sure you want to permanently delete <strong id="deleteAppName" class="text-dark">this application</strong>? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer border-0 pb-4 px-4 pt-2">
+                <button type="button" class="btn btn-light border fw-semibold small" data-bs-dismiss="modal">Cancel</button>
+
+                <form id="deleteAppForm" method="POST" action="" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger fw-semibold small px-3">Confirm Delete</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
+
+{% block js %}
+    <script src="{% static 'js/apps-dashboard.js/'%}"></script>
+{% endblock js %}
 {% endblock %}

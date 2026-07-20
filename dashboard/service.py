@@ -1,7 +1,34 @@
-from .repository import DiscussionDashboardRepo, JobDashboardRepo , ApplicationDashboardRepo
+from .repository import DiscussionDashboardRepo, JobDashboardRepo , ApplicationDashboardRepo , AppsDashboardRepo
 from django.core.paginator import Paginator
 from vote.service import VoteService
 from django.core.paginator import Paginator
+from apps.models import App
+
+class AppsDashboardService:
+
+    repo = AppsDashboardRepo()
+
+    def main_dashboard(self , user , **query_param):
+
+        per_page = query_param.pop("per_page" , 20)
+
+        page = query_param.pop("page" , 1)
+        
+        supported_query_param = {"date_from" , "date_to" , "category" , "name" , "status"}
+
+        query_param = {key:value for key , value in query_param.items() if key in supported_query_param}
+
+        result =  self.repo.main_dashboard(user , **query_param)
+        
+        apps = result.pop("apps")
+
+        paginator = Paginator(apps , per_page)
+
+        result["apps"] = paginator.get_page(page)
+
+        return result
+
+    def app_stats(self):pass
 
 class DiscussionDashboardService:
 
