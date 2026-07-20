@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET , require_POST
 from django.contrib import messages
 from jobs.models import Application , JobCategory , Job
+from apps.models import App
+from urllib.parse import urlencode
 
 
 # ===========SERVICES=============
@@ -10,7 +12,7 @@ from apps.service import AppService , ReviewService
 from jobs.service import ApplicationService , JobService
 from discussion.service import DiscussionService
 from vote.service import VoteService
-from .service import DiscussionDashboardService, JobDashboardService , ApplicationDashboardService
+from .service import DiscussionDashboardService, JobDashboardService , ApplicationDashboardService , AppsDashboardService
 
 # ===========Exceptions===========
 from saas_com.core.exceptions import ObjectNotFound , PermissionDenied , InvalidForm
@@ -24,6 +26,7 @@ vote_service = VoteService()
 review_service = ReviewService()
 discussion_dashboard_service = DiscussionDashboardService()
 application_dashboard_service = ApplicationDashboardService()
+apps_dashboard_service = AppsDashboardService()
 
 
 @login_required(login_url = "login")
@@ -41,6 +44,29 @@ def apps_dashboard(request):
     context['total_rejected_apps'] = user_apps.get("total_rejected_apps")
 
     return render(request , "apps-dashboard.html" , context)
+
+@login_required(login_url = "login")
+@require_GET
+def apps_dashboard(request):
+    query_param = request.GET.dict()
+
+    try:
+        result = apps_dashboard_service.main_dashboard(request.user , **query_param)
+    
+    except Exception as e:
+        messages.error(request , "Something went wrong")
+        return redirect("apps-dashboard")
+
+    context = {
+            "apps":result.pop("apps"),
+            "top_apps":result.pop("top_apps"),
+            "stats":result.pop("stats"),
+            "statuses":App.get_app_status_as_dict(),
+            "query_param":urlencode(query_param)
+        }
+
+    return render(request , "apps-dashboard.html" , context )
+
 
 @login_required(login_url = "login")
 @require_GET
