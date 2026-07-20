@@ -9,6 +9,7 @@ from vote.models import Vote
 from django.core.validators import MinValueValidator , MaxValueValidator
 from saas_com.core.exceptions import TooManyObject
 from django.urls import reverse
+from report.models import Report
 
 User = get_user_model()
 
@@ -44,6 +45,7 @@ class App(models.Model):
     
     status = models.CharField(choices = StatusChoice.choices , max_length = 10 , default = StatusChoice.PENDING)
     votes = GenericRelation(Vote , related_query_name = "apps")
+    reports = GenericRelation(Report , related_query_name = "apps")
     added_at = models.DateTimeField(auto_now_add = True)
 
     def __str__(self):
@@ -51,6 +53,10 @@ class App(models.Model):
     
     def get_absolute_url(self):
         return reverse("app-detail", kwargs={"id": self.id})
+    
+    @classmethod
+    def get_app_status_as_dict(cls):
+        return dict(cls.StatusChoice.choices)
     
     
     class Meta:
