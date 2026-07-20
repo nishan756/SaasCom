@@ -34,16 +34,6 @@ apps_dashboard_service = AppsDashboardService()
 def dashboard_entry_point(request):
     return render(request , "dashboard-entry-point.html")
 
-@login_required(login_url = "login")
-@require_GET
-def apps_dashboard(request):
-    context = {}
-    user_apps = app_service.get_user_apps(request.user)
-    context["apps"] = user_apps.get("apps")
-    context['total_pending_apps'] = user_apps.get("total_pending_apps")
-    context['total_rejected_apps'] = user_apps.get("total_rejected_apps")
-
-    return render(request , "apps-dashboard.html" , context)
 
 @login_required(login_url = "login")
 @require_GET
