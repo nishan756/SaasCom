@@ -28,7 +28,13 @@ class AppsDashboardService:
 
         return result
 
-    def app_stats(self):pass
+    def app_stats(self , user , id , **query_param):
+
+        supported_query_param = {"date_from" , "date_to"}
+
+        query_param = {key:value for key , value in query_param.items() if key in supported_query_param}
+
+        return self.repo.app_stats(user , id , **query_param)
 
 class DiscussionDashboardService:
 
@@ -148,12 +154,12 @@ class ApplicationDashboardService:
         
         result["applications"] = applications
 
-        total_full_time = result["stats"].pop("total_full_time")
-        total_remote = result["stats"].pop("total_remote")
-        total_intern = result["stats"].pop("total_intern")
-        total_contract = result["stats"].pop("total_contract")
-        total_hybrid = result["stats"].pop("total_hybrid")
-        total_part_time = result["stats"].pop("total_part_time")
+        total_full_time = result["stats"].get("total_full_time")
+        total_remote = result["stats"].get("total_remote")
+        total_intern = result["stats"].get("total_intern")
+        total_contract = result["stats"].get("total_contract")
+        total_hybrid = result["stats"].get("total_hybrid")
+        total_part_time = result["stats"].get("total_part_time")
 
         total_application = result["stats"]["total_application"]
 
