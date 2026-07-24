@@ -1,0 +1,55 @@
+    :root {
+        --subtle-bg: #f8f9fa;
+        --card-border: #edf2f7;
+        --text-muted: #64748b;
+        --text-dark: #0f172a;
+    }
+    body {
+        background-color: #f6f8fa !important;
+        color: var(--text-dark);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    .analytics-card {
+        border: 1px solid var(--card-border) !important;
+        border-radius: 12px !important;
+        background-color: #ffffff;
+        transition: all 0.2s ease-in-out;
+    }
+    .analytics-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.05);
+    }
+    .icon-shape {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+    }
+    .app-hero-logo {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        object-fit: cover;
+        border: 1px solid var(--card-border);
+    }
+    .nav-activity .nav-link {
+        color: var(--text-muted);
+        border: none;
+        padding: 0.75rem 1rem;
+        font-weight: 500;
+    }
+    .nav-activity .nav-link.active {
+        color: var(--bs-primary);
+        background: transparent;
+        border-bottom: 2px solid var(--bs-primary);
+    }
+    .progress-sm {
+        height: 6px;
+    }
+    .metric-border-primary { border-left: 4px solid var(--bs-primary) !important; }
+    .metric-border-success { border-left: 4px solid var(--bs-success) !important; }
+    .metric-border-danger { border-left: 4px solid var(--bs-danger) !important; }
+    .metric-border-warning { border-left: 4px solid var(--bs-warning) !important; }
+    .metric-border-info { border-left: 4px solid var(--bs-info) !important; }

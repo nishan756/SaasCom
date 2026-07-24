@@ -32,7 +32,35 @@ class AppsDashboardService:
 
         query_param = {key:value for key , value in query_param.items() if key in supported_query_param}
 
-        return self.repo.app_stats(user , id , **query_param)
+        result = self.repo.app_stats(user , id , **query_param)
+
+        stats = result.pop("stats")
+    
+        review_stats = stats.pop("review_stats")
+
+        temp_review_stats = {}
+
+        total_review = review_stats.get("total_review")
+        total_0 = review_stats.get("total_0")
+        total_1 = review_stats.get("total_1")
+        total_2 = review_stats.get("total_2")
+        total_3 = review_stats.get("total_3")
+        total_4 = review_stats.get("total_4")
+        total_5 = review_stats.get("total_5")
+
+        temp_review_stats["total_0_ratio"] = f"{round((total_0 * 100 / total_review) if total_review > 0 else 0)}%"
+        temp_review_stats["total_1_ratio"] = f"{round((total_1 * 100 / total_review) if total_review > 0 else 0)}%"
+        temp_review_stats["total_2_ratio"] = f"{round((total_2 * 100 / total_review) if total_review > 0 else 0)}%"
+        temp_review_stats["total_3_ratio"] = f"{round((total_3 * 100 / total_review) if total_review > 0 else 0)}%"
+        temp_review_stats["total_4_ratio"] = f"{round((total_4 * 100 / total_review) if total_review > 0 else 0)}%"
+        temp_review_stats["total_5_ratio"] = f"{round((total_5 * 100 / total_review) if total_review > 0 else 0)}%"
+
+        print(total_0)
+
+        review_stats = {**review_stats , **temp_review_stats}
+        stats["review_stats"] = review_stats
+        result["stats"] = stats
+        return result
 
 class DiscussionDashboardService:
 

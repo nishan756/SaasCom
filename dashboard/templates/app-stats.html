@@ -1,82 +1,302 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
-{{app.name}} | Stats
+{{ app.name }} | Stats
 {% endblock title %}
 
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/app-stats.css' %}">
+    <link rel="stylesheet" href="{% static 'css/app-status.css' %}">
+{% endblock css %}
+
 {% block content %}
-<div class="container my-5">
-    <div class="mb-4">
-        <a href="{% url 'apps-dashboard' %}" class="text-decoration-none text-secondary"><i class="bi bi-arrow-left me-1"></i> Back to Apps Dashboard</a>
-    </div>
-
-    <div class="d-flex align-items-center mb-5">
-        {% if app.logo %}
-            <img src="{{ app.logo.url }}" alt="Logo" class="rounded-3 border me-3" style="width: 65px; height: 65px; object-fit: cover;">
-        {% endif %}
-        <div>
-            <h2 class="fw-bold mb-0">{{ app.name }}</h2>
-            <p class="text-muted mb-0">Detailed Performance Analytics & Insights</p>
+<div class="container-fluid px-0">
+    <div class='container my-5'>
+        <div class='container'>
+            <h2>
+                <a href="{% url 'apps-dashboard' %}"class='no-underline'>
+                    <button class='btn btn-info'>
+                        <i class='fa fa-arrow-left'></i> Go Back
+                    </button>
+                </a>
+            </h2>
         </div>
-    </div>
-
-    <div class="card border-0 shadow-sm p-4 mb-5 bg-white rounded-3">
-        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-filter-left me-1 text-primary"></i> Filter Statistics by Date</h5>
-        <form method="GET" class="row g-3 align-items-end" action="{% url 'app-stats' app.id %}">
-
-            <div class="col-md-4">
-                <label for="date_from" class="form-label text-secondary small fw-medium">From Date</label>
-                <input type="date" class="form-control" id="date_from" name="date_from" value="{{ request.GET.date_from }}">
+        <!-- 1. APP HEADER & DATE FILTER -->
+        <header class="row align-items-center g-3 mb-4">
+            <div class="col-12 col-lg-7">
+                <div class="d-flex align-items-center gap-3">
+                    <img src="{{ app.logo.url }}" alt="{{ app.name }}" class="app-hero-logo">
+                    <div>
+                        <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                            <h1 class="h3 fw-bold mb-0 text-dark">{{ app.name|default:"SaaS Application" }}</h1>
+                            {% for cat in app.category.all %}
+                                <span class="badge bg-primary-subtle text-primary rounded-pill px-2.5 py-1 small fw-semibold">{{ cat.name }}</span>
+                            {% endfor %}
+                        </div>
+                        <p class="text-muted small mb-0 flex-wrap d-flex gap-3">
+                            <span><i class="bi bi-calendar3 me-1"></i>Created: <strong>{{ app.added_at|date:"M d, Y" }}</strong></span>
+                            <span class="badge status-{{app.status}}">
+                                {{ app.get_status_display }}
+                            </span>
+                        </p>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-4">
-                <label for="date_to" class="form-label text-secondary small fw-medium">To Date</label>
-                <input type="date" class="form-control" id="date_to" name="date_to" value="{{ request.GET.date_to }}">
+            <!-- Filter Section -->
+            <div class="card filter-card p-4 mb-5">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-funnel text-primary me-2" style="color: #6f42c1 !important;"></i>Filter</h5>
+                <form method="GET" class="row g-3 align-items-end">
+                    
+
+                    <div class="col-md-4">
+                        <label for="date_from" class="form-label text-secondary small fw-semibold">Date From</label>
+                        <input type="date" class="form-control" id="date_from" name="date_from" value="{{ request.GET.date_from }}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="date_to" class="form-label text-secondary small fw-semibold">Date To</label>
+                        <input type="date" class="form-control" id="date_to" name="date_to" value="{{ request.GET.date_to }}">
+                    </div>
+
+                    <div class="col-md-4 d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'apps-dashboard' %}" class="btn btn-outline-secondary w-100 fw-semibold">Reset</a>
+                        <button type="submit" class="btn btn-primary w-100 fw-semibold" style="background-color: #6f42c1; border-color: #6f42c1;">Apply</button>
+                    </div>
+                </form>
             </div>
-            <div class="col-md-4 d-grid">
-                <button type="submit" class="btn btn-primary fw-semibold py-2">
-                    <i class="bi bi-sliders me-1"></i> Apply Filter
-                </button>
+        </header>
+
+        <hr class="text-muted opacity-10 my-4">
+
+        <!-- 2. CARDS  -->
+        <section class="row g-3 mb-4" aria-label="Key Performance Indicators">
+
+            <!-- Upvotes -->
+            <div class="col-6 col-md-4 col-xl-2.4 col-xxl-2">
+                <div class="card analytics-card h-100 p-3 metric-border-success">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="text-muted small fw-medium">Total Upvotes</span>
+                        <div class="icon-shape bg-light-subtle text-success"><i class="fa fa-arrow-up"></i></div>
+                    </div>
+                    <h3 class="fw-bold mb-1 text-dark">{{ stats.vote_stats.total_upvote|default:"0" }}</h3>
+                    {% comment %}
+                    <span class="text-success small fw-semibold"><i class="bi bi-arrow-up-short"></i>8.2%</span>
+                    {% endcomment %}
+                </div>
+            </div>
+            <!-- Downvotes -->
+            <div class="col-6 col-md-4 col-xl-2.4 col-xxl-2">
+                <div class="card analytics-card h-100 p-3 metric-border-danger">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="text-muted small fw-medium">Downvotes</span>
+                        <div class="icon-shape bg-light-subtle text-danger"><i class="fa fa-arrow-down"></i></div>
+                    </div>
+                    <h3 class="fw-bold mb-1 text-dark">{{ stats.vote_stats.total_downvote|default:"0" }}</h3>
+                    {% comment %}
+                    <span class="text-danger small fw-semibold"><i class="bi bi-arrow-up-short"></i>4.1%</span>
+                    {% endcomment %}
+                </div>
+            </div>
+            <!-- Vote Score -->
+            <div class="col-6 col-md-4 col-xl-2.4 col-xxl-2">
+                <div class="card analytics-card h-100 p-3 metric-border-primary">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="text-muted small fw-medium">Vote Score</span>
+                        <div class="icon-shape bg-light-subtle text-dark"><i class="fa fa-calculator"></i></div>
+                    </div>
+                    <h3 class="fw-bold mb-1 text-dark">{% if stats.vote_stats.vote_score > 0 %}+{% elif stats.vote_stats.vote_scoer <= 0 %}-{% endif %}{{ stats.vote_stats.vote_score|default:"0" }}</h3>
+                    <span class="text-muted small">Upvotes - Downvotes</span>
+                </div>
+            </div>
+
+            <!-- Reviews -->
+            <div class="col-6 col-md-4 col-xl-2.4 col-xxl-2">
+                <div class="card analytics-card h-100 p-3 metric-border-warning">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="text-muted small fw-medium">Total Reviews</span>
+                        <div class="icon-shape bg-light-subtle text-warning"><i class="fas fa-comments"></i></div>
+                    </div>
+                    <h3 class="fw-bold mb-1 text-dark">{{ stats.review_stats.total_review|default:"0" }}</h3>
+                    {% comment %}
+                    <span class="text-success small fw-semibold"><i class="bi bi-arrow-up-short"></i>14.2%</span>
+                    {% endcomment %}
+                </div>
+            </div>
+
+            <!-- Avg Rating -->
+            <div class="col-6 col-md-4 col-xl-2.4 col-xxl-2">
+                <div class="card analytics-card h-100 p-3 metric-border-warning">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="text-muted small fw-medium">Avg Rating</span>
+                        <div class="icon-shape bg-light-subtle text-warning"><i class="bi bi-star-fill fs-5"></i></div>
+                    </div>
+                    <h3 class="fw-bold mb-1 text-dark">{{ stats.review_stats.avg_rating|default:"0" }}</h3>
+                    <span class="text-muted small">Out of 5.0 stars</span>
+                </div>
+            </div>
+            <!-- Total Rating -->
+            <div class="col-6 col-md-4 col-xl-2.4 col-xxl-2">
+                <div class="card analytics-card h-100 p-3 metric-border-warning">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="text-muted small fw-medium">Total Ratings</span>
+                        <div class="icon-shape bg-light-subtle text-secondary"><i class="bi bi-stars fs-5"></i></div>
+                    </div>
+                    <h3 class="fw-bold mb-1 text-dark">{{ stats.review_stats.total_rating|default:"0" }}</h3>
+                    <span class="text-muted small">Total scores</span>
+                </div>
+            </div>
+
+            <!-- Bookmarks -->
+            <div class="col-6 col-md-4 col-xl-2.4 col-xxl-2">
+                <div class="card analytics-card h-100 p-3 metric-border-success">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="text-muted small fw-medium">Bookmarks</span>
+                        <div class="icon-shape bg-light-subtle text-success"><i class="fa fa-bookmark"></i></div>
+                    </div>
+                    <h3 class="fw-bold mb-1 text-dark">{{ stats.bookmark_stats.total_bookmark|default:"0" }}</h3>
+                    {% comment %}
+                    <span class="text-success small fw-semibold"><i class="bi bi-arrow-up-short"></i>18.5%</span>
+                    {% endcomment %}
+                </div>
+            </div>
+
+            <!-- Reports -->
+            <div class="col-6 col-md-4 col-xl-2.4 col-xxl-2">
+                <div class="card analytics-card h-100 p-3 metric-border-danger">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="text-muted small fw-medium">Total Reports</span>
+                        <div class="icon-shape bg-light-subtle text-danger"><i class="fa fa-flag"></i></div>
+                    </div>
+                    <h3 class="fw-bold mb-1 text-dark">{{ stats.report_stats.total_report|default:"0" }}</h3>
+                    {% comment %}
+                    <span class="text-danger small fw-semibold"><i class="bi bi-arrow-up-short"></i>2 new</span>
+                    {% endcomment %}
+                </div>
             </div>
             
-        </form>
-    </div>
+        </section>
 
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm p-4 text-center bg-white rounded-3" style="border-top: 4px solid #198754 !important;">
-                <div class="text-success mb-2">
-                    <i class="bi bi-arrow-up-circle fs-1"></i>
+        <!-- 4. BREAKDOWNS & METRICS SECTION -->
+        <section class="row g-4 mb-4" aria-label="Detailed Performance Breakdowns">
+            <!-- Rating Breakdown -->
+            <div class="col-12 col-lg-6">
+                <div class="card analytics-card p-4 h-100">
+                    <h3 class="h5 fw-bold mb-4">Rating Summary Matrix</h3>
+                    <div class="d-flex flex-column gap-3">
+                        <!-- 5 Stars -->
+                        <div>
+                            <div class="d-flex justify-content-between text-muted small mb-1">
+                                <span class="text-dark fw-medium">5 stars ★★★★★</span>
+                                <span>{{ stats.review_stats.total_5_ratio|default:"0%" }} ({{ stats.review_stats.total_5|default:"0" }})</span>
+                            </div>
+                            <div class="progress progress-sm bg-light">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: {{ stats.review_stats.total_5_ratio|default:'0%' }}" aria-valuenow="{{ stats.review_stats.total_5|default:'0' }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        <!-- 4 Stars -->
+                        <div>
+                            <div class="d-flex justify-content-between text-muted small mb-1">
+                                <span class="text-dark fw-medium">4 stars ★★★★☆</span>
+                                <span>{{ stats.review_stats.total_4_ratio|default:"0%" }} ({{ stats.review_stats.total_4|default:"0" }})</span>
+                            </div>
+                            <div class="progress progress-sm bg-light">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: {{ stats.review_stats.total_4_ratio|default:'0%' }}" aria-valuenow="{{ stats.review_stats.total_4|default:'0' }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        <!-- 3 Stars -->
+                        <div>
+                            <div class="d-flex justify-content-between text-muted small mb-1">
+                                <span class="text-dark fw-medium">3 stars ★★★☆☆</span>
+                                <span>{{ stats.review_stats.total_3_ratio|default:"0%" }} ({{ stats.review_stats.total_3|default:"0" }})</span>
+                            </div>
+                            <div class="progress progress-sm bg-light">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: {{ stats.review_stats.total_3_ratio|default:'0%' }}" aria-valuenow="{{ stats.review_stats.total_3|default:'0' }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        <!-- 2 Stars -->
+                        <div>
+                            <div class="d-flex justify-content-between text-muted small mb-1">
+                                <span class="text-dark fw-medium">2 stars ★★☆☆☆</span>
+                                <span>{{ stats.review_stats.total_2_ratio|default:"0%" }} ({{ stats.review_stats.total_2|default:"0" }})</span>
+                            </div>
+                            <div class="progress progress-sm bg-light">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: {{ stats.review_stats.total_2_ratio|default:'0%' }}" aria-valuenow="{{ stats.review_stats.total_2|default:'0' }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        <!-- 1 Star -->
+                        <div>
+                            <div class="d-flex justify-content-between text-muted small mb-1">
+                                <span class="text-dark fw-medium">1 star ★☆☆☆☆</span>
+                                <span>{{ stats.review_stats.total_1_ratio|default:"0%" }} ({{ stats.review_stats.total_1|default:"0" }})</span>
+                            </div>
+                            <div class="progress progress-sm bg-light">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: {{ stats.review_stats.total_1_ratio|default:'0%' }}" aria-valuenow="{{ stats.review_stats.total_1|default:'0' }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        <!-- 0 Star -->
+                        <div>
+                            <div class="d-flex justify-content-between text-muted small mb-1">
+                                <span class="text-dark fw-medium">0 star ☆☆☆☆☆</span>
+                                <span>{{ stats.review_stats.total_0_ratio|default:"0%" }} ({{ stats.review_stats.total_0|default:"0" }})</span>
+                            </div>
+                            <div class="progress progress-sm bg-light">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: {{ stats.review_stats.total_0_ratio|default:'0%' }}" aria-valuenow="{{ stats.review_stats.total_0|default:'0' }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <h6 class="text-muted uppercase fw-semibold small mb-1">Upvotes</h6>
-                <h2 class="fw-bold text-dark mb-0">{{ total_upvote|default:"0" }}</h2>
             </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm p-4 text-center bg-white rounded-3" style="border-top: 4px solid #dc3545 !important;">
-                <div class="text-danger mb-2">
-                    <i class="bi bi-arrow-down-circle fs-1"></i>
+            <!-- Report Breakdown -->
+            <div class="col-12 col-md-6 col-lg-6">
+                <div class="card analytics-card p-4 h-100">
+                    <h3 class="h5 fw-bold mb-3">Moderation & Reports</h3>
+                    <div class="table-responsive">
+                        <table class="table table-borderless table-sm align-middle mb-0">
+                            <thead>
+                                <tr class="text-muted small">
+                                    <th>Reason</th>
+                                    <th class="text-end">Count</th>
+                                </tr>
+                            </thead>
+                            <tbody class="small">
+                                <tr>
+                                    <td><i class="bi bi-shield-slash text-danger me-2"></i>Spam</td>
+                                    <td class="text-end fw-semibold">{{stats.report_stats.total_spam}}</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="bi bi-person-x text-warning me-2"></i>Fake</td>
+                                    <td class="text-end fw-semibold">{{stats.report_stats.total_fake}}</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="bi bi-patch-exclamation text-primary me-2"></i>Scam</td>
+                                    <td class="text-end fw-semibold">{{stats.report_stats.total_scam}}</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="bi bi-c-circle text-info me-2"></i>Copyright</td>
+                                    <td class="text-end fw-semibold">{{stats.report_stats.total_copyright}}</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="bi bi-heartbreak text-secondary me-2"></i>Harassment</td>
+                                    <td class="text-end fw-semibold">{{stats.report_stats.total_harassment}}</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="bi bi-eye-slash text-dark me-2"></i>NSFW</td>
+                                    <td class="text-end fw-semibold">{{stats.report_stats.total_nsfw}}</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="bi bi-three-dots text-muted me-2"></i>Other</td>
+                                    <td class="text-end fw-semibold">{{stats.report_stats.total_other}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <h6 class="text-muted uppercase fw-semibold small mb-1">Downvotes</h6>
-                <h2 class="fw-bold text-dark mb-0">{{ total_downvote|default:"0" }}</h2>
             </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm p-4 text-center bg-white rounded-3" style="border-top: 4px solid #ffc107 !important;">
-                <div class="text-warning mb-2">
-                    <i class="bi bi-star-half fs-1"></i>
-                </div>
-                <h6 class="text-muted uppercase fw-semibold small mb-1">Average Rating</h6>
-                <h2 class="fw-bold text-dark mb-0">
-                    {% if avg_rating %}
-                        {{ avg_rating|floatformat:1 }} <span class="fs-5 text-muted">/ 5</span>
-                    {% else %}
-                        N/A
-                    {% endif %}
-                </h2>
-            </div>
-        </div>
+        </section>
+    
     </div>
 </div>
-{% endblock %}
+
+{% endblock content %}

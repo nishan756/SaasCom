@@ -40,8 +40,10 @@ def dashboard_entry_point(request):
 def apps_dashboard(request):
     query_param = request.GET.dict()
 
+    page = query_param.pop("page" , 1)
+
     try:
-        result = apps_dashboard_service.main_dashboard(request.user , **query_param)
+        result = apps_dashboard_service.main_dashboard(request.user , page , **query_param)
     
     except Exception as e:
         messages.error(request , "Something went wrong")
@@ -64,23 +66,19 @@ def app_stats(request , id):
     query_param = request.GET.dict()
     context = {}
     try:
-        context["app"] = app_service.get_app(id = id)
-
-        if not context["app"].user == request.user:
-            return redirect("apps-dashboard")
+        result = apps_dashboard_service.app_stats(request.user , id , **query_param)
         
-        vote_stats = vote_service.get_object_votes_stats('app' , id , **query_param)
-        context["total_upvote"] = vote_stats["total_upvote"]
-        context["total_downvote"] = vote_stats["total_downvote"]
-        context["avg_rating"] = review_service.get_app_rating_stats(context["app"] , **query_param)
+        context["app"] = result.pop("app")
+        context["stats"] = result.pop("stats")
+
         return render(request , "app-stats.html" , context)
 
     except ObjectNotFound as e:
         messages.info(request , str(e))
 
     except Exception as e:
-        messages.error(request , "Something went wrong")
-        
+        messages.info(request , "Something went wrong")
+
     return redirect("apps-dashboard")
 
 @login_required(login_url = "login")

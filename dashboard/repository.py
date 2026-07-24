@@ -3,7 +3,7 @@ from discussion.service import DiscussionService
 from comment.service import CommentService
 from report.service import ReportService
 from django.db.models import Count , Q , Avg , Sum , F , FloatField , ExpressionWrapper
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce , Round
 from bookmark.service import BookmarkService
 from jobs.service import JobService
 from jobs.models import Application
@@ -12,6 +12,7 @@ from vote.models import Vote
 from report.models import Report
 from django.contrib.contenttypes.models import ContentType
 from saas_com.core.exceptions import ObjectNotFound
+from bookmark.models import Bookmark
 
 
 class AppsDashboardRepo:
@@ -152,7 +153,90 @@ class AppsDashboardRepo:
             "top_apps": top_apps,
         }
 
-    def app_stats(self , id):pass
+    def app_stats(self, user, id, **query_param):
+        try:
+            app = App.objects.get(id = id , user = user)
+        
+        except App.DoesNotExist:
+            raise ObjectNotFound("App Not Found")
+        
+        content_type = ContentType.objects.get_for_model(App)
+
+        votes = Vote.objects.filter(content_type = content_type , object_id = id)
+
+        reports = Report.objects.filter(content_type = content_type , object_id = id)
+
+        reviews = Review.objects.filter(app = app)
+
+        bookmarks = Bookmark.objects.filter(content_type = content_type , object_id = id)
+
+        query = {}
+
+        date_from = query_param.get("date_from" , None)
+
+        date_to = query_param.get("date_to" , None)
+
+        if date_from:
+            query["added_at__gte"] = date_from
+        
+        if date_to:
+            query["added_at__lte"] = date_to
+
+        if query:
+            votes = votes.filter(**query)
+            reports = reports.filter(**query)
+            reviews = reviews.filter(**query)
+            bookmarks = bookmarks.filter(**query)
+        
+        stats = {}
+
+        vote_stats = votes.aggregate(
+            total_vote = Count("id"),
+            total_upvote = Count("id" , filter = Q(vote_type = "upvote")),
+            total_downvote = Count("id" , filter = Q(vote_type = "downvote")),
+            vote_score = F("total_upvote") - F("total_downvote")
+        )        
+
+        review_stats = reviews.aggregate(
+                total_review = Count("id"),
+                avg_rating = Round(Avg("rating") , 2),
+                total_rating = Sum("rating"),
+                total_0 = Count("id" , filter = Q(rating = 0)),
+                total_1 = Count("id" , filter = Q(rating = 1)),
+                total_2 = Count("id" , filter = Q(rating = 2)),
+                total_3 = Count("id" , filter = Q(rating = 3)),
+                total_4 = Count("id" , filter = Q(rating = 4)),
+                total_5 = Count("id" , filter = Q(rating = 5)),
+
+            )
+
+
+        report_stats = reports.aggregate(
+            total_report = Count("id"),
+            total_spam=Count("id", filter=Q(report_type="spam")),
+            total_fake=Count("id", filter=Q(report_type="fake")),
+            total_harassment=Count("id", filter=Q(report_type="harassment")),
+            total_copyright=Count("id", filter=Q(report_type="copyright")),
+            total_scam=Count("id", filter=Q(report_type="scam")),
+            total_other=Count("id", filter=Q(report_type="other")),
+            total_nsfw=Count("id", filter=Q(report_type="nsfw")),
+        )
+
+
+        stats["bookmark_stats"] = bookmarks.aggregate(
+            total_bookmark = Count("id"),
+        )
+
+        stats["vote_stats"] = vote_stats
+        stats["review_stats"] = review_stats
+        stats["report_stats"] = report_stats
+
+
+        return {
+            "app":app,
+            "stats":stats,
+        }
+
 
 class DiscussionDashboardRepo:
 
