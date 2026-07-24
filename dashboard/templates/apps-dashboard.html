@@ -13,6 +13,7 @@ Apps | Dashboard
 
 {% block content %}
 
+<!-- Header Header Section -->
 <div class="container-fluid px-0">
     <div class="apps-dashboard-header">
         <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start">
@@ -29,10 +30,11 @@ Apps | Dashboard
     </div>
 </div>
 
-<div class="container my-5">
+<!-- Main Wrapper Container -->
+<div class="container dashboard-container my-4">
     
-    <!-- Filter Section -->
-    <div class="card filter-card p-4 mb-5">
+    <!-- 1. Filter Section -->
+    <div class="card filter-card p-4 mb-4 shadow-sm border-0">
         <h5 class="fw-bold text-dark mb-3"><i class="bi bi-funnel text-primary me-2" style="color: #6f42c1 !important;"></i>Filter</h5>
         <form method="GET" class="row g-3 align-items-end">
             
@@ -76,10 +78,10 @@ Apps | Dashboard
         </form>
     </div>
 
-    <!--Quick Summary-->
-    <section class="row g-3 mb-5" aria-label="Quick Summary">
+    <!-- 2. Quick Summary Section -->
+    <section class="row g-3 mb-4" aria-label="Quick Summary">
         <div class="col-6 col-md-4 col-xl-3">
-            <div class="card h-100 p-3">
+            <div class="card h-100 p-3 shadow-sm border-0">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="text-muted small fw-medium">Total Apps</span>
                     <div class="icon-box bg-primary-subtle text-primary"><i class="fas fa-th"></i></div>
@@ -88,9 +90,9 @@ Apps | Dashboard
             </div>
         </div>
 
-        <!--Total Published Apps-->
+        <!-- Total Published Apps -->
         <div class="col-6 col-md-4 col-xl-3">
-            <div class="card h-100 p-3">
+            <div class="card h-100 p-3 shadow-sm border-0">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="text-muted small fw-medium">Published Apps</span>
                     <div class="icon-box bg-warning-subtle text-warning"><i class="fa fa-upload"></i></div>
@@ -99,10 +101,9 @@ Apps | Dashboard
             </div>
         </div>
 
-        <!--Total Pending Apps-->
-
+        <!-- Total Pending Apps -->
         <div class="col-6 col-md-4 col-xl-3">
-            <div class="card h-100 p-3">
+            <div class="card h-100 p-3 shadow-sm border-0">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="text-muted small fw-medium">Pending Apps</span>
                     <div class="icon-box bg-warning-subtle text-warning"><i class="fa fa-clock"></i></div>
@@ -111,10 +112,9 @@ Apps | Dashboard
             </div>
         </div>
         
-        <!--Total Rejected Apps-->
-
+        <!-- Total Rejected Apps -->
         <div class="col-6 col-md-4 col-xl-3">
-            <div class="card h-100 p-3">
+            <div class="card h-100 p-3 shadow-sm border-0">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="text-muted small fw-medium">Rejected Apps</span>
                     <div class="icon-box bg-danger-subtle text-danger"><i class="fa fa-x"></i></div>
@@ -123,36 +123,27 @@ Apps | Dashboard
             </div>
         </div>
 
-        {% comment %}
-        <div class="col-6 col-md-4 col-xl-2">
-            <div class="card h-100 p-3">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted small fw-medium">Total Views</span>
-                    <div class="icon-box bg-info-subtle text-info"><i class="bi bi-eye-fill fs-5"></i></div>
-                </div>
-                <h3 class="fw-bold mb-1">{{ total_views|default:"45.2K" }}</h3>
-                <span class="text-muted small text-truncate">User engagement</span>
-            </div>
+        <div class="col-12 my-2">
+            <h6 class="text-danger mb-0"><i class="bi bi-info-circle me-1"></i>You can filter this section by date range</h6>
         </div>
-        {% endcomment %}
 
-        <h6 class='text-danger'>You can filter this section by date range</h6>
-        <!--Total Votes-->
-        <div class="col-6 col-md-4 col-xl-2">
-            <div class="card h-100 p-3">
+        <!-- Total Votes -->
+        <div class="col-6 col-md-4 col-xl-3">
+            <div class="card h-100 p-3 shadow-sm border-0">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="text-muted small fw-medium">Total Votes</span>
-                    <div class="icon-box bg-success-subtle text-success"><i class="fa fa-arrow-up"></i></div>
-                    <div class="icon-box bg-success-subtle text-success"><i class="fa fa-arrow-down"></i></div>
+                    <div class="d-flex gap-1">
+                        <div class="icon-box bg-success-subtle text-success"><i class="fa fa-arrow-up"></i></div>
+                        <div class="icon-box bg-success-subtle text-success"><i class="fa fa-arrow-down"></i></div>
+                    </div>
                 </div>
                 <h3 class="fw-bold mb-1">{{ stats.total_vote|default:"0" }}</h3>
             </div>
         </div>
 
-        <!--Total upvotes-->
-
-        <div class="col-6 col-md-4 col-xl-2">
-            <div class="card h-100 p-3">
+        <!-- Total Upvotes -->
+        <div class="col-6 col-md-4 col-xl-3">
+            <div class="card h-100 p-3 shadow-sm border-0">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="text-muted small fw-medium">Total Upvotes</span>
                     <div class="icon-box bg-success-subtle text-success"><i class="fa fa-arrow-up"></i></div>
@@ -161,22 +152,20 @@ Apps | Dashboard
             </div>
         </div>
 
-        <!--Total downvotes-->
-
-        <div class="col-6 col-md-4 col-xl-2">
-            <div class="card h-100 p-3">
+        <!-- Total Downvotes -->
+        <div class="col-6 col-md-4 col-xl-3">
+            <div class="card h-100 p-3 shadow-sm border-0">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="text-muted small fw-medium">Total Downvotes</span>
-                    <div class="icon-box bg-success-subtle text-success"><i class="fa fa-arrow-down"></i></div>
+                    <div class="icon-box bg-danger-subtle text-danger"><i class="fa fa-arrow-down"></i></div>
                 </div>
                 <h3 class="fw-bold mb-1">{{ stats.total_downvote|default:"0" }}</h3>
             </div>
         </div>
 
-        <!--Total Rating-->
-
-        <div class="col-6 col-md-4 col-xl-2">
-            <div class="card h-100 p-3">
+        <!-- Total Rating -->
+        <div class="col-6 col-md-4 col-xl-3">
+            <div class="card h-100 p-3 shadow-sm border-0">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="text-muted small fw-medium">Total Rating</span>
                     <div class="icon-box bg-warning-subtle text-warning"><i class="fa fa-star"></i></div>
@@ -186,25 +175,25 @@ Apps | Dashboard
             </div>
         </div>
 
-        <!--Total Report-->
-        {% for key , value in stats.report_stats.items %}
-            <div class="col-6 col-md-4 col-xl-2">
-                <div class="card h-100 p-3">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-muted small fw-medium">Total {{key|cut:'total_'|title}}</span>
-                        <div class="icon-box bg-warning-subtle text-warning"><i class="fa fa-flag fs-5"></i></div>
-                    </div>
-                    <h3 class="fw-bold mb-1">{{ value|default:"0" }}</h3>
+        <!-- Report Stats -->
+        <div class="col-12 col-lg-3">
+            <div class="card analytics-card p-4 h-100 shadow-sm border-0">
+                <h3 class="h5 fw-bold mb-3">Report stats</h3>
+                <div class="d-flex flex-column gap-2">
+                    {% for key , value in stats.report_stats.items %}
+                        <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                            <span class="text-muted small fw-medium">{{key|cut:'total_'|title}}</span>
+                            <span class="fw-bold text-dark small">{{value|default:'0'}}</span>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
-        {% endfor %}
-    </section>
+        </div>
 
-    <div class="row g-4 mb-5">
-
-        <div class="col-12 col-lg-12">
-            <div class="card h-100 p-4">
-                <div class="d-flex justify-content-between align-items-center mb-4">
+        <!-- Top Performing Apps Table -->
+        <div class="col-12 col-lg-9">
+            <div class="card h-100 p-4 shadow-sm border-0">
+                <div class="d-flex justify-content-between align-items-center mb-3">
                     <h3 class="h5 fw-bold mb-0">Top Performing Apps</h3>
                     <span class="badge bg-primary-subtle text-primary px-2 py-1">Top 5</span>
                 </div>
@@ -231,18 +220,17 @@ Apps | Dashboard
                                 <td><span class="text-warning small"><i class="bi bi-star-fill me-1"></i>{{ app.avg_rating|default:'0' }}</span></td>
                                 <td class="text-end"><a href="{% url 'app-stats' app.id %}" class="btn btn-sm btn-light border py-1 px-2 small">View Stats</a></td>
                             </tr>
-                                
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- 8. MAIN APP TABLE -->
-    <section class="card p-4 mb-4" aria-labelledby="main-table-title">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- 3. MAIN APP TABLE (Updated with Matching Margin/Layout) -->
+    <section class="card p-4 mb-4 shadow-sm border-0" aria-labelledby="main-table-title">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 id="main-table-title" class="h5 fw-bold mb-0">Your Applications</h3>
         </div>
         
@@ -275,7 +263,6 @@ Apps | Dashboard
                             </td>
                             <td><span class="text-muted small">{{ app.category|default:"SaaS Tool" }}</span></td>
                             <td>
-                                
                                 <span class="badge status-{{app.status}}">
                                     {{app.get_status_display}}
                                 </span>
@@ -294,7 +281,7 @@ Apps | Dashboard
                                     <button class="btn btn-sm btn-light border" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-three-dots"></i>
                                     </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                                         <li><a class="dropdown-item small" href="{% url 'app-stats' app.id %}"><i class="bi bi-eye me-2 text-muted"></i> View Stats</a></li>
                                         <li><a class="dropdown-item small" href="{% url 'update-app' app.id %}"><i class="bi bi-pencil-square me-2 text-muted"></i> Update</a></li>
                                         <li><hr class="dropdown-divider"></li>
@@ -310,7 +297,7 @@ Apps | Dashboard
                             </td>
                         </tr>
                     {% empty %}
-                        <!-- 10. EMPTY STATE IF NO APPS -->
+                        <!-- EMPTY STATE IF NO APPS -->
                         <tr>
                             <td colspan="8" class="text-center py-5">
                                 <div class="text-muted display-6 mb-3"><i class="bi bi-box-seam"></i></div>
@@ -323,7 +310,7 @@ Apps | Dashboard
             </table>
         </div>
 
-        <!-- 9. PAGINATION -->
+        <!-- PAGINATION -->
         {% if apps.has_other_pages %}
         <nav class="d-flex justify-content-between align-items-center mt-4" aria-label="Table Navigation">
             <span class="small text-muted">Page {{ apps.number }} of {{ apps.paginator.num_pages }}</span>
@@ -344,7 +331,7 @@ Apps | Dashboard
                 {% if apps.has_next %}
                     <li class="page-item">
                         <a class="page-link" 
-                            href="?page={{ apps.next_page_number }}{% if query_param %}&{{query_param}}{% endif %}">
+                            href="?page={{apps.next_page_number}}{% if query_param %}&{{query_param}}{% endif %}">
                             Next
                         </a>
                     </li>
@@ -357,13 +344,14 @@ Apps | Dashboard
     </section>
 
 </div>
-<!-- ================= BOOTSTRAP DELETE CONFIRMATION MODAL ================= -->
+
+<!-- BOOTSTRAP DELETE CONFIRMATION MODAL -->
 <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 0.75rem;">
             <div class="modal-header border-0 pt-4 px-4 pb-0">
                 <h5 class="modal-title fw-bold text-dark" id="deleteModalLabel">Delete Application?</h5>
-                <button type="button" class="btn-close" data-bs-dynamic-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body px-4 py-3">
                 <p class="text-muted mb-0">Are you sure you want to permanently delete <strong id="deleteAppName" class="text-dark">this application</strong>? This action cannot be undone.</p>
@@ -381,6 +369,6 @@ Apps | Dashboard
 </div>
 
 {% block js %}
-    <script src="{% static 'js/apps-dashboard.js/'%}"></script>
+    <script src="{% static 'js/apps-dashboard.js'%}"></script>
 {% endblock js %}
 {% endblock %}
