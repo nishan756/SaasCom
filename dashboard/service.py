@@ -8,11 +8,9 @@ class AppsDashboardService:
 
     repo = AppsDashboardRepo()
 
-    def main_dashboard(self , user , **query_param):
+    def main_dashboard(self , user , page  , **query_param):
 
         per_page = query_param.pop("per_page" , 20)
-
-        page = query_param.pop("page" , 1)
         
         supported_query_param = {"date_from" , "date_to" , "category" , "name" , "status"}
 
