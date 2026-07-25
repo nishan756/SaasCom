@@ -108,7 +108,7 @@ class AppsDashboardRepo:
         apps = (
             apps.prefetch_related("votes", "reviews", "reports")
             .annotate(
-                avg_rating=Coalesce(Avg("reviews__rating"), 0.0),
+                avg_rating=Coalesce(Round(Avg("reviews__rating") , 2), 0.0),
                 total_review=Count("reviews", distinct=True),
                 total_upvote=Count(
                     "votes",
