@@ -198,31 +198,35 @@ Apps | Dashboard
                     <span class="badge bg-primary-subtle text-primary px-2 py-1">Top 5</span>
                 </div>
                 <div class="table-responsive">
-                    <table class="table align-middle mb-0">
-                        <thead>
-                            <tr>
-                                <th>App</th>
-                                <th>Upvotes</th>
-                                <th>Avg Rating</th>
-                                <th class="text-end">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for app in top_apps|slice:":5" %}
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <img src="{{ app.logo.url }}" alt="" class="app-thumbnail">
-                                        <span class="fw-semibold small">{{ app.name }}</span>
-                                    </div>
-                                </td>
-                                <td class="text small fw-medium">{{ app.total_upvote|default:'0' }}</td>
-                                <td><span class="text-warning small"><i class="bi bi-star-fill me-1"></i>{{ app.avg_rating|default:'0' }}</span></td>
-                                <td class="text-end"><a href="{% url 'app-stats' app.id %}" class="btn btn-sm btn-light border py-1 px-2 small">View Stats</a></td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                    {% if top_apps %}
+                        <table class="table align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>App</th>
+                                    <th>Upvotes</th>
+                                    <th>Avg Rating</th>
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for app in top_apps|slice:":5" %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img src="{{ app.logo.url }}" alt="" class="app-thumbnail">
+                                            <span class="fw-semibold small">{{ app.name }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="text small fw-medium">{{ app.total_upvote|default:'0' }}</td>
+                                    <td><span class="text-warning small"><i class="bi bi-star-fill me-1"></i>{{ app.avg_rating|default:'0' }}</span></td>
+                                    <td class="text-end"><a href="{% url 'app-stats' app.id %}" class="btn btn-sm btn-light border py-1 px-2 small">View Stats</a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <h3 class='text-center m-md-5'>No top apps found</h3>
+                    {% endif %}
                 </div>
             </div>
         </div>
