@@ -83,7 +83,6 @@ def delete_discussion(request , id):
     try:
         discussion_service.delete_discussion(user = request.user , id = id)
         messages.success(request , "Successfully deleted your discussion")
-        return redirect("all-discussions")
     
     except ObjectNotFound as e:
         messages.error(request , str(e))

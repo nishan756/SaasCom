@@ -168,7 +168,6 @@ def del_app(request , id):
     try:
         app_service.del_app(id , user)
         messages.success(request , "Successfully deleted your app")
-        return redirect("all-apps")
     
     except PermissionDenied as e:
         messages.warning(request , str(e))
