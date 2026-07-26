@@ -91,7 +91,7 @@ def user_application_dashboard(request):
 
     if not request.user.is_developer:
         messages.info(request , "This feature isn't available for you")
-        return redirect("home")
+        return redirect("dashboard-entry-point")
     
     context = {}
 
@@ -111,6 +111,11 @@ def user_application_dashboard(request):
 @login_required(login_url = "login")
 @require_GET
 def jobs_dashboard(request):
+    # Checking if the user is company
+    if not request.user.is_company:
+        messages.info(request , "This feature isn't available for you")
+        return redirect("dashboard-entry-point")
+    
     query_param = request.GET.dict()
     page = query_param.pop("page" , 1)
     per_page = query_param.pop("per_page" , 20)
