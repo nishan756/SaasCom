@@ -13,6 +13,7 @@ from report.models import Report
 from django.contrib.contenttypes.models import ContentType
 from saas_com.core.exceptions import ObjectNotFound
 from bookmark.models import Bookmark
+from jobs.models import Job
 
 
 class AppsDashboardRepo:
@@ -334,8 +335,54 @@ class JobDashboardRepo:
             "jobs":jobs
         }
 
-    def job_stats(self):
-        pass
+    def job_stats(self , id):
+
+        try:
+            job = Job.objects.select_related("category").get(id = id)
+
+        except Job.DoesNotExist:
+            raise ObjectNotFound("Job not found")
+
+        content_type = ContentType.objects.get_for_model(model = Job)
+
+        stats = {}
+
+        report_stats = Report.objects.filter(content_type = content_type , object_id = id)\
+            .aggregate(
+                total_report = Count("id"),
+                total_spam = Count("id" , filter = Q(report_type = "spam")),
+                total_fake = Count("id" , filter = Q(report_type = "fake")),
+                total_harassment = Count("id" , filter = Q(report_type = "harassment")),
+                total_scam = Count("id" , filter = Q(report_type = "scam")),
+            )
+
+        application_stats = Application.objects.filter(job__id = id)\
+            .aggregate(
+                total_application = Count("id"),
+                total_pending = Count("id" , filter = Q(status = "pending")),
+                total_under_review = Count("id" , filter = Q(status = "under_review")),
+                total_shortlisted = Count("id" , filter = Q(status = "shortlisted")),
+                total_interview_scheduled = Count("id" , filter = Q(status = "interview_scheduled")),
+                total_offered = Count("id" , filter = Q(status = "offered")),
+                total_offer_declined = Count("id" , filter = Q(status = "offer_declined")),
+                total_offer_accepted = Count("id" , filter = Q(status = "offer_accepted")),
+                total_rejected_by_hr = Count("id" , filter = Q(status = "rejected_by_hr")),
+                total_withdrawn = Count("id" , filter = Q(status = "withdrawn")),
+                total_hired = Count("id" , filter = Q(status = "hired")),
+
+            )
+
+        reccent_applications = Application.objects.filter(job__id = id , status = "pending")
+
+
+        stats["report_stats"] = report_stats
+        stats["application_stats"] = application_stats
+        stats["total_bookmark"] = Bookmark.objects.filter(content_type = content_type , object_id = id).aggregate(
+            total_bookmark = Count("id"),
+        ).get("total_bookmark")
+
+        return {"job":job , "stats":stats , "recent_applications":reccent_applications}
+        
 
 
 class ApplicationDashboardRepo:

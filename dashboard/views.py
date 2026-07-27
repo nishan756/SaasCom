@@ -215,10 +215,16 @@ def application_detail(request, id):
 
 @login_required(login_url = "login")
 @require_GET
-def job_stats(request):
-    query_param = request.GET.dict()
-    context = {}
-    return render(request , "job-stats.html" , context)
+def job_stats(request , id):
+
+    try:
+        result = job_dashboard_service.job_stats(id)
+        return render(request , "job-stats.html" , result)
+
+    except ObjectNotFound as e:
+        messages.error(request , str(e))
+    
+    return redirect("jobs-dashboard")
 
 
 @login_required(login_url = "login")
