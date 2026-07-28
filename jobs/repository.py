@@ -75,7 +75,7 @@ class JobRepo:
 class JobCatRepo:
 
     def categories(self):
-        return JobCategory.objects.prefetch_related("jobs").annotate(
+        return JobCategory.objects.annotate(
             active_jobs = Count("jobs" , filter = Q(jobs__is_active = True)),
         )
 
