@@ -76,7 +76,14 @@ class JobCatRepo:
 
     def categories(self):
         return JobCategory.objects.annotate(
-            active_jobs = Count("jobs" , filter = Q(jobs__is_active = True)),
+            active_jobs=Count(
+                "jobs",
+                filter=Q(jobs__is_active=True)
+            ) +
+            Count(
+                "sub_categories__jobs",
+                filter=Q(sub_categories__jobs__is_active=True)
+            )
         )
 
 
