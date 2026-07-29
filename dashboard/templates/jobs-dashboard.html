@@ -8,6 +8,7 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/jobs-dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/job-stats.css' %}">
 {% endblock css %}
 
 {% block content %}
@@ -16,12 +17,12 @@
     <div class="jobs-dashboard-header">
         <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start">
             <div>
-                <h1 class="fw-bold display-6 mb-2"><i class="bi bi-briefcase me-2"></i>Jobs Dashboard</h1>
+                <h1 class="fw-bold display-6 mb-2"><i class="fa-solid fa-briefcase me-2"></i>Jobs Dashboard</h1>
                 <p class="lead text-white-50 mb-0">Manage your job postings, track applications, and view hiring insights.</p>
             </div>
             <div class="mt-3 mt-md-0">
                 <a href="{% url 'post-job' %}" class="btn btn-light btn-lg fw-bold text-success shadow-sm">
-                    <i class="bi bi-plus-circle me-2"></i>Post New Job
+                    <i class="fa-solid fa-circle-plus me-2"></i>Post New Job
                 </a>
             </div>
         </div>
@@ -30,15 +31,15 @@
 
 <div class="container my-5">
     <div class="card filter-card p-4 mb-5">
-        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-funnel text-success me-2"></i>Filter Job Postings</h5>
+        <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-filter text-success me-2"></i>Filter Job Postings</h5>
 
         <form method="GET" class="row g-3 align-items-end" action="{% url 'jobs-dashboard' %}">
             <div class="col-md-2">
-                <label for="is_active" class="form-label text-secondary small fw-semibold">Job Status</label>
-                <select class="form-select" id="is_active" name="is_active">
+                <label for="job_status" class="form-label text-secondary small fw-semibold">Job Status</label>
+                <select class="form-select" id="job_status" name="job_status">
                     <option value="">All</option>
-                    <option value="True" {% if request.GET.status == 'True' %}selected{% endif %}>Active</option>
-                    <option value="False" {% if request.GET.status == 'False' %}selected{% endif %}>Inactive</option>
+                    <option value="active" {% if request.GET.job_status == 'active' %}selected{% endif %}>Active</option>
+                    <option value="inactive" {% if request.GET.job_status == 'inactive' %}selected{% endif %}>Inactive</option>
                 </select>
             </div>
 
@@ -59,7 +60,7 @@
 
             <div class="col-md-2">
                 <label for="per_page" class="form-label text-secondary small fw-semibold">Per page</label>
-                <input name="per_page" value="{{request.GET.per_page|default:'20'}}" type="number" class='form-control' max="100" min="1" placeholder="Minimum 20 per page"></input>
+                <input name="per_page" value="{{request.GET.per_page|default:'20'}}" type="number" class='form-control' max="100" min="20" placeholder="Minimum 20 per page" required>
             </div>
 
             <div class="col-md-2 d-grid gap-2 d-md-flex justify-content-md-end">
@@ -68,17 +69,18 @@
             </div>
         </form>
     </div>
+
     <!-- 1. Statistics Overview Cards Section -->
     <div class="row g-3 mb-5">
 
-        <div class="col-xl-2  col-sm-6">
+        <div class="col-xl-2 col-sm-6">
             <div class="card h-100 stat-card p-3">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div class="stat-icon-wrapper bg-light text-dark">
-                        <i class="bi bi-briefcase"></i>
+                        <i class="fa-solid fa-briefcase"></i>
                     </div>
                 </div>
-                <h3 class="fw-bold mb-1">{{stats.total_job}}</h3>
+                <h3 class="fw-bold mb-1">{{stats.job_stats.total_job}}</h3>
                 <span class="text-secondary small fw-medium">Total Jobs</span>
             </div>
         </div>
@@ -87,22 +89,22 @@
             <div class="card h-100 stat-card p-3">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div class="stat-icon-wrapper bg-success-subtle text-success">
-                        <i class="bi bi-check-circle-fill fs-4"></i>
+                        <i class="fa-solid fa-circle-check fs-4"></i>
                     </div>
                 </div>
-                <h3 class="fw-bold mb-1">{{stats.total_active_job}}</h3>
+                <h3 class="fw-bold mb-1">{{stats.job_stats.total_active_job}}</h3>
                 <span class="text-secondary small fw-medium">Active Jobs</span>
             </div>
         </div>
 
-        <div class="col-xl-2  col-sm-6">
+        <div class="col-xl-2 col-sm-6">
             <div class="card h-100 stat-card p-3">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div class="stat-icon-wrapper bg-danger-subtle text-danger">
-                        <i class="bi bi-exclamation-octagon fs-4"></i>
+                        <i class="fa-solid fa-circle-exclamation fs-4"></i>
                     </div>
                 </div>
-                <h3 class="fw-bold mb-1">{{stats.total_inactive_job}}</h3>
+                <h3 class="fw-bold mb-1">{{stats.job_stats.total_inactive_job}}</h3>
                 <span class="text-secondary small fw-medium">Inactive Jobs</span>
             </div>
         </div>
@@ -111,10 +113,10 @@
             <div class="card h-100 stat-card p-3">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div class="stat-icon-wrapper bg-primary-subtle text-primary">
-                        <i class="bi bi-people fs-4"></i>
+                        <i class="fa-solid fa-users fs-4"></i>
                     </div>
                 </div>
-                <h3 class="fw-bold mb-1">{{stats.total_application}}</h3>
+                <h3 class="fw-bold mb-1">{{stats.application_stats.total_application}}</h3>
                 <span class="text-secondary small fw-medium">Total Applicants</span>
             </div>
         </div>
@@ -122,119 +124,327 @@
         <div class="col-xl-2 col-sm-6">
             <div class="card h-100 stat-card p-3">
                 <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="stat-icon-wrapper bg-warning-subtle text-warning">
-                        <i class="bi bi-calendar4-event fs-4"></i>
+                    <div class="stat-icon-wrapper bg-warning-subtle text-primary">
+                        <i class="fa-solid fa-flag"></i>
                     </div>
-                    <span class="badge bg-warning-subtle text-warning">This Week</span>
                 </div>
-                <h3 class="fw-bold mb-1">26</h3>
-                <span class="text-secondary small fw-medium">Interviews Scheduled</span>
+                <h3 class="fw-bold mb-1">{{stats.application_stats.total_application}}</h3>
+                <span class="text-secondary small fw-medium">Total Reports</span>
             </div>
         </div>
 
         <div class="col-xl-2 col-sm-6">
             <div class="card h-100 stat-card p-3">
                 <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="stat-icon-wrapper bg-success-subtle text-success">
-                        <i class="bi bi-person-check fs-4"></i>
+                    <div class="stat-icon-wrapper bg-warning-subtle text-primary">
+                        <i class="fa-solid fa-bookmark"></i>
                     </div>
-                    <span class="badge bg-success-subtle text-success">+8% Target</span>
                 </div>
-                <h3 class="fw-bold mb-1">14</h3>
-                <span class="text-secondary small fw-medium">Hired Candidates</span>
+                <h3 class="fa fa-badge-active">{{stats.total_bookmark}}</h3>
+                <span class="text-secondary small fw-medium">Total Bookmark</span>
             </div>
         </div>
 
+    </div>
+
+    <!-- 3. APPLICATION STATUS BREAKDOWN (10 STATUSES INTEGRATED) -->
+    <div class="row g-3 mb-5">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h2 class="h6 fw-bold mb-0 text-dark">Application Status Breakdown</h2>
+        </div>
+        <span class="badge bg-light text-dark border">{{stats.application_stats.total_application}} Total</span>
+      </div>
+
+      <!-- Segmented Stacked Progress Bar -->
+        <div class="status-stacked-bar mb-4">
+        <div class="status-pending" 
+            style="width: {{stats.application_stats.pending_ratio|default:'0%'}}" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Pending: {{stats.application_stats.pending_ratio|default:'0%'}}">
+        </div>
+
+        <div class="status-under_review" 
+            style="width: {{stats.application_stats.under_review_ratio|default:'0%'}}" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Under Review: {{stats.application_stats.under_review_ratio|default:'0%'}}">
+        </div>
+
+        <div class="status-shortlisted" 
+            style="width: {{stats.application_stats.shortlisted_ratio|default:'0%'}}" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Shortlisted: {{stats.application_stats.shortlisted_ratio|default:'0%'}}">
+        </div>
+
+        <div class="status-interview_scheduled" 
+            style="width: {{stats.application_stats.interview_scheduled_ratio|default:'0%'}}" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Interview Scheduled: {{stats.application_stats.interview_scheduled_ratio|default:'0%'}}">
+        </div>
+
+        <div class="status-offered" 
+            style="width: {{stats.application_stats.offered_ratio|default:'0%'}}" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Offered: {{stats.application_stats.offered_ratio|default:'0%'}}">
+        </div>
+
+        <div class="status-offer_accepted" 
+            style="width: {{stats.application_stats.offer_accepted_ratio|default:'0%'}}" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Offer Accepted: {{stats.application_stats.offer_accepted_ratio|default:'0%'}}">
+        </div>
+
+        <div class="status-offer_declined" 
+            style="width: {{stats.application_stats.offer_declined_ratio|default:'0%'}}" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Offer Declined: {{stats.application_stats.offer_declined_ratio|default:'0%'}}">
+        </div>
+
+        <div class="status-rejected_by_hr" 
+            style="width: {{stats.application_stats.rejected_by_hr_ratio|default:'0%'}}" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Rejected by HR: {{stats.application_stats.rejected_by_hr_ratio|default:'0%'}}">
+        </div>
+
+        <div class="status-withdrawn" 
+            style="width: {{stats.application_stats.withdrawn_ratio|default:'0%'}}" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Withdrawn: {{stats.application_stats.withdrawn_ratio|default:'0%'}}">
+        </div>
+
+        <div class="status-hired" 
+            style="width: {{stats.application_stats.hired_ratio|default:'0%'}}" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Hired: {{stats.application_stats.hired_ratio|default:'0%'}}">
+        </div>
+    </div>
+
+      <!-- Status Grid Cards -->
+      <div class="row g-4 mb-3">
+        <!-- 1. Pending -->
+        <div class="col-6 col-md-4 col-lg-2.4">
+          <div class="p-2.5 rounded border bg-light">
+            <div class="d-flex align-items-center gap-1.5 mb-1">
+              <span class="d-inline-block rounded-circle bar-pending" style="width: 8px; height: 8px;"></span>
+              <span class="text-muted small fw-medium">Pending</span>
+            </div>
+            <div class="d-flex align-items-baseline justify-content-between">
+              <span class="fw-bold text-dark h6 mb-0">{{stats.application_stats.total_pending|default:0}}</span>
+              <span class="text-muted small fs-7">{{stats.application_stats.pending_ratio|default:"0%"}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Under Review -->
+        <div class="col-6 col-md-4 col-lg-2.4">
+          <div class="p-2.5 rounded border bg-light">
+            <div class="d-flex align-items-center gap-1.5 mb-1">
+              <span class="d-inline-block rounded-circle bar-under-review" style="width: 8px; height: 8px;"></span>
+              <span class="text-muted small fw-medium">Under Review</span>
+            </div>
+            <div class="d-flex align-items-baseline justify-content-between">
+              <span class="fw-bold text-dark h6 mb-0">{{stats.application_stats.total_under_review|default:0}}</span>
+              <span class="text-muted small fs-7">{{stats.application_stats.under_review_ratio|default:"0%"}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Shortlisted -->
+        <div class="col-6 col-md-4 col-lg-2.4">
+          <div class="p-2.5 rounded border bg-light">
+            <div class="d-flex align-items-center gap-1.5 mb-1">
+              <span class="d-inline-block rounded-circle bar-shortlisted" style="width: 8px; height: 8px;"></span>
+              <span class="text-muted small fw-medium">Shortlisted</span>
+            </div>
+            <div class="d-flex align-items-baseline justify-content-between">
+              <span class="fw-bold text-dark h6 mb-0">{{stats.application_stats.total_shortlisted|default:0}}</span>
+              <span class="text-muted small fs-7">{{stats.application_stats.shortlisted_ratio|default:"0%"}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Interview Scheduled -->
+        <div class="col-6 col-md-4 col-lg-2.4">
+          <div class="p-2.5 rounded border bg-light">
+            <div class="d-flex align-items-center gap-1.5 mb-1">
+              <span class="d-inline-block rounded-circle bar-interview" style="width: 8px; height: 8px;"></span>
+              <span class="text-muted small fw-medium">Interview Scheduled</span>
+            </div>
+            <div class="d-flex align-items-baseline justify-content-between">
+              <span class="fw-bold text-dark h6 mb-0">{{stats.application_stats.total_interview_scheduled|default:0}}</span>
+              <span class="text-muted small fs-7">{{stats.application_stats.interview_scheduled_ratio|default:"0%"}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Offered -->
+        <div class="col-6 col-md-4 col-lg-2.4">
+          <div class="p-2.5 rounded border bg-light">
+            <div class="d-flex align-items-center gap-1.5 mb-1">
+              <span class="d-inline-block rounded-circle bar-offered" style="width: 8px; height: 8px;"></span>
+              <span class="text-muted small fw-medium">Offered</span>
+            </div>
+            <div class="d-flex align-items-baseline justify-content-between">
+              <span class="fw-bold text-dark h6 mb-0">{{stats.application_stats.total_offered|default:0}}</span>
+              <span class="text-muted small fs-7">{{stats.application_stats.offered_ratio|default:"0%"}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Offer Accepted -->
+        <div class="col-6 col-md-4 col-lg-2.4">
+          <div class="p-2.5 rounded border bg-light">
+            <div class="d-flex align-items-center gap-1.5 mb-1">
+              <span class="d-inline-block rounded-circle bar-accepted" style="width: 8px; height: 8px;"></span>
+              <span class="text-muted small fw-medium">Offer Accepted</span>
+            </div>
+            <div class="d-flex align-items-baseline justify-content-between">
+              <span class="fw-bold text-dark h6 mb-0">{{stats.application_stats.total_offer_accepted|default:0}}</span>
+              <span class="text-muted small fs-7">{{stats.application_stats.offer_accepted_ratio|default:"0%"}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. Offer Declined -->
+        <div class="col-6 col-md-4 col-lg-2.4">
+          <div class="p-2.5 rounded border bg-light opacity-75">
+            <div class="d-flex align-items-center gap-1.5 mb-1">
+              <span class="d-inline-block rounded-circle bar-declined" style="width: 8px; height: 8px;"></span>
+              <span class="text-muted small fw-medium">Offer Declined</span>
+            </div>
+            <div class="d-flex align-items-baseline justify-content-between">
+              <span class="fw-bold text-dark h6 mb-0">{{stats.application_stats.total_offer_declined|default:0}}</span>
+              <span class="text-muted small fs-7">{{stats.application_stats.offer_declined_ratio|default:"0%"}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. Hired -->
+        <div class="col-6 col-md-4 col-lg-2.4">
+          <div class="p-2.5 rounded border bg-light">
+            <div class="d-flex align-items-center gap-1.5 mb-1">
+              <span class="d-inline-block rounded-circle bar-hired" style="width: 8px; height: 8px;"></span>
+              <span class="text-muted small fw-medium">Hired</span>
+            </div>
+            <div class="d-flex align-items-baseline justify-content-between">
+              <span class="fw-bold text-dark h6 mb-0">{{stats.application_stats.total_hired|default:0}}</span>
+              <span class="text-muted small fs-7">{{stats.application_stats.hired_ratio|default:"0%"}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. Rejected by HR -->
+        <div class="col-6 col-md-4 col-lg-2.4">
+          <div class="p-2.5 rounded border bg-light opacity-75">
+            <div class="d-flex align-items-center gap-1.5 mb-1">
+              <span class="d-inline-block rounded-circle bar-rejected" style="width: 8px; height: 8px;"></span>
+              <span class="text-muted small fw-medium">Rejected by HR</span>
+            </div>
+            <div class="d-flex align-items-baseline justify-content-between">
+              <span class="fw-bold text-dark h6 mb-0">{{stats.application_stats.total_rejected_by_hr|default:0}}</span>
+              <span class="text-muted small fs-7">{{stats.application_stats.rejected_by_hr_ratio|default:"0%"}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 10. Withdrawn -->
+        <div class="col-6 col-md-4 col-lg-2.4">
+          <div class="p-2.5 rounded border bg-light opacity-75">
+            <div class="d-flex align-items-center gap-1.5 mb-1">
+              <span class="d-inline-block rounded-circle bar-withdrawn" style="width: 8px; height: 8px;"></span>
+              <span class="text-muted small fw-medium">Withdrawn</span>
+            </div>
+            <div class="d-flex align-items-baseline justify-content-between">
+              <span class="fw-bold text-dark h6 mb-0">{{stats.application_stats.total_withdrawn|default:0}}</span>
+              <span class="text-muted small fs-7">{{stats.application_stats.withdrawn_ratio|default:0}}%</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      
+    </div>
+
+    <!-- Report Stats -->
+    <div class="row g-4 mb-3">
+        <div class='col-md-12'>
+            <div class="card analytics-card p-4 h-100 shadow-sm border-0">
+                <h5 class="fw-bold text-dark mb-3">
+                    <i class="fa-solid fa-flag text-warning me-2"></i>Report Stats
+                </h5>
+                <div class="d-flex flex-column gap-2">
+                    {% for key, value in stats.report_stats.items %}
+                        <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                            <span class="text-muted small fw-medium">{{ key|cut:'total_'|title }}</span>
+                            <span class="fw-bold text-dark small">{{ value|default:'0' }}</span>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted small">No report data available.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     </div>
 
     {% comment %}
-    <div class="row g-3 mb-5">
-        <div class="col-xl-3 col-sm-6">
-            <div class="card h-100 stat-card p-3">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="stat-icon-wrapper bg-dark-subtle text-dark">
-                        <i class="bi bi-eye fs-4"></i>
-                    </div>
-                    <span class="badge bg-success-subtle text-success">+24% Avg</span>
-                </div>
-                <h3 class="fw-bold mb-1">28,490</h3>
-                <span class="text-secondary small fw-medium">Total Job Views</span>
-            </div>
-        </div>
-    </div>
+    <!-- Analytics & Stats Section -->
+    <div class="row g-4 mb-5"> 
 
-    {% endcomment %}
-
-    <!-- 2. Quick Insights & 9. Notifications Widgets Section -->
-    <div class="row g-4 mb-5">
-        <div class="col-md-6">
-            <div class="card h-100 p-4 shadow-sm border-0">
-                <h5 class="fw-bold text-dark mb-4"><i class="bi bi-lightning text-warning me-2"></i>Quick Insights</h5>
-                <div class="row g-3">
-                    <div class="col-sm-6">
-                        <div class="insight-item d-flex align-items-center">
-                            <i class="bi bi-hourglass-split text-danger fs-4 me-3"></i>
-                            <div>
-                                <h6 class="fw-bold mb-0">3 Positions</h6>
-                                <small class="text-secondary">Expiring within 48h</small>
-                            </div>
+        <!-- Report Stats -->
+        <div class="col-md-3">
+            <div class="card analytics-card p-4 h-100 shadow-sm border-0">
+                <h5 class="fw-bold text-dark mb-3">
+                    <i class="fa-solid fa-flag text-warning me-2"></i>Report Stats
+                </h5>
+                <div class="d-flex flex-column gap-2">
+                    {% for key, value in stats.report_stats.items %}
+                        <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                            <span class="text-muted small fw-medium">{{ key|cut:'total_'|title }}</span>
+                            <span class="fw-bold text-dark small">{{ value|default:'0' }}</span>
                         </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="insight-item d-flex align-items-center">
-                            <i class="bi bi-person-plus text-success fs-4 me-3"></i>
-                            <div>
-                                <h6 class="fw-bold mb-0">+34 Applicants</h6>
-                                <small class="text-secondary">Received today</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="insight-item d-flex align-items-center">
-                            <i class="bi bi-telephone-inbound text-primary fs-4 me-3"></i>
-                            <div>
-                                <h6 class="fw-bold mb-0">8 Interviews</h6>
-                                <small class="text-secondary">Scheduled tomorrow</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="insight-item d-flex align-items-center">
-                            <i class="bi bi-trophy text-warning fs-4 me-3"></i>
-                            <div>
-                                <h6 class="fw-bold mb-0">68% Success Rate</h6>
-                                <small class="text-secondary">Offer acceptance ratio</small>
-                            </div>
-                        </div>
-                    </div>
+                    {% empty %}
+                        <p class="text-muted small">No report data available.</p>
+                    {% endfor %}
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+
+        <!-- System Alerts -->
+        <div class="col-md-4">
             <div class="card h-100 p-4 shadow-sm border-0">
-                <h5 class="fw-bold text-dark mb-4"><i class="bi bi-bell text-success me-2"></i>System Alerts</h5>
+                <h5 class="fw-bold text-dark mb-4"><i class="fa-solid fa-bell text-success me-2"></i>System Alerts</h5>
                 <div class="list-group list-group-flush">
                     <div class="list-group-item px-0 py-2 border-0 d-flex justify-content-between align-items-center">
-                        <span class="text-secondary"><i class="bi bi-calendar-range text-danger me-2"></i>Jobs Expiring Soon</span>
+                        <span class="text-secondary"><i class="fa-solid fa-calendar-days text-danger me-2"></i>Jobs Expiring Soon</span>
                         <span class="badge bg-danger rounded-pill">3 Posts</span>
                     </div>
                     <div class="list-group-item px-0 py-2 border-0 d-flex justify-content-between align-items-center">
-                        <span class="text-secondary"><i class="bi bi-person-lines-fill text-success me-2"></i>New Profiles Submitted</span>
+                        <span class="text-secondary"><i class="fa-solid fa-address-card text-success me-2"></i>New Profiles Submitted</span>
                         <span class="badge bg-success rounded-pill">12 Applications</span>
                     </div>
                     <div class="list-group-item px-0 py-2 border-0 d-flex justify-content-between align-items-center">
-                        <span class="text-secondary"><i class="bi bi-camera-video text-primary me-2"></i>Interviews Set for Today</span>
+                        <span class="text-secondary"><i class="fa-solid fa-video text-primary me-2"></i>Interviews Set for Today</span>
                         <span class="badge bg-primary rounded-pill">2 Events</span>
                     </div>
                     <div class="list-group-item px-0 py-2 border-0 d-flex justify-content-between align-items-center">
-                        <span class="text-secondary"><i class="bi bi-flag text-warning me-2"></i>Reported Job Postings</span>
+                        <span class="text-secondary"><i class="fa-solid fa-flag text-warning me-2"></i>Reported Job Postings</span>
                         <span class="badge bg-warning text-dark rounded-pill">1 Report</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
+    {% endcomment %}
     <div class="card job-table-card p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h4 class="fw-bold text-dark mb-0">Your Jobs</h4>
@@ -276,7 +486,7 @@
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-1 flex-wrap">
                                     <a href="{% url 'job-applications' job.id %}" class="btn btn-success btn-action position-relative" title="View Job Applicants">
-                                        <i class="bi bi-people-fill me-1"></i>Applicants
+                                        <i class="fa-solid fa-users me-1"></i>Applicants
                                         {% if job.applicants_count %}
                                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.7rem;">
                                                 {{ job.applicants_count }}
@@ -285,19 +495,19 @@
                                     </a>
 
                                     <a href="{% url 'job-stats' job.id %}" class="btn btn-outline-primary btn-action" title="View Analytics">
-                                        <i class="bi bi-bar-chart-line me-1"></i>Stats
+                                        <i class="fa-solid fa-chart-column me-1"></i>Stats
                                     </a>
                                     
                                     <a href="{{ job.get_absolute_url }}" class="btn btn-outline-info btn-action text-dark" title="View Public Post">
-                                        <i class="bi bi-eye me-1"></i>View
+                                        <i class="fa-solid fa-eye me-1"></i>View
                                     </a>
                                     
                                     <a href="{% url 'update-job' job.id %}" class="btn btn-outline-secondary btn-action" title="Edit Position">
-                                        <i class="bi bi-pencil-square me-1"></i>Edit
+                                        <i class="fa-solid fa-pen-to-square me-1"></i>Edit
                                     </a>
                                     
                                     <button type="button" class="btn btn-outline-danger btn-action" data-bs-toggle="modal" data-bs-target="#deleteJobModal-{{ job.id }}" title="Delete Posting">
-                                        <i class="bi bi-trash me-1"></i>Delete
+                                        <i class="fa-solid fa-trash me-1"></i>Delete
                                     </button>
                                 </div>
                             </td>
@@ -305,7 +515,7 @@
                     {% empty %}
                         <tr>
                             <td colspan="5" class="text-center py-5 text-muted">
-                                <i class="bi bi-folder-x fs-2 mb-2 d-block text-secondary"></i>
+                                <i class="fa-solid fa-folder-open fs-2 mb-2 d-block text-secondary"></i>
                                 No job positions found matching your criteria.
                             </td>
                         </tr>
@@ -313,10 +523,10 @@
                 </tbody>
             </table>
         </div>
+
         <!-- Pagination Block -->
         {% if jobs.has_other_pages %}
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 pt-3 border-top">
-                <!-- Showing X to Y of Z Entries text -->
                 <div class="text-secondary small mb-3 mb-md-0">
                     Showing Page <strong class="text-dark">{{ jobs.number }}</strong> of {{ jobs.paginator.num_pages }}
                 </div>
@@ -326,7 +536,7 @@
                                 
                         {% if jobs.has_previous %}
                             <li class="page-item">
-                                <a class="page-link text-success" href="?page={{ jobs.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.date_from %}&date_from={{ request.GET.date_from }}{% endif %}{% if request.GET.date_to %}&date_to={{ request.GET.date_to }}{% endif %}{% if request.GET.deadline %}&deadline={{ request.GET.deadline }}{% endif %}&per_page={{request.GET.per_page}} {% if request.GET.per_page %}{% endif %}" aria-label="Previous">
+                                <a class="page-link text-success" href="?page={{ jobs.previous_page_number }} {% if query_param %}&{{query_param}} {% endif %}" aria-label="Previous">
                                     <span aria-hidden="true">&laquo; Previous</span>
                                 </a>
                             </li>
@@ -338,7 +548,7 @@
 
                         {% if jobs.has_next %}
                             <li class="page-item">
-                                <a class="page-link text-success" href="?page={{ jobs.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.date_from %}&date_from={{ request.GET.date_from }}{% endif %}{% if request.GET.date_to %}&date_to={{ request.GET.date_to }}{% endif %}{% if request.GET.deadline %}&deadline={{ request.GET.deadline }}{% endif %}&per_page={{request.GET.per_page}} {% if request.GET.per_page %}{% endif %}" aria-label="Next">
+                                <a class="page-link text-success" href="?page={{ jobs.next_page_number }} {% if query_param %}&{{query_param}} {% endif %}" aria-label="Next">
                                     <span aria-hidden="true">Next &raquo;</span>
                                 </a>
                             </li>
@@ -361,7 +571,7 @@
             <div class="modal-content border-0 shadow">
                 <div class="modal-header border-0 bg-light">
                     <h5 class="modal-title fw-bold text-dark" id="deleteJobModalLabel-{{ job.id }}">
-                        <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Remove Job Posting
+                        <i class="fa-solid fa-triangle-exclamation text-danger me-2"></i>Remove Job Posting
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>

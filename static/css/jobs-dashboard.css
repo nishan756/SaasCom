@@ -1,4 +1,4 @@
-html {
+    html {
         overflow-y: scroll !important;
     }
     body {
@@ -48,3 +48,137 @@ html {
     .table-responsive {
         overflow: visible !important;
     }
+
+    .application-stats-card{
+        height: 348px;
+        overflow-y: auto;
+    }
+
+
+        .stat-card {
+            border: none;
+            border-radius: 0.75rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.05);
+            transition: var(--transition-smooth);
+            background: var(--surface-card);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.08);
+        }
+
+        .stat-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .insight-item {
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            background-color: #f8f9fa;
+            transition: var(--transition-smooth);
+        }
+
+        .insight-item:hover {
+            background-color: #f1f3f5;
+        }
+
+        .timeline-vertical {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .timeline-vertical::before {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 5px;
+            bottom: 5px;
+            width: 2px;
+            background-color: #e9ecef;
+        }
+
+        .timeline-event {
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+
+        .timeline-event:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-point {
+            position: absolute;
+            left: -1.5rem;
+            left: calc(-1.5rem + 1px);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #198754;
+            outline: 4px solid #ffffff;
+            top: 6px;
+        }
+
+        .funnel-stage {
+            position: relative;
+            background: #ffffff;
+            border: 1px solid #e9ecef;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.02);
+        }
+
+        .funnel-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: #6c757d;
+        }
+
+        .chart-placeholder-bg {
+            background: linear-gradient(45deg, #f8f9fa 25%, #e9ecef 25%, #e9ecef 50%, #f8f9fa 50%, #f8f9fa 75%, #e9ecef 75%, #e9ecef 100%);
+            background-size: 40px 40px;
+            height: 200px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #dee2e6;
+        }
+
+        .candidate-avatar {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .badge-active {
+            background-color: rgba(25, 135, 84, 0.1);
+            color: #198754;
+            padding: 0.35em 0.65em;
+            border-radius: 50rem;
+            font-size: 0.75em;
+            font-weight: 700;
+        }
+
+        .badge-inactive {
+            background-color: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+            padding: 0.35em 0.65em;
+            border-radius: 50rem;
+            font-size: 0.75em;
+            font-weight: 700;
+        }
+
+        .dashboard-footer {
+            background-color: #ffffff;
+            border-top: 1px solid #e9ecef;
+        }

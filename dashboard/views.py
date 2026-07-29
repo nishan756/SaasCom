@@ -120,15 +120,18 @@ def jobs_dashboard(request):
     page = query_param.pop("page" , 1)
     per_page = query_param.pop("per_page" , 20)
     context = {}
+
     try:
         result = job_dashboard_service.main_dashboard(request.user , page , per_page , **query_param)
         context["jobs"] = result["jobs"]
         context["stats"] = result["stats"]
+        context["query_param"] = urlencode(query_param)
+        return render(request , "jobs-dashboard.html" , context)
     
     except Exception as e:
         messages.error(request , "Something went wrong")
-        
-    return render(request , "jobs-dashboard.html" , context)
+
+    return redirect("dashboard-entry-point")
 
 @login_required(login_url = "login")
 @require_GET

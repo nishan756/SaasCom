@@ -314,26 +314,194 @@ class DiscussionDashboardRepo:
 
 class JobDashboardRepo:
 
-    def main_dashboard(self , user , page , **query_param):
-        jobs = JobService().get_user_jobs(user , page , **query_param)
+    def main_dashboard(self, user, **query_param):
 
-        stats = jobs.object_list.aggregate(
-            total_job = Count("id" , distinct = True),
-            total_active_job = Count("id" , filter = Q(is_active = True) , distinct = True),
-            total_inactive_job = Count("id" , filter = Q(is_active = False) , distinct = True),
+        jobs = Job.objects.filter(user=user)
+
+        jobs_ids = jobs.values_list("id", flat=True)
+
+        applications = Application.objects.filter(
+            job__user=user
         )
 
-        application_stats = jobs.object_list.prefetch_related("applications").aggregate(
-            total_application = Count("applications" , distinct = True),
+        content_type = ContentType.objects.get_for_model(Job)
+
+        reports = Report.objects.filter(
+            content_type=content_type,
+            object_id__in=jobs_ids
         )
 
-        for stat in application_stats:
-            stats[stat] = application_stats[stat]
-        
-        return {
-            "stats":stats,
-            "jobs":jobs
+        bookmarks = Bookmark.objects.filter(
+            content_type=content_type,
+            object_id__in=jobs_ids
+        )
+
+
+        date_from = query_param.pop("date_from", None)
+        date_to = query_param.pop("date_to", None)
+
+        if date_from:
+            jobs = jobs.filter(
+                posted_at__gte=date_from
+            )
+
+            applications = applications.filter(
+                applied_at__gte=date_from
+            )
+
+            reports = reports.filter(
+                reported_at__gte=date_from
+            )
+
+        if date_to:
+            jobs = jobs.filter(
+                posted_at__lte=date_to
+            )
+
+            applications = applications.filter(
+                applied_at__lte=date_to
+            )
+
+            reports = reports.filter(
+                reported_at__lte=date_to
+            )
+
+        job_stats = jobs.aggregate(
+            total_job=Count(
+                "id",
+                distinct=True
+            ),
+
+            total_active_job=Count(
+                "id",
+                filter=Q(is_active=True),
+                distinct=True
+            ),
+
+            total_inactive_job=Count(
+                "id",
+                filter=Q(is_active=False),
+                distinct=True
+            ),
+        )
+
+
+        application_stats = applications.aggregate(
+            total_application=Count("id"),
+
+            total_pending=Count(
+                "id",
+                filter=Q(status="pending")
+            ),
+
+            total_under_review=Count(
+                "id",
+                filter=Q(status="under_review")
+            ),
+
+            total_shortlisted=Count(
+                "id",
+                filter=Q(status="shortlisted")
+            ),
+
+            total_interview_scheduled=Count(
+                "id",
+                filter=Q(status="interview_scheduled")
+            ),
+
+            total_offered=Count(
+                "id",
+                filter=Q(status="offered")
+            ),
+
+            total_offer_declined=Count(
+                "id",
+                filter=Q(status="offer_declined")
+            ),
+
+            total_offer_accepted=Count(
+                "id",
+                filter=Q(status="offer_accepted")
+            ),
+
+            total_rejected_by_hr=Count(
+                "id",
+                filter=Q(status="rejected_by_hr")
+            ),
+
+            total_withdrawn=Count(
+                "id",
+                filter=Q(status="withdrawn")
+            ),
+
+            total_hired=Count(
+                "id",
+                filter=Q(status="hired")
+            ),
+        )
+
+
+        report_stats = reports.aggregate(
+            total_report=Count("id"),
+
+            total_spam=Count(
+                "id",
+                filter=Q(report_type="spam")
+            ),
+
+            total_fake=Count(
+                "id",
+                filter=Q(report_type="fake")
+            ),
+
+            total_harassment=Count(
+                "id",
+                filter=Q(report_type="harassment")
+            ),
+
+            total_scam=Count(
+                "id",
+                filter=Q(report_type="scam")
+            ),
+
+            total_nsfw=Count(
+                "id",
+                filter=Q(report_type="nsfw")
+            ),
+
+            total_other=Count(
+                "id",
+                filter=Q(report_type="other")
+            ),
+        )
+
+
+        bookmark_stats = bookmarks.aggregate(
+            total_bookmark=Count("id")
+        )
+
+
+        stats = {
+            "application_stats": application_stats,
+            "job_stats": job_stats,
+            "report_stats": report_stats,
+            "total_bookmark": bookmark_stats.get(
+                "total_bookmark"
+            ),
         }
+
+
+        job_status = query_param.pop(
+            "job_status",
+            None
+        )
+
+        if job_status:
+            jobs = jobs.filter(
+                is_active=job_status
+            )
+
+        return {"stats": stats , "jobs": jobs}
 
     def job_stats(self , id):
 

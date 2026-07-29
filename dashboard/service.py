@@ -149,12 +149,63 @@ class JobDashboardService:
 
     repo = JobDashboardRepo()
 
-    def main_dashboard(self , user , page , per_page , **query_param):
-        jobs = self.repo.main_dashboard(user , page , **query_param).get("jobs")
+    def main_dashboard(self , user , page_num , per_page , **query_param):
+
+        supported_query_field = {"date_from" , "date_to" , "job_status"}
+
+        query_param = {key:value for key , value in query_param.items() if key in supported_query_field}
+
+        job_status_dict = {
+            "active":"True",
+            "inactive":"False",
+        }
+
+        job_status = query_param.pop("job_status" , None)
+
+        if job_status:
+            query_param["job_status"] = job_status_dict[job_status]
+
+        result = self.repo.main_dashboard(user , **query_param)
+
+        application_stats = result.get("stats").pop("application_stats")
+        
+        total_application = application_stats.get("total_application")
+        total_pending = application_stats.get("total_pending")
+        total_under_review = application_stats.get("total_under_review")
+        total_shortlisted = application_stats.get("total_shortlisted")
+        total_interview_scheduled = application_stats.get("total_interview_scheduled")
+        total_offered = application_stats.get("total_offered")
+        total_offer_declined = application_stats.get("total_offer_declined")
+        total_offer_accepted = application_stats.get("total_offer_accepted")
+        total_rejected_by_hr = application_stats.get("total_rejected_by_hr")
+        total_withdrawn = application_stats.get("total_withdrawn")
+        total_hired = application_stats.get("total_hired")
+        
+        temp_ratio_stats = {}
+        if total_application != 0:
+            temp_ratio_stats["pending_ratio"] = f"{round((total_pending * 100) / total_application , 2)}%"
+            temp_ratio_stats["under_review_ratio"] = f"{round((total_under_review * 100) / total_application , 2)}%"
+            temp_ratio_stats["shortlisted_ratio"] = f"{round((total_shortlisted * 100) / total_application , 2)}%"
+            temp_ratio_stats["interview_scheduled_ratio"] = f"{round((total_interview_scheduled * 100) / total_application , 2)}%"
+            temp_ratio_stats["offered_ratio"] = f"{round((total_offered * 100) / total_application , 2)}%"
+            temp_ratio_stats["offer_declined_ratio"] = f"{round((total_offer_declined * 100) / total_application , 2)}%"
+            temp_ratio_stats["offer_accepted_ratio"] = f"{round((total_offer_accepted * 100) / total_application , 2)}%"
+            temp_ratio_stats["rejected_by_hr_ratio"] = f"{round((total_rejected_by_hr * 100) / total_application , 2)}%"
+            temp_ratio_stats["withdrawn_ratio"] = f"{round((total_withdrawn * 100) / total_application , 2)}%"
+            temp_ratio_stats["hired_ratio"] = f"{round((total_hired * 100) / total_application , 2)}%"
+        
+        application_stats = {**application_stats , **temp_ratio_stats}
+        
+        result["stats"]["application_stats"] = application_stats
+
+        jobs = result.pop("jobs")
+
         paginator = Paginator(jobs , per_page)
-        jobs = paginator.get_page(page)
-        result =  self.repo.main_dashboard(user , page , **query_param)
+
+        jobs = paginator.get_page(page_num)
+
         result["jobs"] = jobs
+
         return result
 
     def job_stats(self , id):
