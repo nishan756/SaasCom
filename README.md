@@ -63,6 +63,13 @@ The goal of this project is to create a centralized ecosystem where developers, 
 * Streaming support
 * Tech podcast system
 
+###  Dashboard
+
+* Apps Dashboard
+* Jobs Dashboard
+* Discussion Dashboard
+* Application Dashboard
+
 ### ❤️ Interactive Features
 
 * Like system
