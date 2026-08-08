@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'bookmark',
     'comment',
     'dashboard',
+    'rest_framework',
 
 ]
 
