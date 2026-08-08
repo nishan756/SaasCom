@@ -33,6 +33,7 @@ urlpatterns = [
     path('discussion/', include("discussion.urls")),
     path('comment/', include("comment.urls")),
     path('dashboard/', include("dashboard.urls")),
+    path('api/', include("api.urls")),
     path("summernote/" , include("django_summernote.urls"))
 ] + debug_toolbar_urls()
 
