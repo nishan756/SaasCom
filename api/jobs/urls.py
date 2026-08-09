@@ -1,4 +1,4 @@
-from .views import JobCategoryListCreateView , JobCategoryDetailUpdateDeleteView , SkillListCreateView , SkillDetailUpdateDeleteView , CurrencyListCreateView , CurrencyDetailUpdateDeleteView
+from .views import JobCategoryListCreateView , JobCategoryDetailUpdateDeleteView , SkillListCreateView , SkillDetailUpdateDeleteView , CurrencyListCreateView , CurrencyDetailUpdateDeleteView , JobListCreateView , JobDetailUpdateDeleteView
 from django.urls import path
 
 urlpatterns = [
@@ -10,5 +10,8 @@ urlpatterns = [
 
     path("currencies/" , CurrencyListCreateView.as_view() , name = "currencies"),
     path("currencies/<int:pk>/" , CurrencyDetailUpdateDeleteView.as_view() , name = "currency-detail"),
+
+    path("all-jobs/" , JobListCreateView.as_view() , name = "all-jobs-api"),
+    path("all-jobs/<str:id>/" , JobDetailUpdateDeleteView.as_view() , name = "job-detail-api"),
 
 ]

@@ -1,5 +1,6 @@
 from jobs.models import Currency , Job , JobCategory , Application , Skill
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 
 class CurrencySerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only = True)
@@ -64,4 +65,11 @@ class JobCategorySerializer(serializers.Serializer):
             raise serializers.ValidationError("Category with this title is already exists")
         return value
         
-        
+
+class JobSerializer(serializers.ModelSerializer):
+    User = get_user_model()
+    user = serializers.StringRelatedField(read_only = True)
+
+    class Meta:
+        model = Job
+        exclude = ["posted_at"]

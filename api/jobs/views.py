@@ -1,9 +1,10 @@
 from rest_framework.views import APIView
-from .serializers import JobCategorySerializer , SkillSerializer , CurrencySerializer , Skill , JobCategory , Currency
+from .serializers import JobCategorySerializer , SkillSerializer , CurrencySerializer , Skill , JobCategory , Currency , JobSerializer , Job
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework import generics , authentication , permissions
+from api import object_permission
 
 class JobCategoryListCreateView(APIView):
 
@@ -201,3 +202,41 @@ class CurrencyDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
         if self.request.method == "GET":
             return []
         return [authentication.BasicAuthentication()]
+
+
+class JobListCreateView(generics.ListCreateAPIView):
+    queryset = Job.objects.all()
+    serializer_class = JobSerializer
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [permissions.IsAuthenticated()]
+        return [permissions.AllowAny()]
+    
+    def get_authenticators(self):
+        if self.request.method == "POST":
+            return [authentication.BasicAuthentication()]
+
+    def create(self , request):
+        new_job = request.data 
+        serializer = JobSerializer(data = new_job)
+        if serializer.is_valid():
+            serializer.save(user = request.user)
+            return Response(status = status.HTTP_201_CREATED , data = serializer.data)
+        return Response(status = status.HTTP_400_BAD_REQUEST)
+
+class JobDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Job.objects.all()
+    serializer_class = JobSerializer
+    lookup_field = "id"
+
+    def get_permissions(self):
+        if self.request.method in ["PATCH" , "DELETE" , "PUT"]:
+            return [object_permission.IsOwner()]
+        return [permissions.AllowAny()]
+    
+    def get_authenticators(self):
+        if self.request.method in ["PATCH" , "DELETE" , "PUT"]:
+            return [authentication.BasicAuthentication()]
+        return []
+    
