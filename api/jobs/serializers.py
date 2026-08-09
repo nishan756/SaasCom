@@ -14,8 +14,14 @@ class CurrencySerializer(serializers.Serializer):
         return instance
 
     def validate_code(self , value):
-        if Currency.objects.filter(code__iexact = value).exists():
+        queryset = Currency.objects.filter(code__iexact = value)
+
+        if self.instance:
+            queryset = queryset.exclude(pk = self.instance.id)
+
+        if queryset:
             raise serializers.ValidationError("This currency is already exists!")
+        return value
         
 class SkillSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only = True)
@@ -32,6 +38,7 @@ class SkillSerializer(serializers.Serializer):
     def validate_name(self , value):
         if Skill.objects.filter(name__iexact = value).exists():
             raise serializers.ValidationError("This skill is already exists")
+        return value
 
 class JobCategorySerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only = True)
