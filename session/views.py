@@ -201,7 +201,10 @@ def change_email(request):
                 request.session[f"otp_attempts:{request.user.username}"] = 0
                 request.session["code_expiry"] = timezone.now().timestamp() + 600 
 
-                email_thread = threading.Thread(target = EmailService.send_email , args = ("Email change verification" , email, "send-code.html", {"code": code , "full_name": request.user.full_name}))
+                email_thread = threading.Thread(
+                    target = EmailService.send_email,
+                    args = ("Email change verification" , [email] , "" , "send-code.html" , {"code":code , "full_name":request.user.full_name})
+                )
                 email_thread.start()
 
                 return render(request, "verification.html")
@@ -254,7 +257,6 @@ def verify_email(request):
 
     except Exception as e:
         messages.error(request, "Something went wrong")
-        return redirect("edit-profile")
 
 @login_required(login_url = "login")
 def change_password(request):
