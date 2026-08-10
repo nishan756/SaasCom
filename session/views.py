@@ -255,20 +255,23 @@ def verify_email(request):
         return redirect("edit-profile")
 
 @login_required(login_url = "login")
-@require_POST
 def change_password(request):
     HTTP_REFERER = is_safe_url(url = request.META.get("HTTP_REFERER") , allowed_hosts = request.get_host())
     form = CustomPasswordChangeForm(request.user , request.POST)
-    try:
-        is_updated = user_service.change_password(request , form)
-        if is_updated:
-            logout(request)
-            messages.success(request , "Successfully changed your password. Please login again")
-            return redirect("login")
-    except InvalidForm as e:
-        messages.info(request , str(e))
-        
-    except Exception as e:
-           messages.error(request , "Something went wrong")
+    if request.method == "POST":
+        try:
+            is_updated = user_service.change_password(request , form)
+            if is_updated:
+                logout(request)
+                messages.success(request , "Successfully changed your password. Please login again")
+                return redirect("login")
+        except InvalidForm as e:
+            messages.info(request , str(e))
+            
+        except Exception as e:
+            messages.error(request , "Something went wrong")
+
+        return redirect(HTTP_REFERER)
+
+    return render(request , "change-password.html" , {"form":form})
     
-    return redirect(HTTP_REFERER)
