@@ -177,40 +177,42 @@ def edit_profile(request):
     return render(request , "edit-profile.html" , context)
 
 @login_required(login_url="login")
-@require_POST
 def change_email(request):
-    form = EmailChangeForm(data=request.POST)
+    form = EmailChangeForm()
+    if request.method == "POST":
+        form = EmailChangeForm(data=request.POST)
 
-    if form.is_valid():
-        try:
-            email = form.cleaned_data["email"]
+        if form.is_valid():
+            try:
+                email = form.cleaned_data["email"]
 
-            if email == request.user.email:
-                messages.info(request, "This is your existing email")
-                return redirect("edit-profile")
+                if email == request.user.email:
+                    messages.info(request, "This is your existing email")
+                    return redirect("change-email")
 
-            if user_service.check_user_with_email_or_username(email=email):
-                messages.info(request, "User with this email already exists")
-                return redirect("edit-profile")
+                if user_service.check_user_with_email_or_username(email=email):
+                    messages.info(request, "User with this email already exists")
+                    return redirect("change-email")
 
-            code = str(random.randint(100000, 999999))
+                code = str(random.randint(100000, 999999))
 
-            request.session["session_code"] = code
-            request.session["email"] = email
-            request.session[f"otp_attempts:{request.user.username}"] = 0
-            request.session["code_expiry"] = timezone.now().timestamp() + 600 
+                request.session["session_code"] = code
+                request.session["email"] = email
+                request.session[f"otp_attempts:{request.user.username}"] = 0
+                request.session["code_expiry"] = timezone.now().timestamp() + 600 
 
-            email_thread = threading.Thread(target = EmailService.send_email , args = ("Email change verification" , email, "send-code.html", {"code": code , "full_name": request.user.full_name}))
-            email_thread.start()
+                email_thread = threading.Thread(target = EmailService.send_email , args = ("Email change verification" , email, "send-code.html", {"code": code , "full_name": request.user.full_name}))
+                email_thread.start()
 
-            return render(request, "verification.html")
+                return render(request, "verification.html")
 
-        except Exception as e:
-            messages.error(request, "Something went wrong")
-            return redirect("edit-profile")
-    else:
-        messages.error(request, str(form.errors))
-        return redirect("edit-profile")
+            except Exception as e:
+                messages.error(request, "Something went wrong")
+                return redirect("change-email")
+        else:
+            messages.error(request, str(form.errors))
+            return redirect("change-email")
+    return render(request , "change-email.html" , {"form":form})
 
 
 @login_required(login_url="login")
