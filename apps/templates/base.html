@@ -52,36 +52,75 @@
                     </a>
 
 
-                    <!-- DROPDOWN MENU -->
                     <ul class="dropdown-menu dropdown-menu-end">
 
                         {% if request.user.is_authenticated %}
+
                             <li>
-                                <a class="dropdown-item" href="{% url 'profile' request.user.username %}">
+                                <a class="dropdown-item"
+                                href="{% url 'profile' request.user.username %}">
                                     Profile
                                 </a>
                             </li>
 
-                            <li>
-                                <a class="dropdown-item" href="">
-                                    Settings
+                            <!-- ACCOUNT DROPDOWN -->
+                            <li class="dropdown-submenu">
+
+                                <a class="dropdown-item d-flex justify-content-between align-items-center"
+                                href="#"
+                                id="accountToggle">
+
+                                    Account
+                                    <span>›</span>
+
                                 </a>
+
+                                <ul class="dropdown-menu" id="accountMenu">
+
+                                    <li>
+                                        <a class="dropdown-item" href="">
+                                            Edit Profile
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'change-password'%}">
+                                            Change Password
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item" href="">
+                                            Change Email
+                                        </a>
+                                    </li>
+
+                                </ul>
+
+                            </li>
+                            <!-- END ACCOUNT DROPDOWN -->
+
+
+                            <li>
+                                <hr class="dropdown-divider">
                             </li>
 
-                            <li><hr class="dropdown-divider"></li>
-
                             <li>
-                                <a class="dropdown-item" href="{% url 'dashboard-entry-point' %}">
+                                <a class="dropdown-item"
+                                href="{% url 'dashboard-entry-point' %}">
                                     Dashboard
                                 </a>
                             </li>
 
                             <li>
-                                <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                                <a class="dropdown-item text-danger"
+                                href="{% url 'logout' %}">
                                     Logout
                                 </a>
                             </li>
+
                         {% else %}
+
                             <li>
                                 <a class="dropdown-item" href="{% url 'login' %}">
                                     Login
@@ -95,6 +134,7 @@
                             </li>
 
                         {% endif %}
+
                     </ul>
 
                 </li>
