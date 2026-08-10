@@ -1,9 +1,10 @@
 from .repository import UserRepo , FollowRepo
 from saas_com.core.exceptions import FollowException, InvalidForm , InvalidContentType
 from django.contrib.auth import update_session_auth_hash
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives , send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
+from typing import List
 
 
 class UserService:
@@ -103,25 +104,36 @@ class FollowService:
 class EmailService:
 
     @staticmethod
-    def send_email(subject, recipient, template_name, context = None):
-        context = context if context else {}
+    def send_email(subject:str, recipient:List[str] , body:str = None , template_name:str = None, context:dict = None):
+        context = context or {}
 
-        html_content = render_to_string(
-            template_name=template_name,
-            context=context
+        email = None
+
+        if template_name:
+            html_content = render_to_string(
+                template_name,
+                context = context,
+            )
+    
+            email = EmailMultiAlternatives(
+                subject=subject,
+                body = body or "",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to = recipient
+            )
+
+            email.attach_alternative(
+                html_content,
+                "text/html",
+            )
+
+            return email.send()
+
+        return send_mail(
+            subject = subject,
+            message = body or "",
+            from_email = settings.DEFAULT_FROM_EMAIL,
+            recipient_list = recipient
         )
 
-        email = EmailMultiAlternatives(
-            subject=subject,
-            body="",
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to=[recipient]
-        )
-
-        email.attach_alternative(
-            html_content,
-            "text/html"
-        )
-
-        email.send()
 
