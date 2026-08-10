@@ -1,197 +1,157 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block css %}
-    <link rel="stylesheet" href="{% static 'css/edit-profile.css'%}">
-{% endblock css %}
+{% extends "base.html" %}
 
 {% block title %}
-    Change profile | {{request.user.full_name}}
+Edit Profile
 {% endblock title %}
 
+
 {% block content %}
+
 <div class="container py-5">
-
     <div class="row justify-content-center">
-        <div class="col-lg-10">
+        <div class="col-lg-8 col-md-10">
 
-            <div class="card settings-card">
+            <div class="card border-0 shadow-sm">
+
+                <!-- Header -->
+                <div class="card-header bg-white border-0 py-4">
+                    <h4 class="mb-1">Edit Profile</h4>
+                    <p class="text-muted mb-0">
+                        Update your profile information
+                    </p>
+                </div>
 
                 <div class="card-body p-4">
 
-                    <div class="row g-4">
+                    <form method="POST"
+                          enctype="multipart/form-data">
 
-                        <!-- Sidebar -->
-                        <div class="col-md-4 col-lg-3">
+                        {% csrf_token %}
 
-                            <div class="text-center mb-4">
-                                {% if user_form.instance.image.url %}
-                                <img src="{{user_form.instance.image.url}}"
-                                     class="profile-avatar mb-3"
-                                     alt="Profile">
+                        <!-- First Name / Last Name -->
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    First Name
+                                </label>
+
+                                {{ user_form.first_name }}
+
+                                {% if user_form.first_name.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ user_form.first_name.errors }}
+                                    </div>
                                 {% endif %}
-
-                                <h5 class="mb-1">{{user_form.imstance.full_name}}</h5>
-                                <small class="text-muted">
-                                    {{user_form.instance.email}}
-                                </small>
                             </div>
 
-                            <div class="nav flex-column nav-pills"
-                                 id="settings-tab"
-                                 role="tablist">
 
-                                <button class="nav-link active"
-                                        data-bs-toggle="pill"
-                                        data-bs-target="#profile">
-                                    Profile Info
-                                </button>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    Last Name
+                                </label>
 
-                                <button class="nav-link"
-                                        data-bs-toggle="pill"
-                                        data-bs-target="#password">
-                                    Change Password
-                                </button>
+                                {{ user_form.last_name }}
 
-
-                                <button class="nav-link"
-                                        data-bs-toggle="pill"
-                                        data-bs-target="#account-security">
-                                    Email
-                                </button>
-
+                                {% if user_form.last_name.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ user_form.last_name.errors }}
+                                    </div>
+                                {% endif %}
                             </div>
 
                         </div>
 
-                        <!-- Content -->
-                        <div class="col-md-8 col-lg-9">
 
-                            <div class="tab-content">
+                        <!-- Username -->
+                        <div class="mb-3">
 
-                                <!-- Profile Info -->
-                                <div class="tab-pane fade show active"
-                                     id="profile">
+                            <label class="form-label">
+                                Username
+                            </label>
 
-                                    <h4 class="section-title">
-                                        Edit Profile Information
-                                    </h4>
+                            {{ user_form.username }}
 
-                                    <form method="POST" enctype = "multipart/form-data" action="{% url 'edit-profile' %}">
-                                        {% csrf_token %}
-                                        <div class="row">
-
-                                            <div class="col-md-6 mb-3">
-                                                <label class="form-label">
-                                                    First Name
-                                                </label>
-                                                {{user_form.first_name}}
-                                            </div>
-
-                                            <div class="col-md-6 mb-3">
-                                                <label class="form-label">
-                                                    Last Name
-                                                </label>
-                                                {{user_form.last_name}}
-                                            </div>
-
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label">
-                                                Username
-                                            </label>
-                                            {{user_form.username}}
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label">
-                                                Bio
-                                            </label>
-                                            {{user_form.bio}}
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label">
-                                                Gender
-                                            </label>
-                                            {{user_form.gender}}
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label">
-                                                Profile Image
-                                            </label>
-                                            {{user_form.image}}
-                                        </div>
-
-                                        <button class="btn btn-primary">
-                                            Save Changes
-                                        </button>
-
-                                    </form>
-
+                            {% if user_form.username.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ user_form.username.errors }}
                                 </div>
-
-                                <!-- Change Password -->
-                                <div class="tab-pane fade"
-                                     id="password">
-
-                                    <h4 class="section-title">
-                                        Change Password
-                                    </h4>
-
-                                    <form method="POST" action="{% url 'change-password' %}">
-
-                                        {% csrf_token %}
-                                        {% for field in password_change_form %}
-                                            <div class="mb-3">
-                                                <label class="form-label">
-                                                    {{field.label_tag}}
-                                                </label>
-                                                {{field}}
-                                            </div>
-                                        {% endfor %}
-
-                                        <button class="btn btn-success">
-                                            Update Password
-                                        </button>
-
-                                    </form>
-
-                                </div>
-
-                                <!-- Email Change -->
-                                <div class="tab-pane fade" id="account-security">
-
-                                    <h4 class="section-title">
-                                        Change Your Email
-                                    </h4>
-
-                                    <p class="text-muted">
-                                        Email change requires verification.
-                                    </p>
-
-                                    <form method="POST" action="{% url 'change-email' %}">
-                                        {% csrf_token %}
-
-                                        <div class="mb-3">
-                                            <label class="form-label">New Email</label>
-                                            {{email_change_form.email}}
-                                        </div>
-
-                                        <button class="btn btn-primary">
-                                            Send code
-                                        </button>
-                                    </form>
-
-                                </div>
-
-                            </div>
+                            {% endif %}
 
                         </div>
 
-                    </div>
+
+                        <!-- Bio -->
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Bio
+                            </label>
+
+                            {{ user_form.bio }}
+
+                            {% if user_form.bio.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ user_form.bio.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- Gender -->
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Gender
+                            </label>
+
+                            {{ user_form.gender }}
+
+                            {% if user_form.gender.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ user_form.gender.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- Profile Image -->
+                        <div class="mb-4">
+
+                            <label class="form-label">
+                                Profile Image
+                            </label>
+
+                            {{ user_form.image }}
+
+                            {% if user_form.image.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ user_form.image.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- Actions -->
+                        <div class="d-flex justify-content-end gap-2">
+
+                            <a href="{% url 'profile' request.user.username %}"
+                               class="btn btn-light">
+                                Cancel
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+                                <i class="bi bi-check-lg me-1"></i>
+                                Save Changes
+                            </button>
+
+                        </div>
+
+                    </form>
 
                 </div>
 
@@ -199,7 +159,6 @@
 
         </div>
     </div>
-
 </div>
 
-{% endblock content %}
+{% endblock %}
