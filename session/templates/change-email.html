@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Change Password{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5">
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4 p-md-5">
+
+                    <!-- Header -->
+                    <div class="text-center mb-4">
+                        <div class="mb-3">
+                            <i class="fa-solid fa-envelope fs-3 text-primary"></i>
+                        </div>
+
+                        <h4 class="fw-bold mb-2">Change Email</h4>
+
+                        <p class="text-muted mb-0">
+                            Email change require verification via new email .
+                        </p>
+                    </div>
+
+                    <!-- Form -->
+                    <form method="post">
+
+                        {% csrf_token %}
+
+
+                        <!-- Old Email -->
+                        <div class="mb-3">
+                            <label for="current_email"
+                                   class="form-label fw-semibold">
+                                Current Email
+                            </label>
+
+                            <input type='email' value="{{request.user.email}}" class='form-control' name='current_email' disabled></input>
+
+                        </div>
+
+                        <!-- New Email -->
+                        <div class="mb-3">
+                            <label for="new_email"
+                                   class="form-label fw-semibold">
+                                New Email
+                            </label>
+
+                            {{form.email}}
+
+                        </div>
+
+
+                        <!-- Submit -->
+                        <div class="d-grid">
+
+                            <button type="submit" class="btn btn-primary" id='changeEmailBtn'>
+                                <i class="fa-solid fa-envelope "></i>
+                                Change Email
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
